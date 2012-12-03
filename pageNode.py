@@ -13,28 +13,43 @@ import uuid
 
 """Class PageNode: Defines pageNodes of a tree.
 
-Each pageNode contains a url, an identifier, a pointer to the parent, and a list of pointers to its children.
+Each pageNode contains a url, an nodeId, a pointer to the parent, and a list of pointers to its children.
 PageNode will contain more data than that later on, and each data will have a corresponding get/set function.
 (OR I will encapsulate the data and force you to have tree.pageNode.item.data.value Buuuhahahahahaha)"""
 class PageNode:
 
-    """PageNode.__init__(url:string, identifier:integer=None, expanded:booleanish=True):
+    """PageNode.__init__(url:string, nodeId:integer=None, expanded:booleanish=True):
 
     Sets corresponding data for pageNode.
     Note __bPointer is set to None initially, then is reset later.
     Note __fPointer is set to an empty list."""
-    def __init__(self, url="George", identifier=None, expanded=True):
-        self.__identifier = (uuid.uuid1() if identifier is None else
-                identifier)
+    def __init__(self, url, nodeId, sourceMode=None,\
+ content=None, encodeType=None, pullTS=None, expanded=True):
+        self.__nodeId = (uuid.uuid1() if nodeId is None else
+                nodeId)
         self.url = url
+        self.sourceMode = sourceMode
         self.expanded = expanded
         self.__bPointer = None
         self.__fPointer = []
+        self.content = content
+        self.elementId = None
+        self.encodeType = encodeType
+        self.mimeType = None
+        self.authorTimeStamp = None
+        self.pullTimeStamp = []
+        self.revisionNum = None
+        self.revisionHistory = None
+        self.isReferredTo = 0
+        try:
+            self.pullTimeStamp.extend(pullTS)
+        except:
+            self.pullTimeStamp.append(pullTS if pullTS is not None else None)
 
-    """PageNode.identifier() returns id of pageNode. Root should be 0."""
+    """PageNode.nodeId() returns id of pageNode. Root should be 0."""
     @property
-    def identifier(self):
-        return self.__identifier
+    def nodeId(self):
+        return self.__nodeId
 
     """PageNode.bPointer() returns __bPointer"""
     @property
@@ -54,14 +69,103 @@ class PageNode:
 
     """PageNode.updateFPointer(ideentifier, mode=_ADD):
 
-    Appends an identifier to the list of children if mode is _ADD.
+    Appends an nodeId to the list of children if mode is _ADD.
     Removes id from list of children if mode is _DELETE.
-    Sets entire list = [identifier] if mode is _INSERT."""
-    def updateFPointer(self, identifier, mode=_ADD):
+    Sets entire list = [nodeId] if mode is _INSERT."""
+    def updateFPointer(self, nodeId, mode=_ADD):
         if mode is _ADD:
-            self.__fPointer.append(identifier)
+            self.__fPointer.append(nodeId)
         elif mode is _DELETE:
-            self.__fPointer.remove(identifier)
+            self.__fPointer.remove(nodeId)
         elif mode is _INSERT:
-            self.__fPointer = [identifier]
+            self.__fPointer = [nodeId]
+
+    """PageNode.setContent(content, encodeType) sets both content and encodeType."""
+    def setContent(self, content, encodeType):
+        self.content = content
+        self.encodeType = encodeType
+
+    """PageNode.getContent() returns only content."""
+    def getContent(self):
+        return self.content
+
+    """PageNode.getEncodeType() returns only encodeType."""
+    def getEncodeType(self):
+        return self.encodeType
+    
+    """PageNode.setUrl(url) sets the url."""
+    def setUrl(self, url):
+        self.url = url
+    """PageNode.getUrl() returns the url."""
+    def getUrl(self):
+        return self.url
+
+    """PageNode.setElementId(elementId) sets the elementId."""
+    def setElementId(self, elementId):
+        self.elementId = elementId
+    """PageNode.getElementId() returns the elementId."""
+    def getElementId(self):
+        return self.elementId
+
+    """PageNode.setSourceMode(sourceMode) sets the sourceMode."""
+    def setSourceMode(self, sourceMode):
+        self.sourceMode = sourceMode
+    """PageNode.getSourceMode() returns the sourceMode."""
+    def getSourceMode(self):
+        return self.sourceMode
+
+    """PageNode.setEncodeType(encodeType) sets the encodeType."""
+    def setEncodeType(self, encodeType):
+        self.encodeType = encodeType
+    """PageNode.getEncodeType() returns the encodeType."""
+    def getEncodeType(self):
+        return self.encodeType
+
+    """PageNode.setMimeType(mimeType) sets the mimeType."""
+    def setMimeType(self, mimeType):
+        self.mimeType = mimeType
+    """PageNode.getMimeType() returns the mimeType."""
+    def getMimeType(self):
+        return self.mimeType
+
+    """PageNode.setAuthorTS(authorTS) sets the authorTimeStamp. AuthorTimeStamp should not be a list."""
+    def setAuthorTS(self, authorTS):
+        self.authorTimeStamp = authorTS
+
+    """PageNode.getAuthorTS(nodeId) gets the authorTimeStamp."""
+    def getAuthorTS(self):
+        return self.authorTimeStamp
+
+    """PageNode.setPullTS(pullTS) sets the pullTimeStamp.
+
+    PullTS could be either an individual timestamp or a list of timestamps."""
+    def setPullTS(self, pullTS):
+        print pullTS
+        if self.pullTimeStamp is None:
+            self.pullTimeStamp = []
+        try:
+            print("trying to extend pullTS with a list")
+            self.pullTimeStamp.append(pullTS)
+        except:
+            print("...failed..")
+            self.pullTimeStamp.append(pullTS)
+
+    """PageNode.clearPullTS() empties the pullTimeStamp list."""
+    def clearPullTS(self):
+        del self.pullTimeStamp[:]
+
+    """PageNode.getPullTS(nodeId) returns list of pullTimeStamps."""
+    def getPullTS(self):
+        return self.pullTimeStamp
+
+    """PageNode.setRevisionNum(revisionNum) sets the revisionNum."""
+    def setRevisionNum(self, revisionNum):
+        self.revisionNum = revisionNum
+    """PageNode.getRevisionNum() returns the revisionNum."""
+    def getRevisionNum(self):
+        return self.revisionNum
+
+    """PageNode.isReferredTo() increments the isReferredTo member."""
+    def isReferredTo(self):
+        self.isReferredTo =+1
 
