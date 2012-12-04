@@ -30,13 +30,13 @@ class PageTree:
                 break
         return index
 
-    """PageTree.createPageNode(url:string, nodeId:integer, parent:integer=None)
+    """PageTree.createPageNode(url:string, nodeId:integer, parent:integer=None, sourceMode=None, content=None, encodeType=None, pullTS=None)
 
        If parent is not given, it is the root of the pageTree. Conventionally, give root an id of 0.
        Otherwise specify parent's identification, for example a css file might have 0 as its parent.
        Conventionally, give child elements incrementing id numbers, 1..n."""
-    def createPageNode(self, url, nodeId=None, parent=None, sourceMode=None\
-content=None, encodeType=None, pullTS=None):
+    def createPageNode(self, url, nodeId=None, parent=None, sourceMode=None,\
+ content=None, encodeType=None, pullTS=None):
 
         node = PageNode(url, nodeId, sourceMode, content, encodeType, pullTS)
         self.nodes.append(node)
@@ -186,6 +186,14 @@ content=None, encodeType=None, pullTS=None):
     """PageTree.isReferredTo(nodeId) increments the isReferredTo member of node nodeId."""
     def isReferredTo(self, nodeId):
         self.nodes[self.getIndex(nodeId)].isReferredTo()
+
+    """PageTree.getParent(nodeId) returns the nodeId of the parent."""
+    def getParent(self, nodeId):
+        return self.nodes[self.getIndex(nodeId)].bPointer
+
+    """PageTree.getParent(nodeId) returns the list of nodeIds of the children."""
+    def getChildren(self, nodeId):
+        return self.nodes[self.getIndex(nodeId)].fPointer
 
 """PageTree's main function: currently builds a little pageTree with 10 nodes sorta randomly connected, then prints."""
 if __name__== "__main__":

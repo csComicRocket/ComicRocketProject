@@ -106,6 +106,8 @@ pageTree methods:
 > createPageNode(url, nodeId != 0, parentId)
 > createPageNode(url, nodeId, parentId, sourceMode, content, encodeType, pullTS[])
 > createPageNode(url, nodeId, parentId, sourceMode, content, encodeType, pullTS)
+> getParent(nodeId) returns node's parent's nodeId
+> getChildren(nodeId) returns node's list of children [nodeId's]
 > setUrl(nodeId, url) replaces url added from original tree creation
 > getUrl(nodeId) returns url for given nodeId
 > setElementId(nodeId, elementId)
@@ -129,8 +131,6 @@ This should be effectively once per tree, even if files within the tree point to
 Original creation of tree sets isReferredTo = 1.
 We really only care about other trees referring to the same element.
 
-
-TODO:
-add methods for navigation of tree structure, such as:
-getParent(nodeId) -> parent's nodeId
-getChildren(nodeId) -> children[]'s -> nodeId's
+TODO: _WIDTH, _DEPTH, _ADD, etc are defined in my files, but
+they should be defined everywhere so others can use them. 
+Separate them into file and require with includes.

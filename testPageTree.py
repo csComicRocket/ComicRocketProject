@@ -36,14 +36,20 @@ class TestPageTree:
         print("="*80)
         for node in pageTree.expandPageTree(0, mode=_WIDTH):
             print(node)
+
+    def testGetParentAndChildren(self, pageTree, nodeId):
+        print("Testing getParent()...")
+        print(pageTree.getParent(nodeId))
+        print("Testing getChildren()...")
+        print(pageTree.getChildren(nodeId))
         
 
 if __name__ == '__main__':
     t = TestPageTree()
     
-    pageTree = t.testInit()
-    t.printTree(pageTree)
     pageTree = t.testInit2()
+    t.printTree(pageTree)
+    pageTree = t.testInit()
     t.printTree(pageTree)
 
     print(">> Example of setting and getting content")
@@ -69,4 +75,9 @@ if __name__ == '__main__':
     print(pageTree.getPullTS(0))
     print("It's evident that it doesn't work at the moment. TODO: fix it.")
 
-    print(">> Example of something else.")
+    print(">> Example of getting parent and children. ")
+    print("For now hardcoded to find parent and children of nodeId = 2.")
+    t.testGetParentAndChildren(pageTree, 2)
+    print("Well good, that works. TODO test + fix problems where ")
+    print("no such node and/or no parents and/or no children....odd cases.")
+    

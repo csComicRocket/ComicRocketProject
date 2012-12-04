@@ -18,11 +18,12 @@ PageNode will contain more data than that later on, and each data will have a co
 (OR I will encapsulate the data and force you to have tree.pageNode.item.data.value Buuuhahahahahaha)"""
 class PageNode:
 
-    """PageNode.__init__(url:string, nodeId:integer=None, expanded:booleanish=True):
+    """PageNode.__init__(url, nodeId, sourceMode, content, encodeType, pullTS, expanded=True):
 
     Sets corresponding data for pageNode.
     Note __bPointer is set to None initially, then is reset later.
-    Note __fPointer is set to an empty list."""
+    Note __fPointer is set to an empty list.
+    url and nodeId are required."""
     def __init__(self, url, nodeId, sourceMode=None,\
  content=None, encodeType=None, pullTS=None, expanded=True):
         self.__nodeId = (uuid.uuid1() if nodeId is None else
@@ -40,7 +41,7 @@ class PageNode:
         self.pullTimeStamp = []
         self.revisionNum = None
         self.revisionHistory = None
-        self.isReferredTo = 0
+        self.isReferredTo = 1 # because there's obviously at least one tree pointing to this node.
         try:
             self.pullTimeStamp.extend(pullTS)
         except:
