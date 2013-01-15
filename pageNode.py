@@ -34,7 +34,7 @@ class PageNode:
         self.__bPointer = None
         self.__fPointer = []
         self.content = content
-        self.elementId = None
+        self.comicId = None
         self.encodeType = encodeType
         self.mimeType = None
         self.authorTimeStamp = None
@@ -42,6 +42,7 @@ class PageNode:
         self.revisionNum = None
         self.revisionHistory = None
         self.isReferredTo = 1 # because there's obviously at least one tree pointing to this node.
+        self.hash = None
         try:
             self.pullTimeStamp.extend(pullTS)
         except:
@@ -101,12 +102,12 @@ class PageNode:
     def getUrl(self):
         return self.url
 
-    """PageNode.setElementId(elementId) sets the elementId."""
-    def setElementId(self, elementId):
-        self.elementId = elementId
-    """PageNode.getElementId() returns the elementId."""
-    def getElementId(self):
-        return self.elementId
+    """PageNode.setComicId(comicId) sets the comicId."""
+    def setComicId(self, comicId):
+        self.comicId = comicId
+    """PageNode.getComicId() returns the comicId."""
+    def getComicId(self):
+        return self.comicId
 
     """PageNode.setSourceMode(sourceMode) sets the sourceMode."""
     def setSourceMode(self, sourceMode):
@@ -170,3 +171,9 @@ class PageNode:
     def isReferredTo(self):
         self.isReferredTo =+1
 
+    """PageNode.setHash(hash) sets the hash."""
+    def setHash(self, hash):
+        self.hash = hash
+    """PageNode.getHash() returns the hash."""
+    def getHash(self):
+        return self.hash

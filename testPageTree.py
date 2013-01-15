@@ -81,3 +81,7 @@ if __name__ == '__main__':
     print("Well good, that works. TODO test + fix problems where ")
     print("no such node and/or no parents and/or no children....odd cases.")
     
+    print("Setting hash:")
+    pageTree.setHash(0, 52)
+    print("Hash of node 0: ")
+    print(pageTree.getHash(0))

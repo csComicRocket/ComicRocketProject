@@ -126,12 +126,12 @@ class PageTree:
     def getUrl(self, nodeId):
         return self.nodes[self.getIndex(nodeId)].getUrl()
 
-    """PageTree.setElementId(nodeId, elementId) sets the elementId of node nodeId."""
-    def setElementId(self, nodeId, elementId):
-        self.nodes[self.getIndex(nodeId)].setElementId(elementId)
-    """PageTree.getElementId(nodeId) returns the elementId of node nodeId."""
-    def getElementId(self, nodeId):
-        return self.nodes[self.getIndex(nodeId)].getElementId()
+    """PageTree.setComicId(nodeId, comicId) sets the comicId of node nodeId."""
+    def setComicId(self, nodeId, comicId):
+        self.nodes[self.getIndex(nodeId)].setComicId(comicId)
+    """PageTree.getComicId(nodeId) returns the comicId of node nodeId."""
+    def getComicId(self, nodeId):
+        return self.nodes[self.getIndex(nodeId)].getComicId()
 
     """PageTree.setSourceMode(nodeId, sourceMode) changes the sourceMode of node nodeId."""
     def setSourceMode(self, nodeId, sourceMode):
@@ -153,6 +153,13 @@ class PageTree:
     """PageTree.getMimeType(nodeId) returns the mimeType of node nodeId."""
     def getMimeType(self, nodeId):
         return self.nodes[self.getIndex(nodeId)].getMimeType()
+
+    """PageTree.setHash(nodeId, hash) sets the hash of node nodeId."""
+    def setHash(self, nodeId, hash):
+        self.nodes[self.getIndex(nodeId)].setHash(hash)
+    """PageTree.getHash(nodeId) returns the hash of node nodeId."""
+    def getHash(self, nodeId):
+        return self.nodes[self.getIndex(nodeId)].getHash()
 
     """PageTree.setAuthorTS(nodeId, authorTS) sets the authorTimeStamp. AuthorTimeStamp should not be a list."""
     def setAuthorTS(self, nodeId, authorTS):
