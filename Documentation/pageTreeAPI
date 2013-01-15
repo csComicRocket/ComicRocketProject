@@ -8,7 +8,7 @@ Required files: pageTree.py, pageNode.py, and utilities.py
 Variables of pageNode (element from a comic site, like a comic page or a jpeg or css file.)
 
 url
-elementId
+comicId
 sourceMode
 content
 encodeType
@@ -18,6 +18,7 @@ pullTimeStamp []
 revisionNum
 revisionHistory
 isReferredTo
+hash
 __nodeId
 __bPointer
 __fPointer
@@ -29,9 +30,7 @@ Not sure why. Some explanations use comparison and contrast between similar vari
 
 > The url uniquely identifies a file from the web, but does not determine the version of the url.
 However, where only the url is specified, it is interpreted as the most recent version of that file.
-The elementId uniquely identifies the (url, revision) element.
-If the file has been pulled from the web the elementId will be unknown.
-The elementId will uniquely identify one revision from one file stored in the Cache.
+The comicId uniquely identifies the comic from which a particular page comes from.
 
 > The sourceMode indicates whether the element has been pulled from the Cache or the web, and will determine how the data is interpreted.
 
@@ -57,6 +56,8 @@ It will be used to indicate whether an element is a utility element, such as JPE
 If a file, such as a JPEG, is referred to only once, it may be a unique piece to the page that refers to it.
 If such a file is referred to more than once, 200 times for example, it will be evident that it is a utility file used in many pages on a comic site.
 The variable isReferredTo will not be cleaned or used for garbage collection purposes, but simply will be used as an indicator of whether it is a utility file or specific to a page.
+
+> The variable hash will store a hash of a page for comparison purposes.
 
 > The variables __nodeId, __bPointer, and __fPointer are for pageTree structure.
 The nodeId identifies a node relative to its tree. The root of the tree should have nodeId = 0.
@@ -110,8 +111,8 @@ pageTree methods:
 > getChildren(nodeId) returns node's list of children [nodeId's]
 > setUrl(nodeId, url) replaces url added from original tree creation
 > getUrl(nodeId) returns url for given nodeId
-> setElementId(nodeId, elementId)
-> getElementId(nodeId)
+> setComicId(nodeId, comicId)
+> getComicId(nodeId)
 > setSourceMode(nodeId, sourceMode)
 > getSourceMode(nodeId)
 > setContent(nodeId, content, encodeType)
@@ -124,6 +125,8 @@ pageTree methods:
 > setPullTS(nodeId, pullTimeStamps) adds timestamp to end of list
 > setPullTS(nodeId, pullTimeStamps[]) adds timestamps to end of list
 > getPullTS(nodeId) returns a list of timestamps, even if the list has only one element
+> setHash(nodeId, hash)
+> getHash(nodeId)
 > setRevisionNum(nodeId, revisionNum)
 > getRevisionNum(nodeId)
 > isReferredTo() increases number of documents referring to nodeId by 1.
