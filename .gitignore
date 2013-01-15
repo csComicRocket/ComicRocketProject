@@ -1,0 +1,6 @@
+# GIT Ignore
+# ==========
+# Specify files and folder to ignore in git commands
+
+# Sublime project files
+*.sublime-*
