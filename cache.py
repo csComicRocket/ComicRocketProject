@@ -18,15 +18,16 @@ class Cache:
         try:
             os.makedirs(dir)
         except OSError:
-            pass #this set of code will simply try to create the directory and ignore any errors
+            pass #if an error is thrown it means the directory already exists
         try:
-            with open(dir + fName) as f:
-                revisionPush(pageTree)
-        except IOError: #if an error occurs the file does not yet exist
+            with open(os.path.join(dir, fName)) as f:
+                pass  #non race way to check to see if the file already exists
+            revisionPush(pageTree, dir, fName)
+        except IOError: #if an error occurs the file does not yet exist, which means this is a new page
             self.storeInLast3(pageTree.getComicId(0), pageTree.getUrl(0))
-        with open(dir + "/pageTreeData.txt", 'w+') as f:
+        with open(os.path.join(dir,"pageTreeData.txt"), 'w+') as f:
             f.writelines(pageTree.getPageTreeData())
-        with open(dir + '/' + fName, 'w+') as f:
+        with open(os.path.join(dir, fName), 'w+') as f:
             f.write(str(pageTree.getContent(0)))
         
     def parseDirectory(self, url):
@@ -39,11 +40,23 @@ class Cache:
             return dir[2], "default"
         return dir[0], dir[2]
         
-    def revisionPush(self, pageTree):
-        fName = pageTree.parseDirectory(pageTree.getUrl(0))[1]
-        newFName = pageTree.getRevision(0)
-        os.rename(fname, pageTree.getRevision(0)
-        print "I am not implemented"
+    def revisionPush(self, pageTree, dir, fName):
+        rNum = self.findRevisionNum(dir, fName)
+        newFName = str(rNum) + '_' + fName
+        os.rename(os.path.join(dir, fName), os.path.join(dir, newFName))
+        os.rename(os.path.join(dir, "pageTreeData.txt"), os.path.join(dir, (str(rNum) + '_' + "pageTreeData.txt")))
+        #do something to set the revision number of the current pageTree to rNum+1
+        print "I am not finished"
+    
+    def findRevisionNum(self, dir, fName):
+        rNum = 0
+        while (True):
+            try:
+                with open(os.path.join(dir, (str(rNum) + '_' + fName)) as f:
+                    pass
+                rNum += 1
+            except IOError:
+                return rNum
 
     def fetchCache(self, url, needsChildren):
         print("fetchCache is now building trees (cause I don't have a cache to pull from yet :)")
@@ -95,7 +108,7 @@ class Cache:
             os.makedirs(dir)
             shutil.copy2("predictorInfo/predictorData.txt", dir)
         except OSError:
-            pass #this set of code will simply try to create the directory and ignore any errors
+            pass #if an error is thrown it means the directory already exists
         try:
             with open(dir + "last3Pages.txt") as f:
                 urlList = f.readlines()
