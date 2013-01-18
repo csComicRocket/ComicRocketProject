@@ -44,25 +44,27 @@ class PageTree:
         node.bPointer = parent
         return node
 
+    def show(self, position, level=_ROOT):
+        print self.getPageStructureString(position, level)
+        
+    
     """PageTree.show(position, level=_ROOT) prints the pageTree depth first kinda like this:
 
        http://www.rooturl.com [0]
        ('/t', 'http://www.rooturl.com/child [1]')
        ('/t/t', 'http://www.rooturl.com/child/child [2]')
        etc."""
-    def show(self, position, level=_ROOT):
+    def getPageStructureString(self, position, level=_ROOT):
         queue = self[position].fPointer
         if level == _ROOT:
-            print("{0} [{1}]".format(self[position].url,
-                                     self[position].nodeId))
+            aString = "{0} [{1}]".format(str(self[position].url), str(self[position].nodeId)) + '\n'
         else:
-            print("\t"*level, "{0} [{1}]".format(self[position].url,
-                                                 self[position].nodeId))
+            aString = "  "*level + "{0} [{1}]".format(str(self[position].url), str(self[position].nodeId)) + '\n'
         if self[position].expanded:
             level += 1
             for element in queue:
-                self.show(element, level)  # recursive call
-
+                aString += self.getPageStructureString(element, level)  # recursive call
+        return aString
 
     """PageTree.expandPageTree(position, mode=_DEPTH) prints id's separated by new lines, _DEPTH or _WIDTH first"""
     def expandPageTree(self, position, mode=_DEPTH):
@@ -193,6 +195,10 @@ class PageTree:
     """PageTree.isReferredTo(nodeId) increments the isReferredTo member of node nodeId."""
     def isReferredTo(self, nodeId):
         self.nodes[self.getIndex(nodeId)].isReferredTo()
+        
+    """PageTree.isReferredTo(nodeId) increments the isReferredTo member of node nodeId."""
+    def getIsReferredTo(self, nodeId):
+        return self.nodes[self.getIndex(nodeId)].getIsReferredTo()
 
     """PageTree.getParent(nodeId) returns the nodeId of the parent."""
     def getParent(self, nodeId):
@@ -201,6 +207,18 @@ class PageTree:
     """PageTree.getParent(nodeId) returns the list of nodeIds of the children."""
     def getChildren(self, nodeId):
         return self.nodes[self.getIndex(nodeId)].fPointer
+        
+    def getPageTreeData(self):
+        pageTreeDataString = []
+        pageTreeDataString.append("EncodeType: " + str(self.getEncodeType(0)) + '\n')
+        pageTreeDataString.append("MimeType: " + str(self.getMimeType(0)) + '\n')
+        pageTreeDataString.append("AuthorTS: " + str(self.getAuthorTS(0)) + '\n')
+        pageTreeDataString.append("PullTS: " + str(self.getPullTS(0)) + '\n')
+        pageTreeDataString.append("RevisionNum: " + str(self.getRevisionNum(0)) + '\n')
+        """pageTreeDataString.append(str(self.getRevisionHistory(0)))"""
+        pageTreeDataString.append("IsReferredTo: " + str(self.getIsReferredTo(0)) + '\n')
+        pageTreeDataString.append("PageStructure:\n" + self.getPageStructureString(0) + '\n')
+        return pageTreeDataString
 
 """PageTree's main function: currently builds a little pageTree with 10 nodes sorta randomly connected, then prints."""
 if __name__== "__main__":

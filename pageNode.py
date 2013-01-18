@@ -170,6 +170,10 @@ class PageNode:
     """PageNode.isReferredTo() increments the isReferredTo member."""
     def isReferredTo(self):
         self.isReferredTo =+1
+        
+    """PageNode.isReferredTo() increments the isReferredTo member."""
+    def getIsReferredTo(self):
+        return self.isReferredTo
 
     """PageNode.setHash(hash) sets the hash."""
     def setHash(self, hash):
