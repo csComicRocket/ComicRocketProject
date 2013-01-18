@@ -40,26 +40,26 @@ class Cache:
         aTreeWithChildren = self.fetchCache("http://www.dummyurl.com/", "I would like page's children, please")
         self.storeCache(aTreeWithChildren)
 		
-	def storeInLast(self, pageTree):
-		"""Adds the data from the given pageTree object to the list of last 3 urls.
-		
-		This function should only be called when the pageTree object does not have
-		a current version in the cache."""
-		dir = "predictorInfo/" + str(pageTree.nodes[0].comicId) + "/"
-		try os.makedirs(dir)
-			shutil.copy2("predictorInfo/predictorData.txt", dir)
-		except OSError:
-			pass #this set of code will simply try to create the directory and ignore any errors
-		try:
-			with open(dir + "last3Pages.txt") as f:
-				urlList = f.readlines()
-		except IOError: #if an error occurs the file does not yet exist
-			urllist = []
-		if len(urlList) >= 3:
-			urlList.pop(0)
-		urlList.append(str(pageTree.nodes[0].url) + '\n')
-		with open(dir + "last3Pages.txt", 'w+') as f:
-			f.writelines(urlList)
+    def storeInLast(self, pageTree):
+        """Adds the data from the given pageTree object to the list of last 3 urls.
+        
+        This function should only be called when the pageTree object does not have
+        a current version in the cache."""
+        dir = "predictorInfo/" + str(pageTree.nodes[0].comicId) + "/"
+        try os.makedirs(dir)
+            shutil.copy2("predictorInfo/predictorData.txt", dir)
+        except OSError:
+            pass #this set of code will simply try to create the directory and ignore any errors
+        try:
+            with open(dir + "last3Pages.txt") as f:
+                urlList = f.readlines()
+        except IOError: #if an error occurs the file does not yet exist
+            urllist = []
+        if len(urlList) >= 3:
+            urlList.pop(0)
+        urlList.append(str(pageTree.nodes[0].url) + '\n')
+        with open(dir + "last3Pages.txt", 'w+') as f:
+            f.writelines(urlList)
 		
 if __name__ == '__main__':
     cache = Cache()
