@@ -22,7 +22,7 @@ class Cache:
         try:
             with open(os.path.join(dir, fName)) as f:
                 pass  #non race way to check to see if the file already exists
-            revisionPush(pageTree, dir, fName)
+            self.revisionPush(pageTree, dir, fName)
         except IOError: #if an error occurs the file does not yet exist, which means this is a new page
             self.storeInLast3(pageTree.getComicId(0), pageTree.getUrl(0))
         with open(os.path.join(dir,"pageTreeData.txt"), 'w+') as f:
@@ -44,7 +44,7 @@ class Cache:
         rNum = self.findRevisionNum(dir, fName)
         newFName = str(rNum) + '_' + fName
         os.rename(os.path.join(dir, fName), os.path.join(dir, newFName))
-        os.rename(os.path.join(dir, "pageTreeData.txt"), os.path.join(dir, (str(rNum) + '_' + "pageTreeData.txt")))
+        os.rename(os.path.join(dir, "pageTreeData.txt"), os.path.join(dir, str(rNum) + '_' + "pageTreeData.txt"))
         #do something to set the revision number of the current pageTree to rNum+1
         print "I am not finished"
     
@@ -52,7 +52,7 @@ class Cache:
         rNum = 0
         while (True):
             try:
-                with open(os.path.join(dir, (str(rNum) + '_' + fName)) as f:
+                with open(os.path.join(dir, str(rNum) + '_' + fName)) as f:
                     pass
                 rNum += 1
             except IOError:
