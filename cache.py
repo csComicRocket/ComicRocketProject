@@ -32,8 +32,11 @@ class Cache:
         
     def parseDirectory(self, url):
         """Split a url and make it into a directory name."""
-        dir = url.split("//")
-        dir = dir[1].rpartition('/')
+        if url.endswith("//"):
+            return "cacheInfo/default/", "default"
+        if "//" in url:
+            dir = url.split("//")[1]
+        dir = dir.rpartition('/')
         if dir[2] == "":
             dir = dir[0].rpartition('/')
         if dir[0] == "":
@@ -69,6 +72,28 @@ class Cache:
             return rNum
         except IndexError:
             return rNum
+
+    def storeInLast3(self, comicId, url):
+        """Adds the data from the given pageTree object to the list of last 3 urls.
+        
+        This function should only be called when the pageTree object does not have
+        a current version in the cache."""
+        dir = "predictorInfo/" + str(comicId) + "/"
+        try:
+            os.makedirs(dir)
+            shutil.copy2("predictorInfo/predictorData.txt", dir)
+        except OSError:
+            pass #if an error is thrown it means the directory already exists
+        try:
+            with open(dir + "last3Pages.txt") as f:
+                urlList = f.readlines()
+        except IOError: #if an error occurs the file does not yet exist
+            urlList = []
+        if len(urlList) >= 3:
+            urlList.pop(0)
+        urlList.append(url + '\n')
+        with open(dir + "last3Pages.txt", 'w+') as f:
+            f.writelines(urlList)
 
     def fetchCache(self, url, needsChildren):
         print("fetchCache is now building trees (cause I don't have a cache to pull from yet :)")
@@ -110,27 +135,20 @@ class Cache:
         anotherUrl = "http://www.dummyurl.com"
         print anotherUrl, "->", self.parseDirectory(anotherUrl)
 
-    def storeInLast3(self, comicId, url):
-        """Adds the data from the given pageTree object to the list of last 3 urls.
-        
-        This function should only be called when the pageTree object does not have
-        a current version in the cache."""
-        dir = "predictorInfo/" + str(comicId) + "/"
-        try:
-            os.makedirs(dir)
-            shutil.copy2("predictorInfo/predictorData.txt", dir)
-        except OSError:
-            pass #if an error is thrown it means the directory already exists
-        try:
-            with open(dir + "last3Pages.txt") as f:
-                urlList = f.readlines()
-        except IOError: #if an error occurs the file does not yet exist
-            urlList = []
-        if len(urlList) >= 3:
-            urlList.pop(0)
-        urlList.append(url + '\n')
-        with open(dir + "last3Pages.txt", 'w+') as f:
-            f.writelines(urlList)
+    def testRootOnlyTreeWrite(self):
+        aTreeOnlyRoot = self.fetchCache("http://www.dummyurl.com/", 0)
+        self.storeCache(aTreeOnlyRoot)
+
+    def testSpecificNameTree(self, treeRootDir):
+        pageTree = PageTree()
+        pageTree.createPageNode(treeRootDir, 0)
+        self.storeCache(pageTree)
+
+    def testMalformedUrl(self):
+        url = "some.really.bad./wrongurl//"
+        pageTree = PageTree()
+        pageTree.createPageNode(url, 0)
+        self.storeCache(pageTree)
 
 if __name__ == '__main__':
     cache = Cache()
