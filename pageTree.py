@@ -214,6 +214,8 @@ class PageTree:
         pageTreeDataString.append("MimeType: " + str(self.getMimeType(0)) + '\n')
         pageTreeDataString.append("AuthorTS: " + str(self.getAuthorTS(0)) + '\n')
         pageTreeDataString.append("PullTS: " + str(self.getPullTS(0)) + '\n')
+        if (self.getRevisionNum(0) == None):
+            self.setRevisionNum(0, 0)
         pageTreeDataString.append("RevisionNum: " + str(self.getRevisionNum(0)) + '\n')
         """pageTreeDataString.append(str(self.getRevisionHistory(0)))"""
         pageTreeDataString.append("IsReferredTo: " + str(self.getIsReferredTo(0)) + '\n')

@@ -37,11 +37,12 @@ class Cache:
         if dir[2] == "":
             dir = dir[0].rpartition('/')
         if dir[0] == "":
-            return dir[2], "default"
-        return dir[0], dir[2]
+            return "cacheInfo/" + dir[2], "default"
+        return "cacheInfo/" + dir[0], dir[2]
         
     def revisionPush(self, pageTree, dir, fName):
         rNum = self.findRevisionNum(dir, fName)
+        pageTree.setRevisionNum(0, rNum+1)
         newFName = str(rNum) + '_' + fName
         os.rename(os.path.join(dir, fName), os.path.join(dir, newFName))
         os.rename(os.path.join(dir, "pageTreeData.txt"), os.path.join(dir, str(rNum) + '_' + "pageTreeData.txt"))
@@ -49,14 +50,25 @@ class Cache:
         print "I am not finished"
     
     def findRevisionNum(self, dir, fName):
+        fName = "pageTreeData.txt" #Please!!!!! Remember to take this out maybe someday.
+        print os.path.join(dir, fName)
         rNum = 0
-        while (True):
-            try:
-                with open(os.path.join(dir, str(rNum) + '_' + fName)) as f:
-                    pass
-                rNum += 1
-            except IOError:
+        try:
+            with open(os.path.join(dir, fName)) as f:
+                fileString = f.read()
+                print "file: ", fileString
+                print "file after split at RevisionNum: ", fileString.split("RevisionNum: ")[1].split("\n")[0]
+                rNumString = fileString.split("RevisionNum: ")[1].split("\n")[0]
+                if rNumString == "None":
+                    rNum = 0
+                else:
+                    rNum = int(rNumString)
+                print "rNum: ", rNum
                 return rNum
+        except IOError:
+            return rNum
+        except IndexError:
+            return rNum
 
     def fetchCache(self, url, needsChildren):
         print("fetchCache is now building trees (cause I don't have a cache to pull from yet :)")
@@ -97,7 +109,7 @@ class Cache:
         print anotherUrl, "->", self.parseDirectory(anotherUrl)
         anotherUrl = "http://www.dummyurl.com"
         print anotherUrl, "->", self.parseDirectory(anotherUrl)
-		
+
     def storeInLast3(self, comicId, url):
         """Adds the data from the given pageTree object to the list of last 3 urls.
         
@@ -119,9 +131,8 @@ class Cache:
         urlList.append(url + '\n')
         with open(dir + "last3Pages.txt", 'w+') as f:
             f.writelines(urlList)
-		
+
 if __name__ == '__main__':
     cache = Cache()
 
     cache.testCache()
-
