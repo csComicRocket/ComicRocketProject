@@ -3,6 +3,7 @@
 import time
 from PList import *
 from ComicList import *
+from Predictor import *
 
 SITELIMIT = 20
 PAGELIMIT = 20
@@ -16,8 +17,13 @@ def Scheduler():
 		if time.gmtime().tm_hour != currentTime[1]:
 			currentTime = time.gmtime().tm_wday, time.gmtime().tm_hour
 			histComics.recoverWaiting()
-			for url in newComics.getSlot(currentTime):
-				#run New comic check on url
+			for comicId in newComics.getSlot(currentTime):
+				#url = newComicCheck(comicId)
+				url = None #dummy
+
+				if (url):
+					predictor.updatePredictorData(comicId, url)
+
 				pass
 		#check histComics.getComic()
 		
@@ -27,6 +33,7 @@ def loadData():
 
 histComics = HistoryList()
 newComics = PList()
+predictor = Predictor()
 	
 if __name__ == "__main__":
 	Scheduler()
