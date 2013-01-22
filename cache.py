@@ -32,16 +32,20 @@ class Cache:
         
     def parseDirectory(self, url):
         """Split a url and make it into a directory name."""
-        dir = url.split("//")
-        dir = dir[1].rpartition('/')
+        if url.endswith("//"):
+            return "cacheInfo/default/", "default"
+        if "//" in url:
+            dir = url.split("//")[1]
+        dir = dir.rpartition('/')
         if dir[2] == "":
             dir = dir[0].rpartition('/')
         if dir[0] == "":
-            return dir[2], "default"
-        return dir[0], dir[2]
+            return "cacheInfo/" + dir[2], "default"
+        return "cacheInfo/" + dir[0], dir[2]
         
     def revisionPush(self, pageTree, dir, fName):
         rNum = self.findRevisionNum(dir, fName)
+        pageTree.setRevisionNum(0, rNum+1)
         newFName = str(rNum) + '_' + fName
         os.rename(os.path.join(dir, fName), os.path.join(dir, newFName))
         os.rename(os.path.join(dir, "pageTreeData.txt"), os.path.join(dir, str(rNum) + '_' + "pageTreeData.txt"))
@@ -49,14 +53,47 @@ class Cache:
         print "I am not finished"
     
     def findRevisionNum(self, dir, fName):
+        fName = "pageTreeData.txt" #Please!!!!! Remember to take this out maybe someday.
+        print os.path.join(dir, fName)
         rNum = 0
-        while (True):
-            try:
-                with open(os.path.join(dir, str(rNum) + '_' + fName)) as f:
-                    pass
-                rNum += 1
-            except IOError:
+        try:
+            with open(os.path.join(dir, fName)) as f:
+                fileString = f.read()
+                print "file: ", fileString
+                print "file after split at RevisionNum: ", fileString.split("RevisionNum: ")[1].split("\n")[0]
+                rNumString = fileString.split("RevisionNum: ")[1].split("\n")[0]
+                if rNumString == "None":
+                    rNum = 0
+                else:
+                    rNum = int(rNumString)
+                print "rNum: ", rNum
                 return rNum
+        except IOError:
+            return rNum
+        except IndexError:
+            return rNum
+
+    def storeInLast3(self, comicId, url):
+        """Adds the data from the given pageTree object to the list of last 3 urls.
+        
+        This function should only be called when the pageTree object does not have
+        a current version in the cache."""
+        dir = "predictorInfo/" + str(comicId) + "/"
+        try:
+            os.makedirs(dir)
+            shutil.copy2("predictorInfo/predictorData.txt", dir)
+        except OSError:
+            pass #if an error is thrown it means the directory already exists
+        try:
+            with open(dir + "last3Pages.txt") as f:
+                urlList = f.readlines()
+        except IOError: #if an error occurs the file does not yet exist
+            urlList = []
+        if len(urlList) >= 3:
+            urlList.pop(0)
+        urlList.append(url + '\n')
+        with open(dir + "last3Pages.txt", 'w+') as f:
+            f.writelines(urlList)
 
     def fetchCache(self, url, needsChildren):
         print("fetchCache is now building trees (cause I don't have a cache to pull from yet :)")
@@ -97,31 +134,23 @@ class Cache:
         print anotherUrl, "->", self.parseDirectory(anotherUrl)
         anotherUrl = "http://www.dummyurl.com"
         print anotherUrl, "->", self.parseDirectory(anotherUrl)
-		
-    def storeInLast3(self, comicId, url):
-        """Adds the data from the given pageTree object to the list of last 3 urls.
-        
-        This function should only be called when the pageTree object does not have
-        a current version in the cache."""
-        dir = "predictorInfo/" + str(comicId) + "/"
-        try:
-            os.makedirs(dir)
-            shutil.copy2("predictorInfo/predictorData.txt", dir)
-        except OSError:
-            pass #if an error is thrown it means the directory already exists
-        try:
-            with open(dir + "last3Pages.txt") as f:
-                urlList = f.readlines()
-        except IOError: #if an error occurs the file does not yet exist
-            urlList = []
-        if len(urlList) >= 3:
-            urlList.pop(0)
-        urlList.append(url + '\n')
-        with open(dir + "last3Pages.txt", 'w+') as f:
-            f.writelines(urlList)
-		
+
+    def testRootOnlyTreeWrite(self):
+        aTreeOnlyRoot = self.fetchCache("http://www.dummyurl.com/", 0)
+        self.storeCache(aTreeOnlyRoot)
+
+    def testSpecificNameTree(self, treeRootDir):
+        pageTree = PageTree()
+        pageTree.createPageNode(treeRootDir, 0)
+        self.storeCache(pageTree)
+
+    def testMalformedUrl(self):
+        url = "some.really.bad./wrongurl//"
+        pageTree = PageTree()
+        pageTree.createPageNode(url, 0)
+        self.storeCache(pageTree)
+
 if __name__ == '__main__':
     cache = Cache()
 
     cache.testCache()
-
