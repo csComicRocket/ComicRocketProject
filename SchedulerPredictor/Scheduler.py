@@ -18,12 +18,8 @@ def Scheduler():
 			currentTime = time.gmtime().tm_wday, time.gmtime().tm_hour
 			histComics.recoverWaiting()
 			for comicId in newComics.getSlot(currentTime):
-				#url = newComicCheck(comicId)
-				url = None #dummy
-
-				if (url):
-					predictor.updatePredictorData(comicId, url)
-
+				
+				# if newComicCheck(comicId), call predictor.update(comicId)
 				pass
 		#check histComics.getComic()
 		
@@ -33,7 +29,6 @@ def loadData():
 
 histComics = HistoryList()
 newComics = PList()
-predictor = Predictor()
 	
 if __name__ == "__main__":
 	Scheduler()
