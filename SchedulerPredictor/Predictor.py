@@ -63,6 +63,7 @@ class PredictorData:
 		return self.__data
 
 
+
 class Predictor:
 	""" Contains the methods for predicting updates and storing predicorData """
 
@@ -96,13 +97,29 @@ class Predictor:
 
 	@staticmethod
 	def isInUpdateRange(dayHour, updateRange):
-		urm = updateRange['midPoint']
+		urm = updateRange['midPoint'][0] * 24 + updateRange['midPoint'][1]
 		urw = updateRange['width']
+		dh = (dayHour[0] * 24 + dayHour[1])%(7*24)
 
-		#TODO: handle condition for ranges that span the time when the week changes
-		if (urm[0] * 24 + urm[1] - urw <= dayHour[0] * 24 + dayHour[1] <= urm[0] * 24 + urm[1] + urw):
+		if (urm - urw <= 0 or urm + urw >= 7*24):
+			if ((urm - urw)%(7*24) <= dh or dh <= (urm + urw)%(7*24)):
+				return True 
+		elif ((urm - urw)%(7*24) <= dh <= (urm + urw)%(7*24)):
 			return True
 		return False
+
+	@staticmethod
+	def calculateSchedule(updateRanges):
+		schedule = [[0 for i in range(24)] for j in range(7)]
+		for uRange in updateRanges:
+			urMin = (uRange['midPoint'][0] * 24 + uRange['midPoint'][1] - uRange['width'])
+			urMax = (uRange['midPoint'][0] * 24 + uRange['midPoint'][1] + uRange['width'])
+			for i in range(urMin, urMax + 1):
+				day = i%(7*24)/24
+				hour = i%(7*24) - day*24
+				print(day,hour)
+				schedule[day][hour] = 1
+		return schedule
 
 
 	#
@@ -196,3 +213,56 @@ class Predictor:
 		pd.addDayHour((2,8))
 		print(pd.testGetData())
 
+	def testInUR(self):
+		print('bordercase0' )
+		updateRange = { 'midPoint': (0,0), 'width': 2 }
+		dh = (6,21)
+		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		dh = (6,22)
+		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		dh = (0,2)
+		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		dh = (0,3)
+		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		
+		print('bordercase1')
+		updateRange = { 'midPoint': (6,23), 'width': 2 }
+		dh = (6,20)
+		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		dh = (6,21)
+		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		dh = (0,1)
+		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		dh = (0,2)
+		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+
+		print('normalcase0')
+		updateRange = { 'midPoint': (1,23), 'width': 2 }
+		dh = (1,20)
+		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		dh = (1,21)
+		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		dh = (2,1)
+		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		dh = (2,2)
+		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+
+	def testCalcSched(self):
+		updateRanges = []
+		updateRanges.append({ 'midPoint': (0,0), 'width': 2 })
+		updateRanges.append({ 'midPoint': (4,23), 'width': 2 })
+		updateRanges.append({ 'midPoint': (2,10), 'width': 2 })
+		schedule = self.calculateSchedule(updateRanges)
+		print(schedule)
+		print(schedule[6][22] == True)
+		print(schedule[0][2] == True)
+		print(schedule[4][21] == True)
+		print(schedule[5][1] == True)
+		print(schedule[2][8] == True)
+		print(schedule[2][12] == True)
+
+
+
+if __name__ == "__main__":
+	p = Predictor()
+	p.testCalcSched()
