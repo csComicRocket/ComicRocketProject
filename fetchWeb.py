@@ -22,12 +22,12 @@ def fillNode(response, comicNum=None, nodeNum=None, parentNum=None):		#comicID a
 	
 	tree.createPageNode(url, nodeNum, parentNum, _WEB, pageStr, contentType, rspDate)
 	tree.setComicId(comicNum)
-	if not mimeType:
+	if mimeType == None:							#MIME and ContentType are interchangeable
 		tree.setMimeType(0, contentType)
 	else:
 		tree.setMimeType(0, mimeType)
-	tree.setAuthorTS()
-	tree.setHash()
+	#tree.setAuthorTS()
+	#tree.setHash()
 
 	
 """ fetchWeb(url:string, imgs:boolean=None, comicID:int=None)
@@ -42,7 +42,7 @@ def fetchWeb(url, imgs=None, comicID=None):			# !!!comicID argument!!!
 	# Root setup differs from leaf setup
 	rsp  = urllib.request.urlopen(url)
 	try:										
-		fillNode(rsp, comicID, nodeID)			# Fill root node, nodeID left out # !!!comicID argument!!!
+		fillNode(rsp, comicID, nodeID, None)			# Fill root node # !!!comicID argument!!!
 	except urllib.error.HTTPError, e:
 		print e.code()
 		print e.read()
