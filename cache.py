@@ -13,21 +13,21 @@ class Cache:
         print("storeCache says, here is your new pageTree:")
         pageTree.show(0)
         temp = self.parseDirectory(pageTree.getUrl(0))
-        dir = temp[0]
+        directory = temp[0]
         fName = temp[1]
         try:
-            os.makedirs(dir)
+            os.makedirs(directory)
         except OSError:
             pass #if an error is thrown it means the directory already exists
         try:
-            with open(os.path.join(dir, fName)) as f:
+            with open(os.path.join(directory, fName)) as f:
                 pass  #non race way to check to see if the file already exists
-            self.revisionPush(pageTree, dir, fName)
+            self.revisionPush(pageTree, directory, fName)
         except IOError: #if an error occurs the file does not yet exist, which means this is a new page
             self.storeInLast3(pageTree.getComicId(0), pageTree.getUrl(0))
-        with open(os.path.join(dir,"pageTreeData.txt"), 'w+') as f:
+        with open(os.path.join(directory,"pageTreeData.txt"), 'w+') as f:
             f.writelines(pageTree.getPageTreeData())
-        with open(os.path.join(dir, fName), 'w+') as f:
+        with open(os.path.join(directory, fName), 'w+') as f:
             f.write(str(pageTree.getContent(0)))
         
     def parseDirectory(self, url):
@@ -35,29 +35,29 @@ class Cache:
         if url.endswith("//"):
             return "cacheInfo/default/", "default"
         if "//" in url:
-            dir = url.split("//")[1]
-        dir = dir.rpartition('/')
-        if dir[2] == "":
-            dir = dir[0].rpartition('/')
-        if dir[0] == "":
-            return "cacheInfo/" + dir[2], "default"
-        return "cacheInfo/" + dir[0], dir[2]
+            directory = url.split("//")[1]
+        directory = directory.rpartition('/')
+        if directory[2] == "":
+            directory = directory[0].rpartition('/')
+        if directory[0] == "":
+            return "cacheInfo/" + directory[2], "default"
+        return "cacheInfo/" + directory[0], directory[2]
         
-    def revisionPush(self, pageTree, dir, fName):
-        rNum = self.findRevisionNum(dir, fName)
+    def revisionPush(self, pageTree, directory, fName):
+        rNum = self.findRevisionNum(directory, fName)
         pageTree.setRevisionNum(0, rNum+1)
         newFName = str(rNum) + '_' + fName
-        os.rename(os.path.join(dir, fName), os.path.join(dir, newFName))
-        os.rename(os.path.join(dir, "pageTreeData.txt"), os.path.join(dir, str(rNum) + '_' + "pageTreeData.txt"))
+        os.rename(os.path.join(directory, fName), os.path.join(directory, newFName))
+        os.rename(os.path.join(directory, "pageTreeData.txt"), os.path.join(directory, str(rNum) + '_' + "pageTreeData.txt"))
         #do something to set the revision number of the current pageTree to rNum+1
         print "I am not finished"
     
-    def findRevisionNum(self, dir, fName):
+    def findRevisionNum(self, directory, fName):
         fName = "pageTreeData.txt" #Please!!!!! Remember to take this out maybe someday.
-        print os.path.join(dir, fName)
+        print os.path.join(directory, fName)
         rNum = 0
         try:
-            with open(os.path.join(dir, fName)) as f:
+            with open(os.path.join(directory, fName)) as f:
                 fileString = f.read()
                 print "file: ", fileString
                 print "file after split at RevisionNum: ", fileString.split("RevisionNum: ")[1].split("\n")[0]
@@ -78,21 +78,21 @@ class Cache:
         
         This function should only be called when the pageTree object does not have
         a current version in the cache."""
-        dir = "predictorInfo/" + str(comicId) + "/"
+        directory = "predictorInfo/" + str(comicId) + "/"
         try:
-            os.makedirs(dir)
-            shutil.copy2("predictorInfo/predictorData.txt", dir)
+            os.makedirs(directory)
+            shutil.copy2("predictorInfo/predictorData.txt", directory)
         except OSError:
             pass #if an error is thrown it means the directory already exists
         try:
-            with open(dir + "last3Pages.txt") as f:
+            with open(directory + "last3Pages.txt") as f:
                 urlList = f.readlines()
         except IOError: #if an error occurs the file does not yet exist
             urlList = []
         if len(urlList) >= 3:
             urlList.pop(0)
         urlList.append(url + '\n')
-        with open(dir + "last3Pages.txt", 'w+') as f:
+        with open(directory + "last3Pages.txt", 'w+') as f:
             f.writelines(urlList)
 
     def fetchCache(self, url, needsChildren):
