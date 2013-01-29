@@ -1,9 +1,0 @@
-EncodeType: None
-MimeType: None
-AuthorTS: None
-PullTS: None
-RevisionNum: None
-IsReferredTo: 1
-PageStructure:
-http://www.dummyurl.com/ [0]
-
