@@ -78,10 +78,10 @@ class Cache:
         
         This function should only be called when the pageTree object does not have
         a current version in the cache."""
-        directory = "predictorInfo/" + str(comicId) + "/"
+        directory = "../../cache/predictorInfo/" + str(comicId) + "/"
         try:
             os.makedirs(directory)
-            shutil.copy2("predictorInfo/predictorData.txt", directory)
+            defaultPredData(comicId)
         except OSError:
             pass #if an error is thrown it means the directory already exists
         try:
@@ -150,6 +150,10 @@ class Cache:
         pageTree.createPageNode(url, 0)
         self.storeCache(pageTree)
 
+def defaultPredData(self, comicId):
+    directory = "../../cache/predictorInfo/" + str(comicId) + "/"
+    shutil.copy2("predictorInfo/predictorData.txt", directory)
+        
 if __name__ == '__main__':
     cache = Cache()
 

@@ -18,8 +18,8 @@ def resetPredData(argList):
         comicId = int(argList)
     except ValueError:
         return False
-    #Do stuff to reset predictor history of comicId
-    return False
+    defaultPredData(comicId)
+    return True
     
 def lockPredData(argList):
     """Lock a comics expected update schedule.
@@ -94,4 +94,6 @@ def runTests():
     except:
         tests.append(("crFunctions.restPredData",8,False))
     return tests
-    
+
+if __name__ == "__main__":
+    runTests()
