@@ -7,31 +7,32 @@ def callMethod(string):
     try:
         methodToCall = getattr(crFunctions, funcName)
     except AttributeError:
-        return
+        return False
     methodToCall(args[0])
     
 def runTests():
     tests = []
-    try:
-        callMethod("resetPredData(1101)")
-        tests.append(("callMethod",1,True))
+    try
+        tests.append(("callMethod",1,callMethod("resetPredData(1101)")))
     except:
         tests.append(("callMethod",1,False))
     try:
-        callMethod("resetPredData(1,2,3)")
-        tests.append(("callMethod",2,True))
+        tests.append(("callMethod",2, not callMethod("resetPredData(1,2,3)")))
     except:
         tests.append(("callMethod",2,False))
     try:
-        callMethod("invalidName()")
-        tests.append(("callMethod",3,True))
+        tests.append(("callMethod",3,not callMethod("invalidName()")))
     except:
         tests.append(("callMethod",3,False))
     try:
-        callMethod("invalidFormat")
-        tests.append(("callMethod",4,True))
+        tests.append(("callMethod",4,not callMethod("()invalidFormat")))
     except:
         tests.append(("callMethod",4,False))
+    try:
+        crFunctionsTests = callMethod("runTests()")
+        tests.append(("callMethod",5,True))
+    except:
+        tests..append(("callMethod",5,False))
     return tests
     
 if __name__ == '__main__':

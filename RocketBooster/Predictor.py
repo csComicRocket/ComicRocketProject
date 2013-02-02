@@ -35,11 +35,16 @@ class PredictorData:
 	def setSchedule(self, schedule):
 		if (not self.__data['locked']):
 			self.__data['schedule'] = schedule
+			return True
+		return False
+
+	def getSchedule(self):
+		return self.__data['schedule']
 
 	def addDayHour(self, dayHour):
 		#TODO: Pop any number of excess elements, not just 1.
 		for uRange in self.__data['updateRange']:
-			if (Predictor.isInUpdateRange(dayHour, uRange)):				
+			if (Predictor.inURange(dayHour, uRange)):				
 				if (len(uRange['updateHistory']) >= Predictor.rangeHistorySize):
 					uRange['updateHistory'].pop(0)
 				uRange['updateHistory'].append(dayHour)
@@ -92,20 +97,24 @@ class Predictor:
 		self.__predictorData = None
 		self.__pdir = None
 		self.__pfile = "predictorData.txt"
+		self.__predictorList = self.blankPredictorList()
 
 
 	#
 	# Settings
 	#
 
-	# directory - the directory of all predictor data
+	# directory - The directory of all predictor data
 	directory = "Cache/predictorInfo/"
 
 	# rangeWidth - The width in hours of the updateRanges
 	rangeWidth = 2
 
-	# rangeHistorySize - how many dayhours will be stored in the update history of each range
+	# rangeHistorySize - How many dayhours will be stored in the update history of each range
 	rangeHistorySize = 64
+
+	# rangeHistN - How many dayhours will be used to recalculate the range position
+	rangeHistN = 5
 
 	# weedingRate - The rate the comic is checked for updates during weeding
 	# 1 - every hour, 2 - every second hour, etc.
@@ -117,7 +126,7 @@ class Predictor:
 	#
 
 	@staticmethod
-	def isInUpdateRange(dayHour, updateRange):
+	def inURange(dayHour, updateRange):
 		urm = updateRange['position'][0] * 24 + updateRange['position'][1]
 		urw = updateRange['width']
 		dh = (dayHour[0] * 24 + dayHour[1])%(7*24)
@@ -138,14 +147,45 @@ class Predictor:
 		return { 'position': dayHour, 'updateHistory': dayHour, 'width': Predictor.rangeWidth }
 
 	@staticmethod
-	def moveDayHour(dayHour, step):
-		dayHour = dayHour[0] * 24 + dayHour[1]
-		dayHour += step
-		day = dayHour%(7*24)/24
-		hour = dayHour%(7*24) - day*24
+	def dayHourToHours(dayHour):
+		#TODO test
+		return dayHour[0] * 24 + dayHour[1]
+
+	@staticmethod
+	def hoursToDayHour(hours):
+		#TODO test
+		day = hours%(7*24)/24
+		hour = hours%(7*24) - day*24
 		return day, hour
 
+	def moveDayHour(self, dayHour, step):
+		#TODO test
+		hours = dayHour[0] * 24 + dayHour[1]
+		hours += step
+		return self.hoursToDayHour(hours)
+
+	def calculateURPositions(self, updateRanges):
+		''' Calculates position of each updateRange from the updateHistory of each updateRange '''
+		#TODO make sure average calculation is done right on border
+		#TODO make sure doesn't crash with other range
+		#TODO test
+		ranges = []
+		prevRange = updateRanges[-1]
+		positions = []
+		for uRange in updateRanges:
+			hend = len(uRange['updateHistory']) - 1
+			hstart = 0 if hend - rangeHistN < 0 else hend - rangeHistN
+			for i in range(hstart, hend):
+
+
+				positions.append(self.dayHourToHours(uRange['updateHistory'][i]))
+				positions.sort()
+			uRange['position'] = round(float(sum(positions)) / len(positions))
+			ranges.append(uRange)
+		return ranges	
+
 	def calculateScheduleUR(self, updateRanges):
+		''' Calculates schedule from updateRanges '''
 		schedule = self.blankSchedule()
 		for uRange in updateRanges:
 			urMin = (uRange['position'][0] * 24 + uRange['position'][1] - uRange['width'])
@@ -158,6 +198,7 @@ class Predictor:
 		return schedule
 
 	def calculateScheduleDHL(self, dayHourList):
+		#TODO test
 		schedule = self.blankSchedule()
 		for dayHour in dayHourList:
 			schedule[dayHour[0]][dayHour[1]] = 1
@@ -170,6 +211,7 @@ class Predictor:
 		self.save()
 
 	def update(self, dayHour, comicId):
+		#TODO test
 		""" Called whenever a comic has been updated """
 		self.load(comicId)
 
@@ -178,21 +220,62 @@ class Predictor:
 			if (len(uRanges) > 0):
 				if (self.__predictorData.addDayHour(dayHour)):
 					return
-				if (isInUpdateRange(moveDayHour(dayHour, -self.rangeWidth), uRange[-1])):
+				if (inURange(moveDayHour(dayHour, -self.rangeWidth), uRange[-1])):
 					uRangeLast = moveDayHour(uRange[-1]['position'], uRange[-1]['width'])
 					self.__predictorData.addUpdateRange(self.addUpdateRange(moveDayHour(uRangeLast, Predictor.rangeWidth + 1)))
-				else:		
-					self.__predictorData.addUpdateRange(self.blankUpdateRange(dayHour))
-
+					return	
+			self.__predictorData.addUpdateRange(self.blankUpdateRange(dayHour))
 		else:
 			self.__predictorData.addDayHour(dayHour)
+			self.calculateURPositions(self.__predictorData.getUpdateRanges())
 			self.__predictorData.setSchedule(self.calculateScheduleUR(self.__predictorData.getUpdateRanges()))
+		
+		self.updatePredictorList(self.__predictorData.getSchedule(), comicId)
 		self.save(comicId)
 
 	def setSchedule(self, dayHourList, comicId):
+		#TODO test
 		self.load(comicId)
 		__predictorData.setSchedule(calculateScheduleDHL(dayHourList))
 		self.save(comicId)
+
+
+	#
+	# PredictorList
+	#
+
+	def updatePredictorList(schedule, comicId):
+		#TODO test
+		for day in range(7):
+			for hour in range(24):
+				if (schedule[day][hour] == 1 and not comicId in self.__predictorList[day][hour]):
+					self.__predictorList[day][hour].append(comicId)
+				elif (schedule[day][hour] == 0):
+					while (comicId in self.__predictorList[day][hour]):
+						self.__predictorList[day][hour].remove(comicId)
+
+
+	def getHourList(self, dayHour):
+		#TODO test
+		return self.__predictorList[dayHour[0]][dayHour[1]]
+
+	def blankPredictorList(self):
+		#TODO test
+		return [[[] for i in range(24)] for j in range(7)]
+
+	def scanDirectory(self, comicId):
+		self.load(comicId)
+		updatePredictorList(self.__predictorData.getSchedule(), comicId)
+
+	def scanDirectories(self):
+		#TODO test
+		self.__predictorList = self.blankPredictorList()
+		for root, dirs, files in os.walk(d):
+			for comicId in dirs:
+				comicId = int(comicId)
+				self.load(comicId)
+				updatePredictorList(self.__predictorData.getSchedule(), comicId)
+			break
 
 
 	#
@@ -271,35 +354,35 @@ class Predictor:
 		print('bordercase0' )
 		updateRange = { 'position': (0,0), 'width': 2 }
 		dh = (6,21)
-		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		print(dh, updateRange, self.inURange(dh, updateRange))
 		dh = (6,22)
-		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		print(dh, updateRange, self.inURange(dh, updateRange))
 		dh = (0,2)
-		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		print(dh, updateRange, self.inURange(dh, updateRange))
 		dh = (0,3)
-		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		print(dh, updateRange, self.inURange(dh, updateRange))
 		
 		print('bordercase1')
 		updateRange = { 'position': (6,23), 'width': 2 }
 		dh = (6,20)
-		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		print(dh, updateRange, self.inURange(dh, updateRange))
 		dh = (6,21)
-		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		print(dh, updateRange, self.inURange(dh, updateRange))
 		dh = (0,1)
-		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		print(dh, updateRange, self.inURange(dh, updateRange))
 		dh = (0,2)
-		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		print(dh, updateRange, self.inURange(dh, updateRange))
 
 		print('normalcase0')
 		updateRange = { 'position': (1,23), 'width': 2 }
 		dh = (1,20)
-		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		print(dh, updateRange, self.inURange(dh, updateRange))
 		dh = (1,21)
-		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		print(dh, updateRange, self.inURange(dh, updateRange))
 		dh = (2,1)
-		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		print(dh, updateRange, self.inURange(dh, updateRange))
 		dh = (2,2)
-		print(dh, updateRange, self.isInUpdateRange(dh, updateRange))
+		print(dh, updateRange, self.inURange(dh, updateRange))
 
 	def testCalcSched(self):
 		updateRanges = []
