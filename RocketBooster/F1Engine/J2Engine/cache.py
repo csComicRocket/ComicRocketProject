@@ -1,5 +1,6 @@
 import os
 import shutil
+import time
 
 from LunarModule.pageTree import PageTree
 from LunarModule.pageNode import PageNode
@@ -25,6 +26,7 @@ class Cache:
             self.revisionPush(pageTree, directory, fName)
         except IOError: #if an error occurs the file does not yet exist, which means this is a new page
             self.storeInLast3(pageTree.getComicId(0), pageTree.getUrl(0))
+            self.storeInHistoryList(directory, pageTree.getUrl(0))
         with open(os.path.join(directory,"pageTreeData.txt"), 'w+') as f:
             f.writelines(pageTree.getPageTreeData())
         with open(os.path.join(directory, fName), 'w+') as f:
@@ -33,15 +35,15 @@ class Cache:
     def parseDirectory(self, url):
         """Split a url and make it into a directory name."""
         if url.endswith("//"):
-            return "cacheInfo/default/", "default"
+            return "../../cache/cacheInfo/default/", "default"
         if "//" in url:
             directory = url.split("//")[1]
         directory = directory.rpartition('/')
         if directory[2] == "":
             directory = directory[0].rpartition('/')
         if directory[0] == "":
-            return "cacheInfo/" + directory[2], "default"
-        return "cacheInfo/" + directory[0], directory[2]
+            return "../../cache/cacheInfo/" + directory[2], "default"
+        return "../../cache/cacheInfo/" + directory[0], directory[2]
         
     def revisionPush(self, pageTree, directory, fName):
         rNum = self.findRevisionNum(directory, fName)
@@ -94,6 +96,19 @@ class Cache:
         urlList.append(url + '\n')
         with open(directory + "last3Pages.txt", 'w+') as f:
             f.writelines(urlList)
+            
+    def storeInHistoryList(self, directory, url):
+        temp = directory.split('/')
+        directory = temp[0] + '/' + temp[1] + '/' + temp[2] + '/' + temp[3] + '/' + temp[4] + '/' 
+        try:
+            with open(os.path.join(directory, "historyData.txt")) as f:
+                pass
+        except IOError:
+            with open(os.path.join(directory, "historyData.txt"), 'a+') as f:
+                f.write(time.strftime(time.gmtime(), gmtime()) + '\n')
+                f.write('0/n')
+        with open(os.path.join(directory, "historyList.txt"), 'a+') as f:
+                f.write(url + '\n')
 
     def fetchCache(self, url, needsChildren):
         print("fetchCache is now building trees (cause I don't have a cache to pull from yet :)")
