@@ -52,6 +52,7 @@ class Cache:
         os.rename(os.path.join(directory, fName), os.path.join(directory, newFName))
         os.rename(os.path.join(directory, "pageTreeData.txt"), os.path.join(directory, str(rNum) + '_' + "pageTreeData.txt"))
         #do something to set the revision number of the current pageTree to rNum+1
+        # Already done. See above "pageTree.setRevisionNum(0, rNum+1)"
         print "I am not finished"
     
     def findRevisionNum(self, directory, fName):
@@ -74,6 +75,24 @@ class Cache:
             return rNum
         except IndexError:
             return rNum
+
+    def updateTimeStamp(self, pageTree):
+        fName = parseDirectory(pageTree.getUrl(0))
+
+        newFileString = "" # to put it in right scope... maybe??
+
+        try:
+            with open(os.path.join(directory, fName)) as f:
+                fileString = f.read()
+                print "file: ", fileString
+                timeStampString = fileString.split("TimeStamp: ")[1].split("\n")[0]
+                newFileString = fileString.split("TimeStamp: ")[1] + "TimeStamp: " + timeStampString + pageTree.getPullTS(0) + "\n" + fileString.split("TimeStamp: ")[1].split("\n")[1] #Dumb
+            with open(os.path.join(directory, fName), 'w+') as f:
+                f.writelines(newFileString)
+        except IOError:
+            print "IO error updating timestamp. pageTree:" + pageTree
+        except IndexError:
+            print "Index error updating timestamp. pageTree:" + pageTree
 
     def storeInLast3(self, comicId, url):
         """Adds the data from the given pageTree object to the list of last 3 urls.
@@ -164,6 +183,17 @@ class Cache:
         pageTree = PageTree()
         pageTree.createPageNode(url, 0)
         self.storeCache(pageTree)
+
+    def testUpdateTimeStamp(self):
+        print "Testing updateTimeStamp()"
+        pageTree = PageTree()
+        pageTree.createPageNode("http://www.dummyurl.com/timeStampTest.html", 0)
+        pageTree.setPullTS(0, "52")
+        self.storeCache(pageTree)
+        print "Stored original pageTree"
+        pageTree.setPullTS(0, "53+1/2")
+        print "Updating time stamp"
+        self.updateTimeStamp(pageTree)
 
 def defaultPredData(self, comicId):
     directory = "../../cache/predictorInfo/" + str(comicId) + "/"
