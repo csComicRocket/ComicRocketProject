@@ -131,9 +131,9 @@ class Cache:
         if versionNum:
             if versionNum < 0:
                 versionNum = currVersionNum + versionNum
-            preFileString = versionNum + "_"\
-        if versionNum < 0 or versionNum > currVersionNum:
-            preFileString = ""
+            preFileString = versionNum + "_"
+            if versionNum < 0 or versionNum > currVersionNum:
+                preFileString = ""
 
         pageTree = PageTree(url)
         contentType = "Text"
@@ -150,6 +150,17 @@ class Cache:
         except IOError:
             pass
         return pageTree
+
+    def clearPage(self, url):
+        directory = self.parseDirectory(url)
+        directory = directory[0]
+        #Following code from stackoverflow.com
+        for the_file in os.listdir(directory):
+            file_path = os.path.join(directory, the_file)
+            try:
+                os.unlink(file_path)
+            except Exception, e:
+                print e
 
     def testCache(self):
         aTree = self.sampleTree()
@@ -197,6 +208,11 @@ class Cache:
         pageTree.setHash(0, "Doobop")
         return pageTree
 
+    def testClearPage(self):
+        sampleTree = self.sampleTree()
+        self.storeCache(sampleTree)
+        self.clearPage(sampleTree.getUrl(0))
+
 def defaultPredData(self, comicId):
     directory = "../../cache/predictorInfo/" + str(comicId) + "/"
     shutil.copy2("predictorInfo/predictorData.txt", directory)
@@ -204,4 +220,4 @@ def defaultPredData(self, comicId):
 if __name__ == '__main__':
     cache = Cache()
 
-    cache.testCache()
+    cache.testClearPage()
