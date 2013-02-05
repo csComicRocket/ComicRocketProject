@@ -7,11 +7,7 @@ from LunarModule.pageNode import PageNode
 
 class Cache:
 
-    def __init__(self):
-        print("Hi, I'm a new Cache")
-
     def storeCache(self, pageTree):
-        pageTree.show(0)
         temp = self.parseDirectory(pageTree.getUrl(0))
         directory = temp[0]
         fName = temp[1]
@@ -32,7 +28,7 @@ class Cache:
             f.write(str(pageTree.getContent(0)))
         
     def parseDirectory(self, url):
-        """Split a url and make it into a directory name."""
+        #Split a url and make it into a directory name.
         if url.endswith("//"):
             return "../../cache/cacheInfo/default/", "default"
         if "//" in url:
@@ -46,12 +42,11 @@ class Cache:
         
     def revisionPush(self, pageTree, directory, fName):
         rNum = self.findRevisionNum(directory, fName)
-        pageTree.setRevisionNum(0, rNum+1)
         newFName = str(rNum) + '_' + fName
         os.rename(os.path.join(directory, fName), os.path.join(directory, newFName))
         os.rename(os.path.join(directory, "pageTreeData.txt"), os.path.join(directory, str(rNum) + '_' + "pageTreeData.txt"))
         #do something to set the revision number of the current pageTree to rNum+1
-        # Already done. See above "pageTree.setRevisionNum(0, rNum+1)"
+        pageTree.setRevisionNum(0, rNum+1)
         print "I am not finished"
     
     def findRevisionNum(self, directory, fName):
@@ -160,7 +155,6 @@ class Cache:
         self.storeInLast3(101, 'http://www.anothernotherurl.com')
         self.storeInLast3(101, 'http://www.anothernothernothernothernotherurl.com')
         anotherTree = self.fetchCache(aTree.getUrl(0))
-        print anotherTree.getPageTreeData()
 
     def testRootOnlyTreeWrite(self):
         aTreeOnlyRoot = self.fetchCache("http://www.dummyurl.com/", 0)

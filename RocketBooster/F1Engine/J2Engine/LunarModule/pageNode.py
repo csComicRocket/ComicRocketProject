@@ -142,14 +142,11 @@ class PageNode:
 
     PullTS could be either an individual timestamp or a list of timestamps."""
     def setPullTS(self, pullTS):
-        print pullTS
         if self.pullTimeStamp is None:
             self.pullTimeStamp = []
         try:
-            print("trying to extend pullTS with a list")
             self.pullTimeStamp.append(pullTS)
         except:
-            print("...failed..")
             self.pullTimeStamp.append(pullTS)
 
     """PageNode.clearPullTS() empties the pullTimeStamp list."""
