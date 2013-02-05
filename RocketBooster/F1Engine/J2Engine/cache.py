@@ -125,12 +125,16 @@ class Cache:
         directory = self.parseDirectory(url)
         fName = directory[1]
         directory = directory[0]
+
         preFileString = ""
+        currVersionNum = self.findRevisionNum(directory, fName)
         if versionNum:
             if versionNum < 0:
-                currVersionNum = self.findRevisionNum(directory, fName)
                 versionNum = currVersionNum + versionNum
-            preFileString = versionNum + "_"
+            preFileString = versionNum + "_"\
+        if versionNum < 0 or versionNum > currVersionNum:
+            preFileString = ""
+
         pageTree = PageTree(url)
         contentType = "Text"
         try:
