@@ -11,7 +11,6 @@ class Cache:
         print("Hi, I'm a new Cache")
 
     def storeCache(self, pageTree):
-        print("storeCache says, here is your new pageTree:")
         pageTree.show(0)
         temp = self.parseDirectory(pageTree.getUrl(0))
         directory = temp[0]
@@ -26,7 +25,7 @@ class Cache:
             self.revisionPush(pageTree, directory, fName)
         except IOError: #if an error occurs the file does not yet exist, which means this is a new page
             self.storeInLast3(pageTree.getComicId(0), pageTree.getUrl(0))
-            self.storeInHistoryList(directory, pageTree.getUrl(0))
+            #self.storeInHistoryList(directory, pageTree.getUrl(0))
         with open(os.path.join(directory,"pageTreeData.txt"), 'w+') as f:
             f.writelines(pageTree.getPageTreeData())
         with open(os.path.join(directory, fName), 'w+') as f:
@@ -42,8 +41,8 @@ class Cache:
         if directory[2] == "":
             directory = directory[0].rpartition('/')
         if directory[0] == "":
-            return "../../cache/cacheInfo/" + directory[2], "default"
-        return "../../cache/cacheInfo/" + directory[0], directory[2]
+            return "../../cache/cacheInfo/" + directory[2] + "/default", "default"
+        return "../../cache/cacheInfo/" + directory[0] + "/" + directory[2], directory[2]
         
     def revisionPush(self, pageTree, directory, fName):
         rNum = self.findRevisionNum(directory, fName)
@@ -57,19 +56,15 @@ class Cache:
     
     def findRevisionNum(self, directory, fName):
         fName = "pageTreeData.txt" #Please!!!!! Remember to take this out maybe someday.
-        print os.path.join(directory, fName)
         rNum = 0
         try:
             with open(os.path.join(directory, fName)) as f:
                 fileString = f.read()
-                print "file: ", fileString
-                print "file after split at RevisionNum: ", fileString.split("RevisionNum: ")[1].split("\n")[0]
                 rNumString = fileString.split("RevisionNum: ")[1].split("\n")[0]
                 if rNumString == "None":
                     rNum = 0
                 else:
                     rNum = int(rNumString)
-                print "rNum: ", rNum
                 return rNum
         except IOError:
             return rNum
@@ -84,7 +79,6 @@ class Cache:
         try:
             with open(os.path.join(directory, fName)) as f:
                 fileString = f.read()
-                print "file: ", fileString
                 timeStampString = fileString.split("TimeStamp: ")[1].split("\n")[0]
                 newFileString = fileString.split("TimeStamp: ")[1] + "TimeStamp: " + timeStampString + pageTree.getPullTS(0) + "\n" + fileString.split("TimeStamp: ")[1].split("\n")[1] #Dumb
             with open(os.path.join(directory, fName), 'w+') as f:
@@ -102,7 +96,7 @@ class Cache:
         directory = "../../cache/predictorInfo/" + str(comicId) + "/"
         try:
             os.makedirs(directory)
-            defaultPredData(comicId)
+            defaultPredData(self, comicId)
         except OSError:
             pass #if an error is thrown it means the directory already exists
         try:
@@ -129,45 +123,44 @@ class Cache:
         with open(os.path.join(directory, "historyList.txt"), 'a+') as f:
                 f.write(url + '\n')
 
-    def fetchCache(self, url, needsChildren):
-        print("fetchCache is now building trees (cause I don't have a cache to pull from yet :)")
+    def fetchCache(self, url, versionNum = None):
         # Populate a pageTree with data from my awesome cache.
         # If needsChildren = true, will pull whole pageTree.
         # API for cache to pull data tba.
-        pageTree = PageTree()
-        pageTree.createPageNode(url, 0)
-        if needsChildren:
-            pageTree.createPageNode("http://www.dummyurl.com/child", 1, parent=0)
-            pageTree.createPageNode("http://www.dummyurl.com/child/child", 2, parent=1)
-            pageTree.createPageNode("http://www.dummyurl.com/child", 3, parent=1)
-            pageTree.createPageNode("http://www.dummyurl.com/child", 4, parent=3)
-            pageTree.createPageNode("http://www.dummyurl.com/child", 5, parent=4)
-            pageTree.createPageNode("http://www.dummyurl.com/child", 6, parent=5)
-            pageTree.createPageNode("http://www.dummyurl.com/child", 7, parent=2)
-            pageTree.createPageNode("http://www.dummyurl.com/child", 8, parent=3)
-            pageTree.createPageNode("http://www.dummyurl.com/child", 9, parent=7)
-            pageTree.createPageNode("http://www.dummyurl.com/child", 10, parent=4)
+        directory = self.parseDirectory(url)
+        fName = directory[1]
+        directory = directory[0]
+        preFileString = ""
+        if versionNum:
+            if versionNum < 0:
+                currVersionNum = self.findRevisionNum(directory, fName)
+                versionNum = currVersionNum + versionNum
+            preFileString = versionNum + "_"
+        pageTree = PageTree(url)
+        contentType = "Text"
+        try:
+            with open(os.path.join(directory, preFileString + "pageTreeData.txt")) as f:
+                pageTree.setPageTreeData(f.read())
+                contentType = pageTree.getEncodeType(0)
+                #fill in tree data
+        except IOError:
+            pass
+        try:
+            with open(os.path.join(directory, preFileString + fName)) as f:
+                pageTree.setContent(0, f.read(), contentType)
+        except IOError:
+            pass
         return pageTree
 
     def testCache(self):
-        aTreeOnlyRoot = self.fetchCache("http://www.dummyurl.com/", 0)
-        self.storeCache(aTreeOnlyRoot)
-        print("\n")
-        aTreeWithChildren = self.fetchCache("http://www.dummyurl.com/bleh.html", "I would like page's children, please")
-        self.storeCache(aTreeWithChildren)
-        self.storeCache(aTreeWithChildren)
+        aTree = self.sampleTree()
+        self.storeCache(aTree)
         self.storeInLast3(101, 'http://www.aurl.com')
         self.storeInLast3(101, 'http://www.anotherurl.com')
         self.storeInLast3(101, 'http://www.anothernotherurl.com')
         self.storeInLast3(101, 'http://www.anothernothernothernothernotherurl.com')
-        aUrl = "http://www.dummyurl.com/child/child/img.jpg"
-        print aUrl, "->", self.parseDirectory(aUrl)
-        anotherUrl = "http://www.dummyurl.com/child/child/"
-        print anotherUrl, "->", self.parseDirectory(anotherUrl)
-        anotherUrl = "http://www.dummyurl.com/"
-        print anotherUrl, "->", self.parseDirectory(anotherUrl)
-        anotherUrl = "http://www.dummyurl.com"
-        print anotherUrl, "->", self.parseDirectory(anotherUrl)
+        anotherTree = self.fetchCache(aTree.getUrl(0))
+        print anotherTree.getPageTreeData()
 
     def testRootOnlyTreeWrite(self):
         aTreeOnlyRoot = self.fetchCache("http://www.dummyurl.com/", 0)
@@ -185,15 +178,26 @@ class Cache:
         self.storeCache(pageTree)
 
     def testUpdateTimeStamp(self):
-        print "Testing updateTimeStamp()"
         pageTree = PageTree()
         pageTree.createPageNode("http://www.dummyurl.com/timeStampTest.html", 0)
         pageTree.setPullTS(0, "52")
         self.storeCache(pageTree)
-        print "Stored original pageTree"
         pageTree.setPullTS(0, "53+1/2")
-        print "Updating time stamp"
         self.updateTimeStamp(pageTree)
+
+    def testStrangeDirectory(self):
+        pageTree = PageTree()
+        pageTree.createPageNode("http://www.dummyurl.com/strangeDirectory.html/strangeDirectory.html")
+        self.storeCache(pageTree)
+        self.storeCache(pageTree)
+
+    def sampleTree(self):
+        pageTree = PageTree("http://www.dummyurl.com/sample/aPage.html")
+        pageTree.setEncodeType(0, "Jibberish")
+        pageTree.setContent(0, "Here is some content. Blah blah blah.", pageTree.getEncodeType(0))
+        pageTree.setPullTS(0, "57")
+        pageTree.setHash(0, "Doobop")
+        return pageTree
 
 def defaultPredData(self, comicId):
     directory = "../../cache/predictorInfo/" + str(comicId) + "/"

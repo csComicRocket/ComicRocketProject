@@ -217,10 +217,39 @@ class PageTree:
         if (self.getRevisionNum(0) == None):
             self.setRevisionNum(0, 0)
         pageTreeDataString.append("RevisionNum: " + str(self.getRevisionNum(0)) + '\n')
-        """pageTreeDataString.append(str(self.getRevisionHistory(0)))"""
+        #pageTreeDataString.append(str(self.getRevisionHistory(0)))
         pageTreeDataString.append("IsReferredTo: " + str(self.getIsReferredTo(0)) + '\n')
+        pageTreeDataString.append("Hash: " + str(self.getHash(0)) + '\n')
         pageTreeDataString.append("PageStructure:\n" + self.getPageStructureString(0) + '\n')
         return pageTreeDataString
+
+    def setPageTreeData(self, fileContent):
+        lines = fileContent.split("\n")
+        encodeType = lines[0].split("EncodeType: ")[1]
+        self.setEncodeType(0, encodeType)
+        mimeType = lines[1].split("MimeType: ")[1]
+        self.setMimeType(0, mimeType)
+        authorTS = lines[2].split("AuthorTS: ")[1]
+        self.setAuthorTS(0, authorTS)
+        pullTS = lines[3].split("PullTS: ")[1]
+        self.setPullTS(0, pullTS)
+        revisionNum = lines[4].split("RevisionNum: ")[1]
+        self.setRevisionNum(0, revisionNum)
+        isReferredTo = lines[5].split("IsReferredTo: ")[1]
+        #for i in isReferredTo:
+            #self.isReferredTo(0)
+        aHash = lines[6].split("Hash: ")[1]
+        self.setHash(0, aHash)
+        #pageTreeDataString.append("PageStructure:\n" + self.getPageStructureString(0) + '\n')
+
+"""PageTree's main function: currently builds a little pageTree with 10 nodes sorta randomly connected, then prints."""
+if __name__== "__main__":
+
+    pageTree = PageTree(None)
+    pageTree.createPageNode("http://www.xkcd.com", 0)  # root node
+    pageTree.createPageNode("http://www.xkcd.com/apic.jpg", 1, parent = 0)
+    pageTree.createPageNode("http://www.xkcd.com/style.css", 2, parent = 0)
+    pageTree.createPageNode("Joe", 3, parent = 1)
 
 """PageTree's main function: currently builds a little pageTree with 10 nodes sorta randomly connected, then prints."""
 if __name__== "__main__":
