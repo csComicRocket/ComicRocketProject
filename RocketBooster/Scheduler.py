@@ -2,6 +2,7 @@
 
 import time
 import os
+import threading
 import Predictor
 
 SITELIMIT = 20
@@ -89,19 +90,29 @@ class HistoryList:
 
 def scheduler():
     """Checks the new comics expected in each hour block and the archived comics"""
+    global histComics
     histComics = HistoryList(os.listdir('Cache/cacheInfo/'))
     currentTime = time.gmtime().tm_wday, time.gmtime().tm_hour
+    t = time.Timer((60-time.gmtime().tm_minute)*60, hourlyEvents)
+    t.start()
     while (True):
-        if time.gmtime().tm_hour != currentTime[1]:
-            currentTime = time.gmtime().tm_wday, time.gmtime().tm_hour
-            histComics.recoverWaiting()
-            for comicId in Predictor.getCheckComicIds(currentTime):
-                #if newComicCheck(comicId), call predictor.update(comicId)
-                pass
-		#check histComics.getComic()
+        #check histComics.getComic()
+        pass
+        
+def hourlyEvents():
+    global histComics
+    currentTime = time.gmtime().tm_wday, time.gmtime().tm_hour
+    histComics.recoverWaiting()
+    for comicId in Predictor.getCheckComicIds(currentTime):
+        #if newComicCheck(comicId), call predictor.update(comicId)
+        pass
+    t = time.Timer(3600, hourlyEvents)
+    t.start()
 		
 def runTests():
     pass
+    
+histComics = Historylist()
 
 if __name__ == "__main__":
     runTests()
