@@ -166,8 +166,6 @@ class Predictor:
 
 	def calculateURPositions(self, updateRanges):
 		''' Calculates position of each updateRange from the updateHistory of each updateRange '''
-		#TODO make sure average calculation is done right on border
-		#TODO make sure doesn't crash with other range
 		#TODO test
 		ranges = []
 		prevRange = updateRanges[-1]
@@ -175,11 +173,23 @@ class Predictor:
 		for uRange in updateRanges:
 			hend = len(uRange['updateHistory']) - 1
 			hstart = 0 if hend - rangeHistN < 0 else hend - rangeHistN
+			hPos = [0, 0, 0]
+			hDist = {}
 			for i in range(hstart, hend):
+				hPos[1] = self.dayHourToHours(uRange['updateHistory'][i])
+				hPos[0] = hPos[1] - 7*24
+				hPos[2] = hPos[1] + 7*24
 
+				for p in hPos:
+					if (positions[0] < p < positions[-1]):
+						positions.append(p)
+						positions.sort()
+						break
+					else:
+						hDist[min(abs(position[0] - p), abs(position[-1] - p))] = p
+					if (p == hPos[2]):
+						positions.append(hDist[min(hDist.values())])
 
-				positions.append(self.dayHourToHours(uRange['updateHistory'][i]))
-				positions.sort()
 			uRange['position'] = round(float(sum(positions)) / len(positions))
 			ranges.append(uRange)
 		return ranges	
@@ -211,24 +221,37 @@ class Predictor:
 		self.save()
 
 	def update(self, dayHour, comicId):
+		#TODO fix if no range for dayHour
 		#TODO test
 		""" Called whenever a comic has been updated """
 		self.load(comicId)
 
-		if (self.__predictorData.weeding()):
-			uRanges = self.__predictorData.getUpdateRanges()
-			if (len(uRanges) > 0):
-				if (self.__predictorData.addDayHour(dayHour)):
-					return
-				if (inURange(moveDayHour(dayHour, -self.rangeWidth), uRange[-1])):
-					uRangeLast = moveDayHour(uRange[-1]['position'], uRange[-1]['width'])
-					self.__predictorData.addUpdateRange(self.addUpdateRange(moveDayHour(uRangeLast, Predictor.rangeWidth + 1)))
-					return	
-			self.__predictorData.addUpdateRange(self.blankUpdateRange(dayHour))
-		else:
-			self.__predictorData.addDayHour(dayHour)
-			self.calculateURPositions(self.__predictorData.getUpdateRanges())
-			self.__predictorData.setSchedule(self.calculateScheduleUR(self.__predictorData.getUpdateRanges()))
+		for x in [0]:
+			if (self.__predictorData.weeding()):
+				# Weeding phase
+				uRanges = self.__predictorData.getUpdateRanges()
+				if (len(uRanges) > 0):
+					if (self.__predictorData.addDayHour(dayHour)):
+						break
+					if (inURange(moveDayHour(dayHour, -self.rangeWidth), uRanges[-1])):
+						uRangeLast = moveDayHour(uRanges[-1]['position'], uRanges[-1]['width'])
+						self.__predictorData.addUpdateRange(self.addUpdateRange(moveDayHour(uRangeLast, Predictor.rangeWidth + 1)))
+						break	
+				self.__predictorData.addUpdateRange(self.blankUpdateRange(dayHour))
+			else:
+				if (not self.__predictorData.addDayHour(dayHour)):
+					pass
+					# If no range for dayHour, add dayHour to nearest range
+					# updateRanges = self.__predictorData.getUpdateRanges()
+					# dist = {}
+					# dh = self.dayHourToHours(dayHour)
+					# for i, uRange in enumerate(updateRanges):
+					# 	updh = self.dayHourToHours(uRange['position'])
+					# 	uw = uRange['width']
+					# 	dist[i] = min(abs(self.dayHoursToHour(uRange['position']) - uRange['width'] - self.dayHoursToHour(dayHour)))
+
+				self.calculateURPositions(self.__predictorData.getUpdateRanges())
+				self.__predictorData.setSchedule(self.calculateScheduleUR(self.__predictorData.getUpdateRanges()))
 		
 		self.updatePredictorList(self.__predictorData.getSchedule(), comicId)
 		self.save(comicId)
