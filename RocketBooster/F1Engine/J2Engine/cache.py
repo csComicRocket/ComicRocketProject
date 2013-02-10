@@ -171,14 +171,12 @@ class Cache:
 
     def testCache(self):
         aTree = self.sampleTree()
-        aTree.show()
         self.storeCache(aTree)
         self.storeInLast3(101, 'http://www.aurl.com')
         self.storeInLast3(101, 'http://www.anotherurl.com')
         self.storeInLast3(101, 'http://www.anothernotherurl.com')
         self.storeInLast3(101, 'http://www.anothernothernothernothernotherurl.com')
         anotherTree = self.fetchCache(aTree.getUrl(0))
-        anotherTree.show()
 
     def testRootOnlyTreeWrite(self):
         aTreeOnlyRoot = self.fetchCache("http://www.dummyurl.com/", 0)

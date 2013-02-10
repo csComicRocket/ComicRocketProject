@@ -51,8 +51,8 @@ class PageTree:
     """PageTree.show(position, level=_ROOT) prints the pageTree depth first kinda like this:
 
        http://www.rooturl.com [0]
-       ('/t', 'http://www.rooturl.com/child [1]')
-       ('/t/t', 'http://www.rooturl.com/child/child [2]')
+       ('  ', 'http://www.rooturl.com/child [1]')
+       ('    ', 'http://www.rooturl.com/child/child [2]')
        etc."""
     def getPageStructureString(self, position, level=_ROOT):
         queue = self[position].fPointer
@@ -241,15 +241,6 @@ class PageTree:
         aHash = lines[6].split("Hash: ")[1]
         self.setHash(0, aHash)
         #pageTreeDataString.append("PageStructure:\n" + self.getPageStructureString(0) + '\n')
-
-"""PageTree's main function: currently builds a little pageTree with 10 nodes sorta randomly connected, then prints."""
-if __name__== "__main__":
-
-    pageTree = PageTree(None)
-    pageTree.createPageNode("http://www.xkcd.com", 0)  # root node
-    pageTree.createPageNode("http://www.xkcd.com/apic.jpg", 1, parent = 0)
-    pageTree.createPageNode("http://www.xkcd.com/style.css", 2, parent = 0)
-    pageTree.createPageNode("Joe", 3, parent = 1)
 
 """PageTree's main function: currently builds a little pageTree with 10 nodes sorta randomly connected, then prints."""
 if __name__== "__main__":
