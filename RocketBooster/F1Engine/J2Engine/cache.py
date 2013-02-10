@@ -143,7 +143,7 @@ class Cache:
             with open(os.path.join(directory, preFileString + "pageTreeData.txt")) as f:
                 pageTree.setPageTreeData(f.read())
                 contentType = pageTree.getEncodeType(0)
-                #fill in tree data
+                pageTree.setSourceMode(0, "cache")
         except IOError:
             pass
         try:
@@ -166,12 +166,14 @@ class Cache:
 
     def testCache(self):
         aTree = self.sampleTree()
+        aTree.show()
         self.storeCache(aTree)
         self.storeInLast3(101, 'http://www.aurl.com')
         self.storeInLast3(101, 'http://www.anotherurl.com')
         self.storeInLast3(101, 'http://www.anothernotherurl.com')
         self.storeInLast3(101, 'http://www.anothernothernothernothernotherurl.com')
         anotherTree = self.fetchCache(aTree.getUrl(0))
+        anotherTree.show()
 
     def testRootOnlyTreeWrite(self):
         aTreeOnlyRoot = self.fetchCache("http://www.dummyurl.com/", 0)
