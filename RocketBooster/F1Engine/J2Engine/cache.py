@@ -4,7 +4,7 @@ import time
 
 from LunarModule.pageTree import PageTree
 from LunarModule.pageNode import PageNode
-from ...Predictor import Predictor
+#from ...Predictor import Predictor
 
 class Cache:
 
@@ -177,6 +177,7 @@ class Cache:
         self.storeInLast3(101, 'http://www.anothernotherurl.com')
         self.storeInLast3(101, 'http://www.anothernothernothernothernotherurl.com')
         anotherTree = self.fetchCache(aTree.getUrl(0))
+        return anotherTree
 
     def testRootOnlyTreeWrite(self):
         aTreeOnlyRoot = self.fetchCache("http://www.dummyurl.com/", 0)
@@ -227,4 +228,8 @@ def defaultPredData(comicId):
 if __name__ == '__main__':
     cache = Cache()
 
-    cache.testClearPage()
+    aPageTree = cache.sampleTree()
+    anotherPageTree = cache.testCache()
+    
+    aPageTree.showAll(0)
+    anotherPageTree.showAll(0)

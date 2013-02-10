@@ -46,7 +46,13 @@ class PageTree:
 
     def show(self, position, level=_ROOT):
         print self.getPageStructureString(position, level)
-        
+
+    def showAll(self, position, level=_ROOT):
+        print "Url:", self.getUrl(0)
+        print "Content:"
+        print self.getContent(0)
+        print "PageTree data:", self.getPageTreeData()
+        self.show(position)
     
     """PageTree.show(position, level=_ROOT) prints the pageTree depth first kinda like this:
 
