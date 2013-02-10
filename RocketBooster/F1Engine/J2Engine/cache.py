@@ -4,6 +4,7 @@ import time
 
 from LunarModule.pageTree import PageTree
 from LunarModule.pageNode import PageNode
+from ...Predictor import Predictor
 
 class Cache:
 
@@ -21,7 +22,8 @@ class Cache:
             self.revisionPush(pageTree, directory, fName)
         except IOError: #if an error occurs the file does not yet exist, which means this is a new page
             self.storeInLast3(pageTree.getComicId(0), pageTree.getUrl(0))
-            #self.storeInHistoryList(directory, pageTree.getUrl(0))
+            self.storeInHistoryList(directory, pageTree.getUrl(0))
+            #Predictor.update((time.gmtime().tm_wday, time.gmtime().tm_hour), pageTree.getComicId(0))
         with open(os.path.join(directory,"pageTreeData.txt"), 'w+') as f:
             f.writelines(pageTree.getPageTreeData())
         with open(os.path.join(directory, fName), 'w+') as f:
@@ -45,9 +47,7 @@ class Cache:
         newFName = str(rNum) + '_' + fName
         os.rename(os.path.join(directory, fName), os.path.join(directory, newFName))
         os.rename(os.path.join(directory, "pageTreeData.txt"), os.path.join(directory, str(rNum) + '_' + "pageTreeData.txt"))
-        #do something to set the revision number of the current pageTree to rNum+1
         pageTree.setRevisionNum(0, rNum+1)
-        print "I am not finished"
     
     def findRevisionNum(self, directory, fName):
         fName = "pageTreeData.txt" #Please!!!!! Remember to take this out maybe someday.
@@ -91,7 +91,8 @@ class Cache:
         directory = "../../cache/predictorInfo/" + str(comicId) + "/"
         try:
             os.makedirs(directory)
-            defaultPredData(self, comicId)
+            defaultPredData(comicId)
+            Predictor.scanDirectory(comicId)
         except OSError:
             pass #if an error is thrown it means the directory already exists
         try:
@@ -106,6 +107,7 @@ class Cache:
             f.writelines(urlList)
             
     def storeInHistoryList(self, directory, url):
+        """Store the newly found url in the list of urls to be checked."""
         temp = directory.split('/')
         directory = temp[0] + '/' + temp[1] + '/' + temp[2] + '/' + temp[3] + '/' + temp[4] + '/' 
         try:
@@ -113,11 +115,11 @@ class Cache:
                 pass
         except IOError:
             with open(os.path.join(directory, "historyData.txt"), 'a+') as f:
-                f.write(time.strftime(time.gmtime(), gmtime()) + '\n')
+                f.write(time.strftime("%m", time.gmtime()) + '\n')
                 f.write('0/n')
         with open(os.path.join(directory, "historyList.txt"), 'a+') as f:
-                f.write(url + '\n')
-
+            f.write(url + '\n')
+        
     def fetchCache(self, url, versionNum = None):
         # Populate a pageTree with data from my awesome cache.
         # If needsChildren = true, will pull whole pageTree.
@@ -213,9 +215,9 @@ class Cache:
         self.storeCache(sampleTree)
         self.clearPage(sampleTree.getUrl(0))
 
-def defaultPredData(self, comicId):
+def defaultPredData(comicId):
     directory = "../../cache/predictorInfo/" + str(comicId) + "/"
-    shutil.copy2("predictorInfo/predictorData.txt", directory)
+    shutil.copy2("../../cache/predictorInfo/predictorData.txt", directory)
         
 if __name__ == '__main__':
     cache = Cache()

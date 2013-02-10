@@ -1,6 +1,7 @@
 #Eric Smith
+from pageTree import *
 
-def hashPageTree(pageTree):
+def hashPageTree(pageTreeObj):
     """Hashes a object and returns it for easy storage and comparisons"""
-    #INPROG
-    return hash(pageTree)
+    #This works... but I'm not sure how well
+    return hash(pageTreeObj)
