@@ -24,10 +24,15 @@ class Cache:
             self.storeInLast3(pageTree.getComicId(0), pageTree.getUrl(0))
             self.storeInHistoryList(directory, pageTree.getUrl(0))
             #Predictor.update((time.gmtime().tm_wday, time.gmtime().tm_hour), pageTree.getComicId(0))
-        with open(os.path.join(directory,"pageTreeData.txt"), 'w+') as f:
-            f.writelines(pageTree.getPageTreeData())
-        with open(os.path.join(directory, fName), 'w+') as f:
-            f.write(str(pageTree.getContent(0)))
+        try:
+            with open(os.path.join(directory,"pageTreeData.txt"), 'w+') as f:
+                f.writelines(pageTree.getPageTreeData())
+            with open(os.path.join(directory, fName), 'w+') as f:
+                f.write(str(pageTree.getContent(0)))
+            return True
+        except IOError:
+            print "D'oh"
+            return False
         
     def parseDirectory(self, url):
         #Split a url and make it into a directory name.
