@@ -4,7 +4,7 @@ import time
 
 from LunarModule.pageTree import PageTree
 from LunarModule.pageNode import PageNode
-#from ...Predictor import Predictor
+from ...Predictor import Predictor
 
 class Cache:
 
