@@ -2,6 +2,8 @@ import time
 import json
 import os
 
+
+
 class PredictorData:
 	""" Datatype for the prediction of a given comic """
 
@@ -43,8 +45,7 @@ class PredictorData:
 		return self.__data['schedule']
 
 	def addDayHour(self, dayHour):
-		#TODO: test
-		''' Add dayHour to the updateRange which spans it '''
+		""" Add dayHour to the updateRange which spans it """
 		for i, uRange in enumerate(self.__data['updateRange']):
 			if (Predictor.inURange(dayHour, uRange)):				
 				self.addDayHourToURange(dayHour, i)
@@ -52,8 +53,7 @@ class PredictorData:
 		return False
 
 	def addDayHourToURange(self, dayHour, index):
-		#TODO: test
-		''' Add dayHour to the updateRange with the given index '''
+		""" Add dayHour to the updateRange with the given index """
 		ur_hist_len = len(self.__data['updateRange'][index]['updateHistory']) - Predictor.rangeHistorySize
 		if (ur_hist_len > 0):
 			for i in ur_hist_len:
@@ -61,7 +61,7 @@ class PredictorData:
 		self.__data['updateRange'][index]['updateHistory'].append(dayHour)
 
 	def addUpdateRange(self, uRange):
-		self.__data['updateRanges'].append(uRange)	
+		self.__data['updateRange'].append(uRange)	
 
 	def getUpdateRanges(self):
 		return self.__data['updateRange']
@@ -86,21 +86,9 @@ class PredictorData:
 		return json.dumps(self.__data)
 
 
-	#
-	# Testing
-	#
-
-	# def testSetUR(self):
-	# 	self.__data['updateRange'].append({ 'position': (1,5), 'updateHistory': [(1,2), (1,5), (1,6), (1,3)], 'width': 2 })
-	# 	self.__data['updateRange'].append({ 'position': (2,10), 'updateHistory': [(2,10), (2,11), (2,7), (2,9)], 'width': 2 })
-
-	# def testGetData(self):
-	# 	return self.__data
-
-
 
 class Predictor:
-	""" Contains the methods for predicting updates and storing predicorData """
+	""" Contains the methods for predicting updates from predictorData and storing predicorData """
 
 	def __init__(self):
 		self.__predictorData = None
@@ -136,7 +124,7 @@ class Predictor:
 
 	@staticmethod
 	def inURange(dayHour, updateRange):
-		''' Checks whether or not dayHour is in updateRange '''
+		""" Checks whether or not dayHour is in updateRange """
 		urm = updateRange['position'][0] * 24 + updateRange['position'][1]
 		urw = updateRange['width']
 		dh = (dayHour[0] * 24 + dayHour[1])%(7*24)
@@ -150,34 +138,34 @@ class Predictor:
 
 	@staticmethod
 	def blankSchedule():
-		''' Generate blank schedule '''
+		""" Generate blank schedule """
 		return [[0 for i in range(24)] for j in range(7)]
 
 	@staticmethod
 	def blankUpdateRange(dayHour):
-		''' Generate blank updateRange '''
-		return { 'position': dayHour, 'updateHistory': dayHour, 'width': Predictor.rangeWidth }
+		""" Generate blank updateRange with position dayHour """
+		return { 'position': dayHour, 'updateHistory': [dayHour], 'width': Predictor.rangeWidth }
 
 	@staticmethod
 	def dayHourToHours(dayHour):
-		''' Convert from dayHour to hours '''
+		""" Convert from dayHour to hours """
 		return dayHour[0] * 24 + dayHour[1]
 
 	@staticmethod
 	def hoursToDayHour(hours):
-		''' Convert from hours to dayHour '''
+		""" Convert from hours to dayHour """
 		day = hours%(7*24)/24
 		hour = hours%(7*24) - day*24
 		return day, hour
 
 	def incDayHour(self, dayHour, step):
-		''' Increment a dayHour by step '''
+		""" Increment a dayHour by step """
 		hours = dayHour[0] * 24 + dayHour[1]
 		hours += step
 		return self.hoursToDayHour(hours)
 
 	def calculateURPositions(self, updateRanges):
-		''' Calculates average position of each updateRange from the updateHistory the updateRange '''
+		""" Calculates average position of each updateRange from the updateHistory of the updateRange """
 		ranges = []
 		prevRange = updateRanges[-1]
 		positions = []
@@ -214,7 +202,7 @@ class Predictor:
 		return ranges	
 
 	def calculateScheduleUR(self, updateRanges):
-		''' Calculates schedule from updateRanges '''
+		""" Calculates schedule from updateRanges """
 		schedule = self.blankSchedule()
 		for uRange in updateRanges:
 			urMin = (uRange['position'][0] * 24 + uRange['position'][1] - uRange['width'])
@@ -226,7 +214,7 @@ class Predictor:
 		return schedule
 
 	def calculateScheduleDHL(self, dayHourList):
-		''' Calculate schedule from list of dayHours '''
+		""" Calculate schedule from list of dayHours """
 		schedule = self.blankSchedule()
 		for dayHour in dayHourList:
 			schedule[dayHour[0]][dayHour[1]] = 1
@@ -380,62 +368,87 @@ class Predictor:
 
 		# Predictor.inUrange()
 
+		t_fname = 'PredictorData.addDayHourToURange'
+
 		# 0
 		updateRange = { 'position': (0,0), 'width': 2 }
+		t_num = 0
 		dh = (6,21)
-		t.append(( 'inUrange', 0, not self.inURange(dh, updateRange) ))
-		
+		t_res = not self.inURange(dh, updateRange)
+		t.append(( t_fname, t_num, t_res ))
+
 		# 1
+		t_num = 1
 		dh = (6,22)
-		t.append(( 'inUrange', 1, self.inURange(dh, updateRange) ))
-		
+		t_res = self.inURange(dh, updateRange)
+		t.append(( t_fname, t_num, t_res ))
+
 		# 2
+		t_num = 2
 		dh = (0,2)
-		t.append(( 'inUrange', 2, self.inURange(dh, updateRange) ))
-		
+		t_res = self.inURange(dh, updateRange)
+		t.append(( t_fname, t_num, t_res ))
+
 		# 3
+		t_num = 3
 		dh = (0,3)
-		t.append(( 'inUrange', 3, not self.inURange(dh, updateRange) ))
-		
+		t_res = not self.inURange(dh, updateRange)
+		t.append(( t_fname, t_num, t_res ))
+
 		# 4
 		updateRange = { 'position': (6,23), 'width': 3 }
+		t_num = 4
 		dh = (6,19)
-		t.append(( 'inUrange', 4, not self.inURange(dh, updateRange) ))
-		
+		t_res = not self.inURange(dh, updateRange)
+		t.append(( t_fname, t_num, t_res ))
+
 		# 5
+		t_num = 5
 		dh = (6,21)
-		t.append(( 'inUrange', 5, self.inURange(dh, updateRange) ))
-		
+		t_res = self.inURange(dh, updateRange)
+		t.append(( t_fname, t_num, t_res ))
+
 		# 6
+		t_num = 6
 		dh = (0,1)
-		t.append(( 'inUrange', 6, self.inURange(dh, updateRange) ))
-		
+		t_res = self.inURange(dh, updateRange)
+		t.append(( t_fname, t_num, t_res ))
+
 		# 7
+		t_num = 7
 		dh = (0,3)
-		t.append(( 'inUrange', 7, not self.inURange(dh, updateRange) ))
+		t_res = not self.inURange(dh, updateRange)
+		t.append(( t_fname, t_num, t_res ))
 
 		# 8
 		updateRange = { 'position': (1,23), 'width': 2 } 
+		t_num = 8
 		dh = (1,20)
-		t.append(( 'inUrange', 8, not self.inURange(dh, updateRange) ))
-		
+		t_res = not self.inURange(dh, updateRange)
+		t.append(( t_fname, t_num, t_res ))
+
 		# 9
+		t_num = 9
 		dh = (1,21)
-		t.append(( 'inUrange', 9, self.inURange(dh, updateRange) ))
-		
+		t_res = self.inURange(dh, updateRange)
+		t.append(( t_fname, t_num, t_res ))
+
 		# 10
+		t_num = 10
 		dh = (2,1)
-		t.append(( 'inUrange', 10, self.inURange(dh, updateRange) ))
-		
+		t_res = self.inURange(dh, updateRange)
+		t.append(( t_fname, t_num, t_res ))
+
 		# 11
+		t_num = 11
 		dh = (2,2)
-		t.append(( 'inUrange', 11, not self.inURange(dh, updateRange) ))
+		t_res = not self.inURange(dh, updateRange)
+		t.append(( t_fname, t_num, t_res ))
 
 
 		# Predictor.generatePredictorDataTemplate()
 
-		# declarations
-		t_fname = 'generatePredictorDataTemplate'
+		t_fname = 'Predictor.generatePredictorDataTemplate'
 
 		def test_gpdt_weedingrate(weedingRate):
 			temp_weedingRate = Predictor.weedingRate
@@ -484,12 +497,13 @@ class Predictor:
 		t_res = test_gpdt_weedingrate(5)
 		t.append(( t_fname, t_num, t_res ))
 
+		# cleanup
+		self.generatePredictorDataTemplate()
+
 
 		# Predictor.calculateScheduleUR()
 
-		# declarations
-		t_fname = 'calculateScheduleUR'
-
+		t_fname = 'Predictor.calculateScheduleUR'
 		updateRanges = []
 		updateRanges.append({ 'position': (0,0), 'width': 2 })
 		updateRanges.append({ 'position': (4,23), 'width': 4 })
@@ -554,8 +568,7 @@ class Predictor:
 
 		# Predictor.calculateScheduleDHL()
 
-		# declarations
-		t_fname = 'calculateScheduleDHL'
+		t_fname = 'Predictor.calculateScheduleDHL'
 		schedule = self.blankSchedule()
 		dayHourList = []
 
@@ -592,8 +605,7 @@ class Predictor:
 
 		# Predictor.calculateURPositions()
 
-		# declarations
-		t_fname = 'calculateURPositions'
+		t_fname = 'Predictor.calculateURPositions'
 		updateRanges = []
 		updateRanges.append({ 'position': (0,0), 'updateHistory': [(0,1), (0,3), (0,1), (0,3)], 'width': 2 })
 		updateRanges.append({ 'position': (0,0), 'updateHistory': [(6,23), (0,0), (0,1), (0,0)], 'width': 2 })
@@ -621,6 +633,59 @@ class Predictor:
 		t_res = 139 < self.dayHourToHours(updateRanges[3]['position']) < 143
 		t.append(( t_fname, t_num, t_res ))
 
+
+		# PredictorData.addDayHourToURange()
+		
+		t_fname = 'PredictorData.addDayHourToURange'
+		self.__predictorData = PredictorData(None)
+		self.__predictorData.addUpdateRange(self.blankUpdateRange((0, 0)))
+
+		# 0
+		t_num = 3
+		dh = (3, 3)
+		index = 0
+		self.__predictorData.addDayHourToURange(dh, index)
+		t_res = self.__predictorData.getUpdateRanges()[index]['updateHistory'][1] == dh
+		t.append(( t_fname, t_num, t_res ))
+
+		# cleanup
+		self.__predictorData = None
+
+		# PredictorData.addDayHour()
+	
+		t_fname = 'PredictorData.addDayHour'
+		self.__predictorData = PredictorData(None)
+		self.__predictorData.addUpdateRange(self.blankUpdateRange((0, 0)))
+		self.__predictorData.addUpdateRange(self.blankUpdateRange((1, 5)))
+
+		# 0
+		t_num = 0
+		t_res = True
+		ur_width = self.__predictorData.getUpdateRanges()[0]['width']
+		dh = self.incDayHour((0,0), -ur_width)
+		if (not self.__predictorData.addDayHour(dh)):
+			t_res = False
+		if (self.__predictorData.getUpdateRanges()[0]['updateHistory'][-1] != dh):
+			t_res = False
+		t.append(( t_fname, t_num, t_res ))
+
+		# 1
+		t_num = 1
+		t_res = True
+		ur_width = self.__predictorData.getUpdateRanges()[0]['width']
+		dh = self.incDayHour((0,0), -ur_width-1)
+		if (self.__predictorData.addDayHour(dh)):
+			t_res = False
+		if (self.__predictorData.getUpdateRanges()[0]['updateHistory'][-1] == dh):
+			t_res = False
+		t.append(( t_fname, t_num, t_res ))
+
+		# 2
+		t_num = 2
+		ur_width = self.__predictorData.getUpdateRanges()[1]['width']
+		t_res = self.__predictorData.addDayHour((1,5))
+		t.append(( t_fname, t_num, t_res ))
+
 		return t
 
 
@@ -635,6 +700,4 @@ if __name__ == "__main__":
 	for test in tests:
 		if (not test[2]):
 			print test[0], test[1]
-
-	p.generatePredictorDataTemplate()
 	
