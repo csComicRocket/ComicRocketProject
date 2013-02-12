@@ -34,6 +34,11 @@ class PredictorData:
 			self.__data['weedingStartSec'] = time.mktime(time.strptime(str(tgm.tm_year) +' '+ str(tgm.tm_mon) +' '+ str(tgm.tm_mday) +' '+ str(tgm.tm_hour), '%Y %m %d %H'))
 		else:
 			self.__data = json.loads(dataString)
+			# format [] to () in 'updateHistory'
+			for i, ur in enumerate(self.__data['updateRange']):
+				for j, uh in enumerate(ur['updateHistory']):
+					self.__data['updateRange'][i]['updateHistory'][j] = (uh[0], uh[1])
+				self.__data['updateRange'][i]['position'] = (ur['position'][0], ur['position'][1])
 
 	def setSchedule(self, schedule):
 		if (not self.__data['locked']):
@@ -69,12 +74,15 @@ class PredictorData:
 	def isWeeding(self):
 		return self.__data['weeding']
 
+	def isLocked(self):
+		return self.__data['locked']
+
 	def stopWeeding(self):
 		self.__data['locked'] = False
 		self.__data['weeding'] = False
 
-	def getWeedingStart():
-		return self.__data['weedingStart']
+	def getWeedingStart(self):
+		return self.__data['weedingStartSec']
 
 	def Lock(self):
 		self.__data['locked'] = True
@@ -105,7 +113,7 @@ class Predictor:
 	directory = "Cache/predictorInfo/"
 
 	# rangeWidth - The width in hours of the updateRanges
-	rangeWidth = 2
+	rangeWidth = 3
 
 	# rangeHistorySize - How many dayhours will be stored in the update history of each range
 	rangeHistorySize = 64
@@ -156,7 +164,7 @@ class Predictor:
 		""" Convert from hours to dayHour """
 		day = hours%(7*24)/24
 		hour = hours%(7*24) - day*24
-		return day, hour
+		return (day, hour)
 
 	def incDayHour(self, dayHour, step):
 		""" Increment a dayHour by step """
@@ -229,24 +237,31 @@ class Predictor:
 	def update(self, dayHour, comicId):
 		#TODO test
 		""" Called whenever a comic has been updated """
-		self.load(comicId)
+		self.loadComic(comicId)
 
 		for i in range(1):
 			# Stop weeding?
-			if (self.__predictorData.weeding()):
+			stopWeeding = False
+
+			if (self.__predictorData.isWeeding()):
 				tgm = time.gmtime()
 				sec = time.mktime(time.strptime(str(tgm.tm_year) +' '+ str(tgm.tm_mon) +' '+ str(tgm.tm_mday) +' '+ str(dayHour[1]), '%Y %m %d %H'))
+				
 				if (sec >= self.__predictorData.getWeedingStart() + 7*24*60*60):
 					self.__predictorData.stopWeeding()
+					stopWeeding = True
 
-			if (self.__predictorData.weeding()):
+					if (len(self.__predictorData.getUpdateRanges()) == 0):
+						self.__predictorData.addUpdateRange(self.blankUpdateRange(dayHour))
+
+			if (self.__predictorData.isWeeding() or stopWeeding):
 				# Weeding
 				uRanges = self.__predictorData.getUpdateRanges()
 				if (len(uRanges) > 0):
 					if (self.__predictorData.addDayHour(dayHour)):
 						break
-					if (inURange(incDayHour(dayHour, -self.rangeWidth), uRanges[-1])):
-						uRangeLast = incDayHour(uRanges[-1]['position'], uRanges[-1]['width'])
+					if (self.inURange(self.incDayHour(dayHour, -self.rangeWidth), uRanges[-1])):
+						uRangeLast = self.incDayHour(uRanges[-1]['position'], uRanges[-1]['width'])
 						self.__predictorData.addUpdateRange(self.addUpdateRange(incDayHour(uRangeLast, Predictor.rangeWidth + 1)))
 						break	
 				self.__predictorData.addUpdateRange(self.blankUpdateRange(dayHour))
@@ -261,27 +276,27 @@ class Predictor:
 						ur_pos_hours = self.dayHourToHours(uRange['position'])
 						ur_width = uRange['width']
 						hours = self.dayHourToHours(dayHour)
-						dist[min(abs(ur_pos_dh - ur_width - hours), abs(ur_pos_dh + ur_width - hours))] = i
-					self.__predictorData.addDayHourToURangeange(dayHour, dist[min(dist.keys())])
+						dist[min(abs(ur_pos_hours - ur_width - hours), abs(ur_pos_hours + ur_width - hours))] = i
+					self.__predictorData.addDayHourToURange(dayHour, dist[min(dist.keys())])
 
 				self.calculateURPositions(self.__predictorData.getUpdateRanges())
 				self.__predictorData.setSchedule(self.calculateScheduleUR(self.__predictorData.getUpdateRanges()))
 		
 		self.updatePredictorList(self.__predictorData.getSchedule(), comicId)
-		self.save(comicId)
+		self.saveComic(comicId)
 
 	def setSchedule(self, dayHourList, comicId):
 		#TODO test
-		self.load(comicId)
+		self.loadComic(comicId)
 		__predictorData.setSchedule(calculateScheduleDHL(dayHourList))
-		self.save(comicId)
+		self.saveComic(comicId)
 
 
 	#
 	# PredictorList
 	#
 
-	def updatePredictorList(schedule, comicId):
+	def updatePredictorList(self, schedule, comicId):
 		#TODO test
 		for day in range(7):
 			for hour in range(24):
@@ -301,7 +316,7 @@ class Predictor:
 
 	def scanDirectory(self, comicId):
 		#TODO test
-		self.load(comicId)
+		self.loadComic(comicId)
 		updatePredictorList(self.__predictorData.getSchedule(), comicId)
 
 	def scanDirectories(self):
@@ -310,7 +325,7 @@ class Predictor:
 		for root, dirs, files in os.walk(d):
 			for comicId in dirs:
 				comicId = int(comicId)
-				self.load(comicId)
+				self.loadComic(comicId)
 				updatePredictorList(self.__predictorData.getSchedule(), comicId)
 			break
 
@@ -319,7 +334,7 @@ class Predictor:
 	# Save/Load
 	#
 
-	def load(self, comicId):
+	def loadComic(self, comicId):
 		self.__pdir = self.directory + str(comicId) + "/"
 		return self.load()
 
@@ -337,7 +352,7 @@ class Predictor:
 			return
 		return True
 
-	def save(self, comicId):
+	def saveComic(self, comicId):
 		self.__pdir = self.directory + str(comicId) + "/"
 		return self.save()
 
@@ -685,6 +700,61 @@ class Predictor:
 		ur_width = self.__predictorData.getUpdateRanges()[1]['width']
 		t_res = self.__predictorData.addDayHour((1,5))
 		t.append(( t_fname, t_num, t_res ))
+
+		# Predictor.update()
+
+		t_fname = 'Predictor.update'
+		comicId = 9999997357
+		pd_old = PredictorData(None)
+		pd_old._PredictorData__data['weedingStartSec'] -= 7*24*60*60 - 120
+		self.__predictorData = pd_old
+		self.saveComic(comicId)
+
+		# 0 Weeding - add new UpdateRanges
+		t_num = 0
+		dh = self.incDayHour((time.gmtime().tm_wday, time.gmtime().tm_hour), -4*24)
+		self.update(dh, comicId)
+		dh = self.incDayHour((time.gmtime().tm_wday, time.gmtime().tm_hour), -3*24)
+		self.update(dh, comicId)
+		self.loadComic(comicId)
+		print self.__predictorData._PredictorData__data
+		t_res = self.__predictorData.getUpdateRanges()[-1]['position'] == dh
+		t.append(( t_fname, t_num, t_res ))
+
+		# 1 Weeding - addDayHour to existing updateRange
+		t_num = 1
+		dh = self.incDayHour((time.gmtime().tm_wday, time.gmtime().tm_hour), -3*24 + 1)
+		print dh
+		self.update(dh, comicId)
+		self.loadComic(comicId)
+		print self.__predictorData._PredictorData__data
+		t_res = self.__predictorData._PredictorData__data['updateRange'][-1]['updateHistory'][-1] == dh
+		t.append(( t_fname, t_num, t_res ))
+
+
+		# 2 stopWeeding - Stop weeding and add updateRange
+		t_num = 2
+		self.loadComic(comicId)
+		self.__predictorData._PredictorData__data['weedingStartSec'] -= 240
+		self.saveComic(comicId)
+
+		self.update((time.gmtime().tm_wday, time.gmtime().tm_hour), comicId)
+		self.loadComic(comicId)
+
+		t_res = not (self.__predictorData.isWeeding() or self.__predictorData.isLocked())
+		t.append(( t_fname, t_num, t_res ))
+
+		# 3 - Regular update with spanning updateRange
+		t_num = 3
+		ur_width = self.__predictorData._PredictorData__data['updateRange'][-2]['width']
+		dh = self.incDayHour((time.gmtime().tm_wday, time.gmtime().tm_hour), -3*24 + ur_width)
+		print dh
+		self.update(dh, comicId)
+		self.loadComic(comicId)
+		print self.__predictorData._PredictorData__data
+		t_res = self.__predictorData._PredictorData__data['updateRange'][-2]['updateHistory'][-1] == dh
+		t.append(( t_fname, t_num, t_res ))
+
 
 		return t
 
