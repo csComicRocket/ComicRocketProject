@@ -2,9 +2,10 @@
 from datetime import datetime
 import pika
 import globalVars
+import urllib
 
-def errorNotification(comicURL):
-	""" Sends a notification that an error has been found using rabbitmq, also maintains a list of recent url's/timestamps"""
+def errorNotification(error):
+	""" Sends a notification that an error has been found using rabbitmq"""
         #INPROG
         
 	# not final
@@ -16,7 +17,7 @@ def errorNotification(comicURL):
 
         channel.basic_publish(exchange='',
                               routing_key=globalvars.key,
-                              body='IMPORTANT TEXT!')
+                              body=error.read())
 
         #Test area, this just catches the message we sent
 
