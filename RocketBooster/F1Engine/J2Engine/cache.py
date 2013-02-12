@@ -24,10 +24,15 @@ class Cache:
             self.storeInLast3(pageTree.getComicId(0), pageTree.getUrl(0))
             self.storeInHistoryList(directory, pageTree.getUrl(0))
             #Predictor.update((time.gmtime().tm_wday, time.gmtime().tm_hour), pageTree.getComicId(0))
-        with open(os.path.join(directory,"pageTreeData.txt"), 'w+') as f:
-            f.writelines(pageTree.getPageTreeData())
-        with open(os.path.join(directory, fName), 'w+') as f:
-            f.write(str(pageTree.getContent(0)))
+        try:
+            with open(os.path.join(directory,"pageTreeData.txt"), 'w+') as f:
+                f.writelines(pageTree.getPageTreeData())
+            with open(os.path.join(directory, fName), 'w+') as f:
+                f.write(str(pageTree.getContent(0)))
+            return True
+        except IOError:
+            print "D'oh"
+            return False
         
     def parseDirectory(self, url):
         #Split a url and make it into a directory name.
@@ -143,7 +148,7 @@ class Cache:
             with open(os.path.join(directory, preFileString + "pageTreeData.txt")) as f:
                 pageTree.setPageTreeData(f.read())
                 contentType = pageTree.getEncodeType(0)
-                #fill in tree data
+                pageTree.setSourceMode(0, "cache")
         except IOError:
             pass
         try:
@@ -172,6 +177,12 @@ class Cache:
         self.storeInLast3(101, 'http://www.anothernotherurl.com')
         self.storeInLast3(101, 'http://www.anothernothernothernothernotherurl.com')
         anotherTree = self.fetchCache(aTree.getUrl(0))
+        if anotherTree.equals(aTree):
+            return True
+        else:
+            anotherTree.showAll(0)
+            aTree.showAll(0)
+            return False
 
     def testRootOnlyTreeWrite(self):
         aTreeOnlyRoot = self.fetchCache("http://www.dummyurl.com/", 0)
@@ -198,9 +209,16 @@ class Cache:
 
     def testStrangeDirectory(self):
         pageTree = PageTree()
-        pageTree.createPageNode("http://www.dummyurl.com/strangeDirectory.html/strangeDirectory.html")
+        pageTree.createPageNode("http://www.dummyurl.com/strangeDirectory.html/strangeDirectory.html", 0)
         self.storeCache(pageTree)
         self.storeCache(pageTree)
+        againPageTree = self.fetchCache(pageTree.getUrl(0))
+        self.clearPage(pageTree.getUrl(0))
+        if not againPageTree.equals(pageTree):
+            return False
+        if not againPageTree.getRevisionNum(0) == 1:
+            return False
+        return True
 
     def sampleTree(self):
         pageTree = PageTree("http://www.dummyurl.com/sample/aPage.html")
@@ -222,4 +240,8 @@ def defaultPredData(comicId):
 if __name__ == '__main__':
     cache = Cache()
 
-    cache.testClearPage()
+    result = cache.testCache()
+    # The following test fails. The tree stored and the tree fetched aren't equal for some reason.
+    # Yet testCache() passes...
+    result = cache.testStrangeDirectory()
+

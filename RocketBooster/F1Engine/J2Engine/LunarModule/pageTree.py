@@ -46,13 +46,19 @@ class PageTree:
 
     def show(self, position, level=_ROOT):
         print self.getPageStructureString(position, level)
-        
+
+    def showAll(self, position, level=_ROOT):
+        print "Url:", self.getUrl(0)
+        print "Content:"
+        print self.getContent(0)
+        print "PageTree data:", self.getPageTreeData()
+        self.show(position)
     
     """PageTree.show(position, level=_ROOT) prints the pageTree depth first kinda like this:
 
        http://www.rooturl.com [0]
-       ('/t', 'http://www.rooturl.com/child [1]')
-       ('/t/t', 'http://www.rooturl.com/child/child [2]')
+       ('  ', 'http://www.rooturl.com/child [1]')
+       ('    ', 'http://www.rooturl.com/child/child [2]')
        etc."""
     def getPageStructureString(self, position, level=_ROOT):
         queue = self[position].fPointer
@@ -242,14 +248,11 @@ class PageTree:
         self.setHash(0, aHash)
         #pageTreeDataString.append("PageStructure:\n" + self.getPageStructureString(0) + '\n')
 
-"""PageTree's main function: currently builds a little pageTree with 10 nodes sorta randomly connected, then prints."""
-if __name__== "__main__":
-
-    pageTree = PageTree(None)
-    pageTree.createPageNode("http://www.xkcd.com", 0)  # root node
-    pageTree.createPageNode("http://www.xkcd.com/apic.jpg", 1, parent = 0)
-    pageTree.createPageNode("http://www.xkcd.com/style.css", 2, parent = 0)
-    pageTree.createPageNode("Joe", 3, parent = 1)
+    def equals(self, aTree):
+        if self.getContent(0) == aTree.getContent(0) and self.getHash(0) == aTree.getHash(0) and self.getEncodeType(0) == aTree.getEncodeType(0) and self.getPullTS(0) == aTree.getPullTS(0) and self.getIsReferredTo(0) == aTree.getIsReferredTo(0):
+            return True
+        else:
+            return False
 
 """PageTree's main function: currently builds a little pageTree with 10 nodes sorta randomly connected, then prints."""
 if __name__== "__main__":
