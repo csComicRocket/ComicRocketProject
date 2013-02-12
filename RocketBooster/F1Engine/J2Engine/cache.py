@@ -4,7 +4,7 @@ import time
 
 from LunarModule.pageTree import PageTree
 from LunarModule.pageNode import PageNode
-from ...Predictor import Predictor
+#from ...Predictor import Predictor
 
 class Cache:
 
@@ -36,7 +36,7 @@ class Cache:
         
     def parseDirectory(self, url):
         #Split a url and make it into a directory name.
-        if url.endswith("//"):
+        if url.endswith("//") or not "/" in url:
             return "../../cache/cacheInfo/default/", "default"
         if "//" in url:
             directory = url.split("//")[1]
@@ -150,12 +150,14 @@ class Cache:
                 contentType = pageTree.getEncodeType(0)
                 pageTree.setSourceMode(0, "cache")
         except IOError:
-            pass
+            print directory + preFileString + "/pageTreeData.txt not found."
+            return False
         try:
             with open(os.path.join(directory, preFileString + fName)) as f:
                 pageTree.setContent(0, f.read(), contentType)
         except IOError:
-            pass
+            print directory + preFileString + "/" + fName + "not found."
+            return False
         return pageTree
 
     def clearPage(self, url):
@@ -233,12 +235,17 @@ class Cache:
         self.storeCache(sampleTree)
         self.clearPage(sampleTree.getUrl(0))
 
+    def testNotExistsFetchCache(self):
+        self.fetchCache("http://this.does.not/exist")
+
 def defaultPredData(comicId):
     directory = "../../cache/predictorInfo/" + str(comicId) + "/"
     shutil.copy2("../../cache/predictorInfo/predictorData.txt", directory)
         
 if __name__ == '__main__':
     cache = Cache()
+
+    cache.testNotExistsFetchCache()
 
     result = cache.testCache()
     # The following test fails. The tree stored and the tree fetched aren't equal for some reason.
