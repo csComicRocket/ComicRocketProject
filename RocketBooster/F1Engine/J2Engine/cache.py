@@ -201,14 +201,6 @@ class Cache:
         pageTree.createPageNode(url, 0)
         self.storeCache(pageTree)
 
-    def testUpdateTimeStamp(self):
-        pageTree = PageTree()
-        pageTree.createPageNode("http://www.dummyurl.com/timeStampTest.html", 0)
-        pageTree.setPullTS(0, "52")
-        self.storeCache(pageTree)
-        pageTree.setPullTS(0, "53+1/2")
-        self.updateTimeStamp(pageTree)
-
     def testStrangeDirectory(self):
         pageTree = PageTree()
         pageTree.createPageNode("http://www.dummyurl.com/strangeDirectory.html/strangeDirectory.html", 0)
