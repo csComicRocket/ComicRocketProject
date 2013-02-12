@@ -177,7 +177,12 @@ class Cache:
         self.storeInLast3(101, 'http://www.anothernotherurl.com')
         self.storeInLast3(101, 'http://www.anothernothernothernothernotherurl.com')
         anotherTree = self.fetchCache(aTree.getUrl(0))
-        return anotherTree
+        if anotherTree.equals(aTree):
+            return True
+        else:
+            anotherTree.showAll(0)
+            aTree.showAll(0)
+            return False
 
     def testRootOnlyTreeWrite(self):
         aTreeOnlyRoot = self.fetchCache("http://www.dummyurl.com/", 0)
@@ -204,9 +209,16 @@ class Cache:
 
     def testStrangeDirectory(self):
         pageTree = PageTree()
-        pageTree.createPageNode("http://www.dummyurl.com/strangeDirectory.html/strangeDirectory.html")
+        pageTree.createPageNode("http://www.dummyurl.com/strangeDirectory.html/strangeDirectory.html", 0)
         self.storeCache(pageTree)
         self.storeCache(pageTree)
+        againPageTree = self.fetchCache(pageTree.getUrl(0))
+        self.clearPage(pageTree.getUrl(0))
+        if not againPageTree.equals(pageTree):
+            return False
+        if not againPageTree.getRevisionNum(0) == 1:
+            return False
+        return True
 
     def sampleTree(self):
         pageTree = PageTree("http://www.dummyurl.com/sample/aPage.html")
@@ -228,8 +240,8 @@ def defaultPredData(comicId):
 if __name__ == '__main__':
     cache = Cache()
 
-    aPageTree = cache.sampleTree()
-    anotherPageTree = cache.testCache()
-    
-    aPageTree.showAll(0)
-    anotherPageTree.showAll(0)
+    result = cache.testCache()
+    # The following test fails. The tree stored and the tree fetched aren't equal for some reason.
+    # Yet testCache() passes...
+    result = cache.testStrangeDirectory()
+

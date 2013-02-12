@@ -248,6 +248,12 @@ class PageTree:
         self.setHash(0, aHash)
         #pageTreeDataString.append("PageStructure:\n" + self.getPageStructureString(0) + '\n')
 
+    def equals(self, aTree):
+        if self.getContent(0) == aTree.getContent(0) and self.getHash(0) == aTree.getHash(0) and self.getEncodeType(0) == aTree.getEncodeType(0) and self.getPullTS(0) == aTree.getPullTS(0) and self.getIsReferredTo(0) == aTree.getIsReferredTo(0):
+            return True
+        else:
+            return False
+
 """PageTree's main function: currently builds a little pageTree with 10 nodes sorta randomly connected, then prints."""
 if __name__== "__main__":
 
