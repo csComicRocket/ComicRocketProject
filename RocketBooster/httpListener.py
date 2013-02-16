@@ -1,16 +1,18 @@
 #Lucas Berge
 import string
-from crFunctions import *
 from threading import Thread
-from F1Engine import fetchHTTP
+import F1Engine.crFunctions
+import F1Engine.fetchHTTP
 from http import server
 
 class HTTPListener(server.BaseHTTPRequestHandler):
-	""" Waits for HTTP requests in a loop on separate thread """
+	""" Waits for HTTP requests in a loop on separate thread 
+		GETS requies special ComicID header specifying comic number
+		POSTS require crFunction header specifying action"""
 	def do_GET(self):
 		try:
 			url = parseUrl()
-			fetchHTTP(url)
+			tree = fetchHTTP(url)
 			
 		except Exception as e:
 			print(e)
@@ -19,16 +21,16 @@ class HTTPListener(server.BaseHTTPRequestHandler):
 	def do_POST(self):
 		try:
 			crFn = self.headers['crFunction'].split(':')[0]
-			arg  = self.headers['comicID'] #need lookup for comicID
+			comicID  = self.headers['comicID'].split(':')[0]
 			
 			if(crFn == 'resetPredData'):
-				resetPredData(arg)
+				resetPredData(comicID)
 			if(crFn == 'lockPredData'):
-				lockPredData(arg)
+				lockPredData(comicID)
 			if(crFn == 'unlockPredData'):
-				unlockPredData(arg)
+				unlockPredData(comicID)
 			if(crFn == 'setUpdateSchedule'):
-				setUpdateSchedule(arg)
+				setUpdateSchedule(comicID)
 			
 		except Exception as e:
 			print(e)

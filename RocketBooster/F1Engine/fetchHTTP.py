@@ -2,11 +2,11 @@
 import J2Engine.fetchWeb
 from J2Engine.cache import Cache
 
-def fetchHTTP(url, imgs=None):
+def fetchHTTP(url, comicID, imgs=None):
 	""" Checks cache for URL, if none, call fetchWeb. Returns PageTree"""
-	try:
-		pt = Cache.fetchCache(url)
-	except IOError:
-		pt = fetchWeb.fetchWeb(url)
-		
-	return pt	
+	pt = Cache.fetchCache(url)
+	if (pt is None):
+		pt = fetchWeb.fetchWeb(url, comicID)	
+
+if __name__ == "main":
+	fetchHTTP()
