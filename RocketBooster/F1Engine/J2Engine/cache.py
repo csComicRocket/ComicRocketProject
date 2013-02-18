@@ -4,7 +4,9 @@ import time
 
 from LunarModule.pageTree import PageTree
 from LunarModule.pageNode import PageNode
-#from ...Predictor import Predictor
+from Predictor import Predictor
+
+cacheLoc = "../../Cache/"
 
 class Cache:
 
@@ -37,15 +39,15 @@ class Cache:
     def parseDirectory(self, url):
         #Split a url and make it into a directory name.
         if url.endswith("//") or not "/" in url:
-            return "../../cache/cacheInfo/default/", "default"
+            return cacheLoc + "cacheInfo/default/", "default"
         if "//" in url:
             directory = url.split("//")[1]
         directory = directory.rpartition('/')
         if directory[2] == "":
             directory = directory[0].rpartition('/')
         if directory[0] == "":
-            return "../../cache/cacheInfo/" + directory[2] + "/default", "default"
-        return "../../cache/cacheInfo/" + directory[0] + "/" + directory[2], directory[2]
+            return cacheLoc + "cacheInfo/" + directory[2] + "/default", "default"
+        return cacheLoc + "cacheInfo/" + directory[0] + "/" + directory[2], directory[2]
         
     def revisionPush(self, pageTree, directory, fName):
         rNum = self.findRevisionNum(directory, fName)
@@ -93,7 +95,7 @@ class Cache:
         
         This function should only be called when the pageTree object does not have
         a current version in the cache."""
-        directory = "../../cache/predictorInfo/" + str(comicId) + "/"
+        directory = cacheLoc + "predictorInfo/" + str(comicId) + "/"
         try:
             os.makedirs(directory)
             defaultPredData(comicId)
@@ -113,15 +115,16 @@ class Cache:
             
     def storeInHistoryList(self, directory, url):
         """Store the newly found url in the list of urls to be checked."""
-        temp = directory.split('/')
-        directory = temp[0] + '/' + temp[1] + '/' + temp[2] + '/' + temp[3] + '/' + temp[4] + '/' 
+        temp = directory[len(cacheLoc + "cachInfo/"):]
+        temp = temp.split('/')
+        directory = cacheLoc + temp[0] + '/'
         try:
             with open(os.path.join(directory, "historyData.txt")) as f:
                 pass
         except IOError:
             with open(os.path.join(directory, "historyData.txt"), 'a+') as f:
-                f.write(time.strftime("%m", time.gmtime()) + '\n')
-                f.write('0/n')
+                f.write(time.strftime(time.gmtime(), "%Y-%m-%d %H:%M:%S") + '\n')
+                f.write('0')
         with open(os.path.join(directory, "historyList.txt"), 'a+') as f:
             f.write(url + '\n')
         
@@ -231,8 +234,8 @@ class Cache:
         self.fetchCache("http://this.does.not/exist")
 
 def defaultPredData(comicId):
-    directory = "../../cache/predictorInfo/" + str(comicId) + "/"
-    shutil.copy2("../../cache/predictorInfo/predictorData.txt", directory)
+    directory = cacheLoc + "predictorInfo/" + str(comicId) + "/"
+    shutil.copy2(cacheLoc + "predictorInfo/predictorData.txt", directory)
         
 if __name__ == '__main__':
     cache = Cache()

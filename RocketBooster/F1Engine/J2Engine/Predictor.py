@@ -111,7 +111,7 @@ class Predictor:
 	#
 
 	# directory - The directory of all predictor data
-	directory = "Cache/predictorInfo/"
+	directory = "../../Cache/predictorInfo/"
 
 	# rangeWidth - The width in hours of the updateRanges
 	rangeWidth = 3
@@ -722,9 +722,9 @@ class Predictor:
 
 		# 0 Weeding - add new UpdateRanges
 		t_num = 0
-		dh = self.incDayHour((time.gmtime().tm_wday, time.gmtime().tm_hour), -4*24)
+		dh = self.incDayHour(scaleTime(), -4*24)
 		self.update(dh, comicId)
-		dh = self.incDayHour((time.gmtime().tm_wday, time.gmtime().tm_hour), -3*24)
+		dh = self.incDayHour(scaleTime(), -3*24)
 		self.update(dh, comicId)
 		self.loadComic(comicId)
 		t_res = self.__predictorData.getUpdateRanges()[-1]['position'] == dh
@@ -732,7 +732,7 @@ class Predictor:
 
 		# 1 Weeding - addDayHour to existing updateRange
 		t_num = 1
-		dh = self.incDayHour((time.gmtime().tm_wday, time.gmtime().tm_hour), -3*24 + 1)
+		dh = self.incDayHour(scaleTime(), -3*24 + 1)
 		self.update(dh, comicId)
 		self.loadComic(comicId)
 		t_res = self.__predictorData._PredictorData__data['updateRange'][1]['updateHistory'][-1] == dh
@@ -745,7 +745,7 @@ class Predictor:
 		self.__predictorData._PredictorData__data['weedingStartSec'] -= 240
 		self.saveComic(comicId)
 
-		self.update((time.gmtime().tm_wday, time.gmtime().tm_hour), comicId)
+		self.update(scaleTime(), comicId)
 		self.loadComic(comicId)
 
 		t_res = not (self.__predictorData.isWeeding() or self.__predictorData.isLocked())
@@ -754,7 +754,7 @@ class Predictor:
 		# 3 - Regular update, add to spanning updateRange
 		t_num = 3
 		ur_width = self.__predictorData._PredictorData__data['updateRange'][-2]['width']
-		dh = self.incDayHour((time.gmtime().tm_wday, time.gmtime().tm_hour), -3*24 + ur_width)
+		dh = self.incDayHour(scaleTime(), -3*24 + ur_width)
 		self.update(dh, comicId)
 		self.loadComic(comicId)
 		t_res = self.__predictorData._PredictorData__data['updateRange'][1]['updateHistory'][-1] == dh
@@ -762,7 +762,7 @@ class Predictor:
 
 		# 4 - Regular update, add to nearest updateRange
 		t_num = 4
-		dh = self.incDayHour((time.gmtime().tm_wday, time.gmtime().tm_hour), -4*24+13)
+		dh = self.incDayHour(scaleTime(), -4*24+13)
 		self.update(dh, comicId)
 		self.loadComic(comicId)
 		t_res = self.__predictorData._PredictorData__data['updateRange'][1]['updateHistory'][-1] == dh
@@ -779,7 +779,7 @@ class Predictor:
 		# 0
 		t_num = 0
 		self.scanDirectory(comicId)
-		dh = time.gmtime().tm_wday, time.gmtime().tm_hour
+		dh = scaleTime()
 		t_res = comicId in self.__predictorList[dh[0]][dh[1]]
 		t.append(( t_fname, t_num, t_res ))
 
@@ -820,6 +820,19 @@ class Predictor:
 
 		return t
 
+def scaledTime():
+    """Scales the current time to 1 day every 30 minutes.
+
+    Uncomment the first line to remove the time scaling."""
+    #return (time.gmtime().tm_wday, time.gmtime().tm_hour)
+    timeInMin = ((time.gmtime().tm_mday * 24 + time.gmtime().tm_hour) * 60) + time.gmtime().tm_min
+    day = (timeInMin / 30) % 7
+    hour = (timeInMin % 30) * 4 / 5
+    return (day, hour)
+
+def scaledSeconds():
+    #return (60-time.gmtime().tm_min)*60
+    return 75 - (time.gmtime().tm_sec % 15)
 
 if __name__ == "__main__":
 	p = Predictor()

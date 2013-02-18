@@ -1,14 +1,16 @@
 #Daniel Leblanc
 
 import time
-import os
+import os, sys
 import threading
 import Predictor
-import F1Engine.checkComic
+import F1Engine.J2Engine.comicCheck
 
 SITELIMIT = 20
 PAGELIMIT = 20
 SECONDS = 60
+
+timeFormat = "%Y-%m-%d %H:%M:%S"
 
 class ComicList:
     """Represents a current list of pages in a comic that need to be checked.
@@ -22,12 +24,12 @@ class ComicList:
         self.lastComplete = time.gmtime()
 		
     def __init__(self, directory):
-        """Given a comicId, retrieves the needed data from storage"""
+        """Given a directory, retrieves the needed data from storage"""
         self.histData = directory + "historyData.txt"
         with open(self.histData) as f:
             data = f.readline()
             data = data.strip()
-            self.lastComplete = time.strptime(data, time.gmtime())
+            self.lastComplete = time.strptime(data, timeFormat)
             data = f.readline()
             data = data.strip()
             self.current = int(data)
@@ -48,7 +50,7 @@ class ComicList:
             self.current = 0
             self.lastComplete = time.gmtime()
         with open(self.histData, 'w+') as f:
-            f.write(time.strftime(self.lastComplete, time.gmtime()) + '\n')
+            f.write(time.strftime(timeFormat, self.lastComplete) + '\n')
             f.write(str(self.current))
         return urlList
 		
@@ -64,7 +66,7 @@ class HistoryList:
     def __init__(self, directories):
         self.comics = []
         for comic in directories:
-            directory = '/Cache/cacheInfo/' + comic + '/'
+            directory = 'Cache/cacheInfo/' + comic + '/'
             self.insertComic(ComicList(directory))
         self.waiting = []
 		
@@ -79,6 +81,8 @@ class HistoryList:
 	
     def getComic(self):
         """Retrieves a comic from the list"""
+        if not self.comics:
+            return []
         urlList = self.comics[0].getNext()
         while len(urlList) == 0:
             self.waiting.append(self.comics.pop(0))
@@ -94,36 +98,44 @@ class HistoryList:
 
 def scheduler():
     """Checks the new comics expected in each hour block and the archived comics"""
+    print "scheduler running"
     global histComics
-    Predictor.scanDirectories()
-    histComics = HistoryList(os.listdir('Cache/cacheInfo/'))
+    global predComics
+    predComics.scanDirectories()
     currentTime = time.gmtime().tm_wday, time.gmtime().tm_hour
-    t = time.Timer((60-time.gmtime().tm_minute)*SECONDS, hourlyEvents)
+    t = threading.Timer(Predictor.scaledSeconds(), hourlyEvents)
     t.start()
     while (True):
         urlList = histComics.getComic()
+        if not urlList:
+            time.sleep(5)
         for url in urlList:
-            F1Engine.checkComics.histCheck(url)
+            F1Engine.J2Engine.comicCheck.comicCheck(url)
         
 def hourlyEvents():
-    global histComics
+    global histComics   
+    print "hourly events running"
     currentTime = time.gmtime().tm_wday, time.gmtime().tm_hour
     histComics.recoverWaiting()
-    for comicId in Predictor.getHourList(currentTime):
-        directory = "../../cache/predictorInfo/" + str(comicId) + "/last3Pages.txt"
+    for comicId in predComics.getHourList(currentTime):
+        directory = "Cache/predictorInfo/" + str(comicId) + "/last3Pages.txt"
         urls = []
         with open(directory) as f:
             for line in f:
                 urls.append(line.strip())
         for url in urls:
-            F1Engine.checkComics.newComic(url)
-    t = time.Timer((60-time.gmtime().tm_minute)*SECONDS, hourlyEvents)
+            F1Engine.J2Engine.comicCheck.comicCheck(url)
+    t = threading.Timer(Predictor.scaledSeconds(), hourlyEvents)
     t.start()
+
 		
 def runTests():
     pass
-    
-histComics = Historylist()
 
 if __name__ == "__main__":
+    histComics = HistoryList(os.listdir('Cache/cacheInfo/'))
+    predComics = Predictor.Predictor()
     runTests()
+else:
+    histComics = HistoryList(os.listdir('Cache/cacheInfo/'))
+    predComics = Predictor.Predictor()

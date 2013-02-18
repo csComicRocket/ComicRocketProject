@@ -3,9 +3,13 @@ import string
 from threading import Thread
 import F1Engine.crFunctions
 import F1Engine.fetchHTTP
-from http import server
+#from http import server
+import SimpleHTTPServer
+import SocketServer
+import BaseHTTPServer
+import sys
 
-class HTTPListener(server.BaseHTTPRequestHandler):
+class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
 	""" Waits for HTTP requests in a loop on separate thread 
 		GETS requies special ComicID header specifying comic number
 		POSTS require crFunction header specifying action"""
@@ -45,8 +49,8 @@ class HTTPListener(server.BaseHTTPRequestHandler):
 	
 def runListener():
 	try:
-		HttpServer = server.HTTPServer(('',80), HTTPListner)
-		print('starting HTTPListner...')
+		HttpServer = BaseHTTPServer.HTTPServer(('',81), HTTPListener)
+		print('starting HTTPListener...')
 		HttpServer.serve_forever(.5)
 	except KeyboardInterrupt:
 		print('^C received, shutting down...')

@@ -1,0 +1,10 @@
+EncodeType: Jibberish
+MimeType: None
+AuthorTS: None
+PullTS: None
+RevisionNum: 0
+IsReferredTo: 1
+Hash: Doobop
+PageStructure:
+http://www.dummyurl.com/sample/aPage.html [0]
+
