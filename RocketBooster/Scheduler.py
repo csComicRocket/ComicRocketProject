@@ -128,6 +128,11 @@ def hourlyEvents():
     t = threading.Timer(Predictor.scaledSeconds(), hourlyEvents)
     t.start()
 
+def predUpdate(comicId):
+    predComics.update(Predictor.scaledTime(), comicId)
+    
+def predScanDir(comicId):
+    predComics.scanDirectory(comicId)
 		
 def runTests():
     pass

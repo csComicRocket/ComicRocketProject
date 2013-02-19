@@ -34,7 +34,7 @@ def fillNode(response, comicNum, nodeNum=None, parentNum=None):        #comicID 
 def handleError(e):
     #print e.code()
     print e.read()
-    errorNotification(e)
+    #errorNotification(e)
     
 """ fetchWeb(url:string, imgs:boolean=None, comicID:int=None)
 fetches requested URL from web, parses it and returns it in a PageTree object.

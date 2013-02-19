@@ -5,6 +5,7 @@ import time
 from LunarModule.pageTree import PageTree
 from LunarModule.pageNode import PageNode
 from Predictor import Predictor
+import Scheduler
 
 cacheLoc = "../../Cache/"
 
@@ -25,7 +26,7 @@ class Cache:
         except IOError: #if an error occurs the file does not yet exist, which means this is a new page
             self.storeInLast3(pageTree.getComicId(0), pageTree.getUrl(0))
             self.storeInHistoryList(directory, pageTree.getUrl(0))
-            #Predictor.update((time.gmtime().tm_wday, time.gmtime().tm_hour), pageTree.getComicId(0))
+            Scheduler.predUpdate(pageTree.getComicId(0))
         try:
             with open(os.path.join(directory,"pageTreeData.txt"), 'w+') as f:
                 f.writelines(pageTree.getPageTreeData())
@@ -99,7 +100,7 @@ class Cache:
         try:
             os.makedirs(directory)
             defaultPredData(comicId)
-            Predictor.scanDirectory(comicId)
+            Scheduler.predScanDir(comicId)
         except OSError:
             pass #if an error is thrown it means the directory already exists
         try:
