@@ -58,7 +58,7 @@ def getLatest(host):
     return latest
 
 def httpRequest(host, url, comicId):
-    conn = httplib.HTTPConnection(host, 81)
+    conn = HTTPConnection(host, 81)
     conn.request("GET", url, headers = comicId)
     r1 = conn.getresponse()
 
