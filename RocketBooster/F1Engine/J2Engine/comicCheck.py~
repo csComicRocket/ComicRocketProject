@@ -25,7 +25,7 @@ def newComic(comicURLs):
             storeCache(webObject)
             lastChange = url
     if lastChange:
-        notification("New: " + lastChange)
+        notification(lastChange)
     return None
 
 def histComic(comicURL):
@@ -34,5 +34,5 @@ def histComic(comicURL):
     cacheObject = fetchCache(comicURL,None)
     if compare(webObject.getHash(),cacheObject.getHash()) == False:
         storeCache(webObject)
-        notification("Hist: " + comicURL)
+        #notification(comicURL)
     return None

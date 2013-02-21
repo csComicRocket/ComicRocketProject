@@ -110,7 +110,7 @@ def scheduler():
         if not urlList:
             time.sleep(5)
         for url in urlList:
-            F1Engine.J2Engine.comicCheck.histComic(url)
+            F1Engine.J2Engine.comicCheck.comicCheck(url)
         
 def hourlyEvents():
     global histComics   

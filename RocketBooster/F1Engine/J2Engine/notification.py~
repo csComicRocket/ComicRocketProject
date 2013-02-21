@@ -8,7 +8,7 @@ def notification(msg):
     """ Sends a notification that a change has been found using rabbitmq, also maintains a list of recent url's/timestamps"""
         # opens the list, stores all but the last entry, overwrites the list with the new entry, appends with the old list
         # not totally safe might use a temp file
-    """f = open("notification_list",'r')
+    f = open("notification_list",'r')
         #grabs all but the last line (deleting the last line)
     for i in range(999):
                 old += f.readline()
@@ -18,7 +18,7 @@ def notification(msg):
         f.close()
         f = open("notification_list",'a')
         f.write(old)
-        f.close()"""
+        f.close()
         
     logging.basicConfig()
     connection = pika.BlockingConnection(pika.ConnectionParameters(

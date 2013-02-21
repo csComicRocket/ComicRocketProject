@@ -41,8 +41,8 @@ class Cache:
         #Split a url and make it into a directory name.
         if url.endswith("//") or not "/" in url:
             return cacheLoc + "cacheInfo/default/", "default"
-        if "://" in url:
-            directory = url.split("://")[1]
+        if "//" in url:
+            directory = url.split("//")[1]
         directory = directory.rpartition('/')
         if directory[2] == "":
             directory = directory[0].rpartition('/')

@@ -76,7 +76,7 @@ if __name__ == "__main__":
     try:
         notifications()
     except KeyboardInterrupt:
-        t.join()
         sys.exit()
+    t.join()
     
     
