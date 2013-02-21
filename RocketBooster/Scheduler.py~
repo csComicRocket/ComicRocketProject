@@ -96,6 +96,9 @@ class HistoryList:
             self.insertComic(self.waiting.pop(0))
         return
 
+running = True
+hourlyTimer = None
+
 def scheduler():
     """Checks the new comics expected in each hour block and the archived comics"""
     print "scheduler running"
@@ -105,12 +108,15 @@ def scheduler():
     currentTime = time.gmtime().tm_wday, time.gmtime().tm_hour
     t = threading.Timer(Predictor.scaledSeconds(), hourlyEvents)
     t.start()
-    while (True):
+    while (running):
         urlList = histComics.getComic()
         if not urlList:
-            time.sleep(5)
+            time.sleep(2)
         for url in urlList:
-            F1Engine.J2Engine.comicCheck.comicCheck(url)
+            F1Engine.J2Engine.comicCheck.histComic(url)
+    print "Scheduler Terminating... "
+    t.cancel()
+    print "Terminated"
         
 def hourlyEvents():
     global histComics   

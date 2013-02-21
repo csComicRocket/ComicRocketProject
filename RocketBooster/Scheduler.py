@@ -96,24 +96,32 @@ class HistoryList:
             self.insertComic(self.waiting.pop(0))
         return
 
+running = True
+hourlyTimer = None
+
 def scheduler():
     """Checks the new comics expected in each hour block and the archived comics"""
     print "scheduler running"
     global histComics
     global predComics
+    global hourlyTimer
     predComics.scanDirectories()
     currentTime = time.gmtime().tm_wday, time.gmtime().tm_hour
-    t = threading.Timer(Predictor.scaledSeconds(), hourlyEvents)
-    t.start()
-    while (True):
+    hourlyTimer = threading.Timer(Predictor.scaledSeconds(), hourlyEvents)
+    hourlyTimer.start()
+    while (running):
         urlList = histComics.getComic()
         if not urlList:
-            time.sleep(5)
+            time.sleep(2)
         for url in urlList:
             F1Engine.J2Engine.comicCheck.histComic(url)
+    print "Scheduler Terminating... "
+    hourlyTimer.cancel()
+    print "Terminated"
         
 def hourlyEvents():
     global histComics   
+    global hourlyTimer
     print "hourly events running"
     currentTime = time.gmtime().tm_wday, time.gmtime().tm_hour
     histComics.recoverWaiting()
@@ -124,8 +132,8 @@ def hourlyEvents():
             for line in f:
                 urls.append(line.strip())
         F1Engine.J2Engine.comicCheck.newComic(urls)
-    t = threading.Timer(Predictor.scaledSeconds(), hourlyEvents)
-    t.start()
+    hourlyTimer = threading.Timer(Predictor.scaledSeconds(), hourlyEvents)
+    hourlyTimer.start()
 
 def predUpdate(comicId):
     predComics.update(Predictor.scaledTime(), comicId)
