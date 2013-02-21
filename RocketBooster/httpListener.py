@@ -54,7 +54,7 @@ def runListener():
 		HttpServer = BaseHTTPServer.HTTPServer(('',81), HTTPListener)
 		print('starting HTTPListener...')
 		#HttpServer.serve_forever(.5)
-        while (running):
+        while running:
             HttpServer.handle_request()
 	except KeyboardInterrupt:
 		print('^C received, shutting down...')

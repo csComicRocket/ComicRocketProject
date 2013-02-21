@@ -9,8 +9,6 @@ import SocketServer
 import BaseHTTPServer
 import sys
 
-running = True
-
 class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
 	""" Waits for HTTP requests in a loop on separate thread 
 		GETS requies special ComicID header specifying comic number
@@ -49,11 +47,15 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			_url += _path
 			return url
 	
+running = True
+
 def runListener():
 	try:
 		HttpServer = BaseHTTPServer.HTTPServer(('',81), HTTPListener)
 		print('starting HTTPListener...')
-		HttpServer.serve_forever(.5)
+		#HttpServer.serve_forever(.5)
+        while running:
+            HttpServer.handle_request()
 	except KeyboardInterrupt:
 		print('^C received, shutting down...')
 		HttpServer.socket.close(self)
