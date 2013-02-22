@@ -295,6 +295,16 @@ class Predictor:
 		__predictorData.setSchedule(calculateScheduleDHL(dayHourList))
 		self.saveComic(comicId)
 
+	def lockComic(comicId):
+		self.loadComic(comicId)
+		self.__predictorData.Lock()
+		self.saveComic(comicId)
+
+	def unLockComic(comicId):
+		self.loadComic(comicId)
+		self.__predictorData.Unlock()
+		self.saveComic(comicId)
+
 
 	#
 	# PredictorList
