@@ -300,7 +300,7 @@ class Predictor:
 		self.__predictorData.Lock()
 		self.saveComic(comicId)
 
-	def unLockComic(comicId):
+	def unlockComic(comicId):
 		self.loadComic(comicId)
 		self.__predictorData.Unlock()
 		self.saveComic(comicId)
