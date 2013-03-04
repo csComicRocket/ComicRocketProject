@@ -15,8 +15,9 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
         POSTS require crFunction header specifying action"""
     def do_GET(self):
         try:
+            comicID  = self.headers['comicID']
             url = self.parseUrl()
-            tree = F1Engine.fetchHTTP.fetchHTTP(url)
+            tree = F1Engine.fetchHTTP.fetchHTTP(url, comicID)
             
         except Exception as e:
             print(e)
@@ -24,8 +25,8 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
             
     def do_POST(self):
         try:
-            crFn = self.headers['crFunction'].split(':')[0]
-            comicID  = self.headers['comicID'].split(':')[0]
+            crFn = self.headers['crFunction']
+            comicID  = self.headers['comicID']
             
             if(crFn == 'resetPredData'):
                 resetPredData(comicID)
