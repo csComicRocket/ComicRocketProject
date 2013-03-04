@@ -43,6 +43,8 @@ class Cache:
             return cacheLoc + "cacheInfo/default/", "default"
         if "://" in url:
             directory = url.split("://")[1]
+        else:
+            directory = url
         directory = directory.rpartition('/')
         if directory[2] == "":
             directory = directory[0].rpartition('/')
