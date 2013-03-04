@@ -295,6 +295,16 @@ class Predictor:
 		__predictorData.setSchedule(calculateScheduleDHL(dayHourList))
 		self.saveComic(comicId)
 
+	def lockComic(comicId):
+		self.loadComic(comicId)
+		self.__predictorData.Lock()
+		self.saveComic(comicId)
+
+	def unlockComic(comicId):
+		self.loadComic(comicId)
+		self.__predictorData.Unlock()
+		self.saveComic(comicId)
+
 
 	#
 	# PredictorList
@@ -833,7 +843,7 @@ def scaledTime():
 def scaledSeconds():
     #return (60-time.gmtime().tm_min)*60
     epoch = time.strptime("2013-02-21 11:30:00", "%Y-%m-%d %H:%M:%S")
-    timeInSec = time.mktime(time.gm_time()) - time.mktime(epoch)
+    timeInSec = time.mktime(time.gmtime()) - time.mktime(epoch)
     return 75 - (timeInSec % 75)
 
 if __name__ == "__main__":

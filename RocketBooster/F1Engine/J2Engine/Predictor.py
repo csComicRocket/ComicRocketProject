@@ -834,7 +834,7 @@ def scaledTime():
     Uncomment the first line to remove the time scaling."""
     #return (time.gmtime().tm_wday, time.gmtime().tm_hour)
     epoch = time.strptime("2013-02-21 11:30:00", "%Y-%m-%d %H:%M:%S")
-    timeInSec = time.mktime(time.gm_time()) - time.mktime(epoch)
+    timeInSec = time.mktime(time.gmtime()) - time.mktime(epoch)
     hourSince = timeInSec / 75
     day = hourSince / 24 % 7
     hour = hourSince % 24
@@ -843,7 +843,7 @@ def scaledTime():
 def scaledSeconds():
     #return (60-time.gmtime().tm_min)*60
     epoch = time.strptime("2013-02-21 11:30:00", "%Y-%m-%d %H:%M:%S")
-    timeInSec = time.mktime(time.gm_time()) - time.mktime(epoch)
+    timeInSec = time.mktime(time.gmtime()) - time.mktime(epoch)
     return 75 - (timeInSec % 75)
 
 if __name__ == "__main__":
