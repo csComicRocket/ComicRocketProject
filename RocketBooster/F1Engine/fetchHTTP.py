@@ -6,8 +6,7 @@ def fetchHTTP(url, comicID, imgs=None):
     """ Checks cache for URL, if none, call fetchWeb. Returns PageTree"""
     cache = Cache()
     pt = cache.fetchCache(url)
-    if pt:
-        print "ITEM NOT IN CACHE"
+    if not pt:
         pt = fetchWeb.fetchWeb(url, comicID)
         cache.storeCache(pt)
     return pt
