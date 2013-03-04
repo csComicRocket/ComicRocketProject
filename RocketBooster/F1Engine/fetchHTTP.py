@@ -7,6 +7,7 @@ def fetchHTTP(url, comicID, imgs=None):
     cache = Cache()
     pt = cache.fetchCache(url)
     if pt:
+        print "ITEM NOT IN CACHE"
         pt = fetchWeb.fetchWeb(url, comicID)
         cache.storeCache(pt)
     return pt

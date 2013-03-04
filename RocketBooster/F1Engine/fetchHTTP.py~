@@ -7,7 +7,9 @@ def fetchHTTP(url, comicID, imgs=None):
     cache = Cache()
     pt = cache.fetchCache(url)
     if pt:
+        print "stuff is happening"
         pt = fetchWeb.fetchWeb(url, comicID)
+        cache.storeCache(pt)
     return pt
 
 if __name__ == "main":
