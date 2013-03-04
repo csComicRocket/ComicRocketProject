@@ -7,7 +7,8 @@ from LunarModule.pageNode import PageNode
 from Predictor import Predictor
 import Scheduler
 
-cacheLoc = "../../Cache/"
+cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+cacheLoc = os.path.join(cwd, "../../Cache/")
 
 class Cache:
 
