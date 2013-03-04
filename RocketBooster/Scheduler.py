@@ -3,7 +3,7 @@
 import time
 import os, sys
 import threading
-import Predictor
+import F1Engine.J2Engine.Predictor
 import F1Engine.J2Engine.comicCheck
 
 SITELIMIT = 20
@@ -132,11 +132,11 @@ def hourlyEvents():
             for line in f:
                 urls.append(line.strip())
         F1Engine.J2Engine.comicCheck.newComic(urls)
-    hourlyTimer = threading.Timer(Predictor.scaledSeconds(), hourlyEvents)
+    hourlyTimer = threading.Timer(F1Engine.J2Engine.Predictor.scaledSeconds(), hourlyEvents)
     hourlyTimer.start()
 
 def predUpdate(comicId):
-    predComics.update(Predictor.scaledTime(), comicId)
+    predComics.update(F1Engine.J2Engine.Predictor.scaledTime(), comicId)
     
 def predScanDir(comicId):
     predComics.scanDirectory(comicId)
@@ -146,8 +146,8 @@ def runTests():
 
 if __name__ == "__main__":
     histComics = HistoryList(os.listdir('Cache/cacheInfo/'))
-    predComics = Predictor.Predictor()
+    predComics = F1Engine.J2Engine.Predictor.Predictor()
     runTests()
 else:
     histComics = HistoryList(os.listdir('Cache/cacheInfo/'))
-    predComics = Predictor.Predictor()
+    predComics = F1Engine.J2Engine.Predictor.Predictor()
