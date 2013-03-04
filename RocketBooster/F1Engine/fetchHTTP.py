@@ -7,7 +7,7 @@ def fetchHTTP(url, comicID, imgs=None):
     cache = Cache()
     pt = cache.fetchCache(url)
     if not pt:
-        pt = fetchWeb.fetchWeb(url, comicID)
+        pt = J2Engine.fetchWeb.fetchWeb(url, comicID)
         cache.storeCache(pt)
     return pt
 
