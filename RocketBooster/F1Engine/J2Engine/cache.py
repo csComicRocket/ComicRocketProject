@@ -1,4 +1,4 @@
-import os
+import os, inspect
 import shutil
 import time
 
