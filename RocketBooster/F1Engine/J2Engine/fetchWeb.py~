@@ -53,6 +53,7 @@ def fetchWeb(url, comicID, imgs=None):
         
     soup = BeautifulSoup(rsp.read())
         
+        
     for a in soup.findAll('a',href=True):            #Process links
         nodeID += 1
         try:                                        # if Success
