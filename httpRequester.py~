@@ -65,7 +65,7 @@ def getLatest(host):
 def httpRequest(host, url, comicId):
     conn = HTTPConnection(host, 81)
     conn.request("GET", url, headers = {"comicID" : comicId})
-    r1 = conn.getresponse()
+    #r1 = conn.getresponse()
 
 def getCaughtUp():
     hosts = getComicId(None)

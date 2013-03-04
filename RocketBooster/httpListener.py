@@ -43,9 +43,10 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.send_error(500, 'Internal Server Error: Failed POST')
 
     def parseUrl(self):
-            _host = self.headers['Host']
+            _host = self.headers['Host'].split(':')[0]
             _path = self.path
-            _url = _host + _path
+            _url = ''.join(_host)
+            _url += _path
             return _url
     
 running = True

@@ -22,9 +22,9 @@ def notifications():
     channel.start_consuming()
 
 def parseUrl(url):
-    url = url.split("://")[1]
-    host = url.partition('/')[0]
-    url = url.partition('/')[1] + url.partition('/')[2]
+    urlPieces = url.split("://")
+    host = urlPieces[0] + "://" + urlPieces[1].partition('/')[0]
+    url = urlPieces[1].partition('/')[1] + urlPieces[1].partition('/')[2]
     return (host, url)
 
 def handleMessage(msg):    
