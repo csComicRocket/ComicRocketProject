@@ -43,7 +43,7 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def parseUrl(self):
             _host = self.headers['Host'].split(':')[0]
             _path = self.path
-            _url = ''.join(self.host)
+            _url = ''.join(_host)
             _url += _path
             return url
     
