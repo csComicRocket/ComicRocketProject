@@ -45,7 +45,7 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
             _path = self.path
             _url = ''.join(_host)
             _url += _path
-            return url
+            return _url
     
 running = True
 
