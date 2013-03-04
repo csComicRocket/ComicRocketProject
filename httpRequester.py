@@ -35,7 +35,12 @@ def handleMessage(msg):
     if len(latest) == 0:
         global missed
         missed += 1
+        with open("missed.txt", 'a+') as f:
+            f.write("missed: " + msg)
         print "Bad Notification:", missed
+    elif len(latest) > 1:
+        with open("missed.txt", 'a+') as f:
+            f.write("extra: " + msg)
     for l in latest:
         url = parseUrl(l)
         httpRequest(url[0], url[1], comicId)
