@@ -1,7 +1,7 @@
 #Daniel Leblanc
 
 import time
-import os, sys
+import os, sys, inspect
 import threading
 import F1Engine.J2Engine.Predictor
 import F1Engine.J2Engine.comicCheck
@@ -66,7 +66,7 @@ class HistoryList:
     def __init__(self, directories):
         self.comics = []
         for comic in directories:
-            directory = 'Cache/cacheInfo/' + comic + '/'
+            directory = cwd + '/Cache/cacheInfo/' + comic + '/'
             self.insertComic(ComicList(directory))
         self.waiting = []
 		
@@ -126,7 +126,7 @@ def hourlyEvents():
     currentTime = time.gmtime().tm_wday, time.gmtime().tm_hour
     histComics.recoverWaiting()
     for comicId in predComics.getHourList(currentTime):
-        directory = "Cache/predictorInfo/" + str(comicId) + "/last3Pages.txt"
+        directory = cwd + "/Cache/predictorInfo/" + str(comicId) + "/last3Pages.txt"
         urls = []
         with open(directory) as f:
             for line in f:
@@ -144,11 +144,12 @@ def predScanDir(comicId):
 def runTests():
     pass
 
+cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    
 if __name__ == "__main__":
-    histComics = HistoryList(os.listdir('Cache/cacheInfo/'))
+    histComics = HistoryList(os.listdir(cwd + '/Cache/cacheInfo/'))
     predComics = F1Engine.J2Engine.Predictor.Predictor()
     runTests()
 else:
-    print(os.listdir('.'))
-    histComics = HistoryList(os.listdir('Cache/cacheInfo/'))
+    histComics = HistoryList(os.listdir(cwd + '/Cache/cacheInfo/'))
     predComics = F1Engine.J2Engine.Predictor.Predictor()
