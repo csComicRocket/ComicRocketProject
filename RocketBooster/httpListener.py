@@ -15,8 +15,8 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
         POSTS require crFunction header specifying action"""
     def do_GET(self):
         try:
-            url = parseUrl()
-            tree = fetchHTTP(url)
+            url = self.parseUrl()
+            tree = F1Engine.fetchHTTP.fetchHTTP(url)
             
         except Exception as e:
             print(e)

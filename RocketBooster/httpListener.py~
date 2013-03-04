@@ -55,7 +55,7 @@ def runListener():
         print('starting HTTPListener...')
         #HttpServer.serve_forever(.5)
         while running:
-            HttpServer.timeout() = 2
+            HttpServer.timeout = 2
             HttpServer.handle_request()
     except KeyboardInterrupt:
         print('^C received, shutting down...')
