@@ -149,5 +149,6 @@ if __name__ == "__main__":
     predComics = F1Engine.J2Engine.Predictor.Predictor()
     runTests()
 else:
+    print(os.listdir('.'))
     histComics = HistoryList(os.listdir('Cache/cacheInfo/'))
     predComics = F1Engine.J2Engine.Predictor.Predictor()

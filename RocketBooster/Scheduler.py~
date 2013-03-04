@@ -107,7 +107,7 @@ def scheduler():
     global hourlyTimer
     predComics.scanDirectories()
     currentTime = time.gmtime().tm_wday, time.gmtime().tm_hour
-    hourlyTimer = threading.Timer(Predictor.scaledSeconds(), hourlyEvents)
+    hourlyTimer = threading.Timer(F1Engine.J2Engine.Predictor.scaledSeconds(), hourlyEvents)
     hourlyTimer.start()
     while (running):
         urlList = histComics.getComic()
