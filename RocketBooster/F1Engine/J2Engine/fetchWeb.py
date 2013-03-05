@@ -13,28 +13,35 @@ from bs4 import BeautifulSoup
 """ fillNode(response:urllib.response, comicNum:int, nodeNum:int, parentNum:int)
     Takes a non-error response, parses the content and puts it into and adds a node
     to the pageTree object """
-def fillNode(url, tree, rsp, comicNum, nodeNum=None, parentNum=None):        #comicID argument
+def fillNode(tree, rsp, comicNum, nodeNum=None, parentNum=None):        #comicID argument
     pageStr    = rsp.read()
     headerDict = rsp.info()
-    soup = BeautifulSoup(pageStr)
+    url = rsp.geturl()
     
     contentType = headerDict["Content-Type"]
     rspDate     = headerDict["Date"]
-    mimeType    = None #headerDict["MIME-Version"]    #MIME and contentType appear to be the same thing
+    #mimeType    = headerDict["MIME-Version"]    #MIME and contentType appear to be the same thing
     
     tree.createPageNode(url, nodeNum, parentNum, _WEB, pageStr, contentType, rspDate)
-    tree.setComicId(nodeNum, comicNum)
-    if mimeType == None:                            #MIME and ContentType are interchangeable
-        tree.setMimeType(0, contentType)
-    else:
-        tree.setMimeType(0, mimeType)
+    tree.setComicId(comicNum)
+    
+    #if mimeType is None:                            #MIME and ContentType are interchangeable
+    #    tree.setMimeType(0, contentType)
+    #else:
+    #    tree.setMimeType(0, mimeType)
     #tree.setAuthorTS()
     #tree.setHash()
+    
+def headReq(url):
+    req = urllib2.Request(url)
+    req.get_method = lambda : 'HEAD'
+    
+    rsp = urllib2.urlopen(req)
+    return rsp
 
 def handleError(e):
     #print e.code()
-    pass
-    #print e.read()
+    print e.read()
     #errorNotification(e)
     
 """ fetchWeb(url:string, imgs:boolean=None, comicID:int=None)
@@ -44,21 +51,22 @@ imgs is a boolean that specifies whether to retrieve the whole image or just hea
 def fetchWeb(url, comicID, imgs=None):
 
     try:
-        rsp  = urllib2.urlopen(url) 
-        tree   = LunarModule.pageTree.PageTree()
-        nodeID = 0                                       
-        fillNode(url, tree, rsp, comicID, nodeID, None)            # Fill root node # !!!comicID argument!!!
+        tree   = LunarModule.pageTree.PageTree(url)
+        nodeID = 0                                 
+        
+        rsp  = urllib2.urlopen(url)                      # GET request to fill root
+        fillNode(tree, rsp, comicID, nodeID, None)       # Fill root node
         soup = BeautifulSoup(rsp.read())
         
         for a in soup.findAll('a',href=True):            #Process links
             nodeID += 1
-            rsp = urllib2.urlopen(a)
-            fillNode(url, tree, rsp, comicID, nodeID, 0)        
+            rsp = headReq(a)
+            fillNode(tree, rsp, comicID, nodeID, 0)        
                 
         for b in soup.findAll('img',href=True):            #Process Imgs
             nodeID += 1
-            rsp = urllib2.urlopen(b)
-            fillNode(url, tree, rsp, comicID, nodeID, 0)
+            rsp = headReq(b)
+            fillNode(tree, rsp, comicID, nodeID, 0)
 
         return tree
 
