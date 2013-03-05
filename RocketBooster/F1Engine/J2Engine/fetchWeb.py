@@ -48,10 +48,9 @@ def fetchWeb(url, comicID, imgs=None):
     try:
         rsp  = urllib2.urlopen(url)                                        
         fillNode(rsp, comicID, nodeID, None)            # Fill root node # !!!comicID argument!!!
+        soup = BeautifulSoup(rsp.read())
     except urllib2.HTTPError, e:
         handleError(e)
-        
-    soup = BeautifulSoup(rsp.read())
         
     for a in soup.findAll('a',href=True):            #Process links
         nodeID += 1
