@@ -759,6 +759,9 @@ class Predictor:
 		self.update(scaleTime(), comicId)
 		self.loadComic(comicId)
 
+        if self.__predictorData == None:
+            print "Line 763 (NONE)"
+
 		t_res = not (self.__predictorData.isWeeding() or self.__predictorData.isLocked())
 		t.append(( t_fname, t_num, t_res ))
 
