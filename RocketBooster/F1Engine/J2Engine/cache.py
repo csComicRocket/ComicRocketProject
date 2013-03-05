@@ -130,7 +130,7 @@ class Cache:
                 pass
         except IOError:
             with open(os.path.join(directory, "historyData.txt"), 'a+') as f:
-                f.write(time.strftime(time.gmtime(), "%Y-%m-%d %H:%M:%S") + '\n')
+                f.write(time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()) + '\n')
                 f.write('0')
         with open(os.path.join(directory, "historyList.txt"), 'a+') as f:
             f.write(url + '\n')
