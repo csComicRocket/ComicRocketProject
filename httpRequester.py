@@ -5,6 +5,7 @@ from RocketBooster.F1Engine.J2Engine import globalVars
 import logging
 import sys
 from threading import Thread
+import time
 
 missed = 0
 
@@ -22,9 +23,9 @@ def notifications():
     channel.start_consuming()
 
 def parseUrl(url):
-    url = url.split("://")[1]
-    host = url.partition('/')[0]
-    url = url.partition('/')[1] + url.partition('/')[2]
+    urlPieces = url.split("://")
+    host = urlPieces[1].partition('/')[0]
+    url = urlPieces[1].partition('/')[1] + urlPieces[1].partition('/')[2]
     return (host, url)
 
 def handleMessage(msg):    
@@ -35,7 +36,12 @@ def handleMessage(msg):
     if len(latest) == 0:
         global missed
         missed += 1
+        with open("missed.txt", 'a+') as f:
+            f.write("missed: " + msg)
         print "Bad Notification:", missed
+    elif len(latest) > 1:
+        with open("missed.txt", 'a+') as f:
+            f.write("extra: " + msg)
     for l in latest:
         url = parseUrl(l)
         httpRequest(url[0], url[1], comicId)
@@ -59,8 +65,8 @@ def getLatest(host):
 
 def httpRequest(host, url, comicId):
     conn = HTTPConnection(host, 81)
-    conn.request("GET", url, headers = List(str(comicId)))
-    r1 = conn.getresponse()
+    conn.request("GET", url, headers = {"comicID" : comicId})
+    #r1 = conn.getresponse()
 
 def getCaughtUp():
     hosts = getComicId(None)
@@ -69,6 +75,7 @@ def getCaughtUp():
         for l in latest:
             url = parseUrl(l)
             httpRequest(url[0], url[1], hosts[h])
+            time.sleep(5)
 
 if __name__ == "__main__":
     t = Thread(target=getCaughtUp(), args=())

@@ -1,4 +1,4 @@
-import os
+import os, inspect
 import shutil
 import time
 
@@ -7,7 +7,8 @@ from LunarModule.pageNode import PageNode
 from Predictor import Predictor
 import Scheduler
 
-cacheLoc = "../../Cache/"
+cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+cacheLoc = os.path.join(cwd, "../../Cache/")
 
 class Cache:
 
@@ -43,6 +44,8 @@ class Cache:
             return cacheLoc + "cacheInfo/default/", "default"
         if "://" in url:
             directory = url.split("://")[1]
+        else:
+            directory = url
         directory = directory.rpartition('/')
         if directory[2] == "":
             directory = directory[0].rpartition('/')

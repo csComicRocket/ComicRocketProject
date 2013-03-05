@@ -2,6 +2,7 @@ import Scheduler
 import httpListener
 from threading import Thread
 import sys
+import time
 
 if __name__ == "__main__":
     try:
@@ -9,7 +10,11 @@ if __name__ == "__main__":
         listener.start()
         schedule = Thread(target=Scheduler.scheduler, args=())
         schedule.start()
+        while True:
+            time.sleep(100)
     except KeyboardInterrupt:
+        print "I wonder if the rest of this will work."
+    finally:
         print "Terminating Processes..."
         httpListener.running = False
         Scheduler.running = False
