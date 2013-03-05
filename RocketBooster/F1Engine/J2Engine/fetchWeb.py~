@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 """ fillNode(response:urllib.response, comicNum:int, nodeNum:int, parentNum:int)
     Takes a non-error response, parses the content and puts it into and adds a node
     to the pageTree object """
-def fillNode(rsp, comicNum, nodeNum=None, parentNum=None):        #comicID argument
+def fillNode(tree, rsp, comicNum, nodeNum=None, parentNum=None):        #comicID argument
     pageStr    = rsp.read()
     headerDict = rsp.info()
     soup = BeautifulSoup(pageStr)
@@ -52,15 +52,15 @@ def fetchWeb(url, comicID, imgs=None):
         for a in soup.findAll('a',href=True):            #Process links
             nodeID += 1
             rsp = urllib2.urlopen(a)
-            fillNode(rsp, comicID, nodeID, 0)        
+            fillNode(tree, rsp, comicID, nodeID, 0)        
                 
         for b in soup.findAll('img',href=True):            #Process Imgs
             nodeID += 1
             rsp = urllib2.urlopen(b)
-            fillNode(rsp, comicID, nodeID, 0)
+            fillNode(tree, rsp, comicID, nodeID, 0)
+
+        return tree
 
     except urllib2.HTTPError as e:
         handleError(e)
-    
-    return tree
     
