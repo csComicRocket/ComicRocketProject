@@ -248,6 +248,9 @@ class Predictor:
 			# Stop weeding?
 			stopWeeding = False
 
+            if self.__predictorData == None:
+                print "Line 252 (NONE)"
+
 			if (self.__predictorData.isWeeding()):
 				tgm = time.gmtime()
 				sec = time.mktime(time.strptime(str(tgm.tm_year) +' '+ str(tgm.tm_mon) +' '+ str(tgm.tm_mday) +' '+ str(tgm.tm_hour), '%Y %m %d %H'))
@@ -755,6 +758,9 @@ class Predictor:
 
 		self.update(scaleTime(), comicId)
 		self.loadComic(comicId)
+
+        if self.__predictorData == None:
+            print "Line 763 (NONE)"
 
 		t_res = not (self.__predictorData.isWeeding() or self.__predictorData.isLocked())
 		t.append(( t_fname, t_num, t_res ))
