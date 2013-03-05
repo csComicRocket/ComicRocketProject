@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 """ fillNode(response:urllib.response, comicNum:int, nodeNum:int, parentNum:int)
     Takes a non-error response, parses the content and puts it into and adds a node
     to the pageTree object """
-def fillNode(response, comicNum, nodeNum=None, parentNum=None):        #comicID argument
+def fillNode(rsp, comicNum, nodeNum=None, parentNum=None):        #comicID argument
     pageStr    = rsp.read()
     headerDict = rsp.info()
     soup = BeautifulSoup(pageStr)

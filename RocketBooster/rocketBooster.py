@@ -12,7 +12,8 @@ if __name__ == "__main__":
         schedule.start()
         while True:
             time.sleep(100)
-    except KeyboardInterrupt:
+#    except KeyboardInterrupt:
+    finally:
         print "Terminating Processes..."
         httpListener.running = False
         Scheduler.running = False

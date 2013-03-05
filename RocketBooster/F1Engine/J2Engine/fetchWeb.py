@@ -59,7 +59,8 @@ def fetchWeb(url, comicID, imgs=None):
             nodeID += 1
             rsp = urllib2.urlopen(b)
             fillNode(rsp, comicID, nodeID, 0)
-    except urllib2.HTTPError, e:
+
+    except urllib2.HTTPError as e:
         handleError(e)
     
     return tree
