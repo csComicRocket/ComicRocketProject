@@ -48,26 +48,19 @@ def fetchWeb(url, comicID, imgs=None):
     try:
         rsp  = urllib2.urlopen(url)                                        
         fillNode(rsp, comicID, nodeID, None)            # Fill root node # !!!comicID argument!!!
-    except urllib2.HTTPError, e:
-        handleError(e)
+        soup = BeautifulSoup(rsp.read())
         
-    soup = BeautifulSoup(rsp.read())
-        
-    for a in soup.findAll('a',href=True):            #Process links
-        nodeID += 1
-        try:                                        # if Success
+        for a in soup.findAll('a',href=True):            #Process links
+            nodeID += 1
             rsp = urllib2.urlopen(a)
             fillNode(rsp, comicID, nodeID, 0)        
-        except urllib2.HTTPError, e:            # if Failure
-            handleError(e)
-            
-    for b in soup.findAll('img',href=True):            #Process Imgs
-        nodeID += 1
-        try:
+                
+        for b in soup.findAll('img',href=True):            #Process Imgs
+            nodeID += 1
             rsp = urllib2.urlopen(b)
             fillNode(rsp, comicID, nodeID, 0)
-        except urllib2.HTTPError, e:
-            handleError(e)
+    except urllib2.HTTPError, e:
+        handleError(e)
     
     return tree
     

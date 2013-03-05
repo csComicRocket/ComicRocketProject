@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 """ fillNode(response:urllib.response, comicNum:int, nodeNum:int, parentNum:int)
     Takes a non-error response, parses the content and puts it into and adds a node
     to the pageTree object """
-def fillNode(response, comicNum, nodeNum=None, parentNum=None):        #comicID argument
+def fillNode(rsp, comicNum, nodeNum=None, parentNum=None):        #comicID argument
     pageStr    = rsp.read()
     headerDict = rsp.info()
     soup = BeautifulSoup(pageStr)
@@ -49,24 +49,18 @@ def fetchWeb(url, comicID, imgs=None):
         rsp  = urllib2.urlopen(url)                                        
         fillNode(rsp, comicID, nodeID, None)            # Fill root node # !!!comicID argument!!!
         soup = BeautifulSoup(rsp.read())
-    except urllib2.HTTPError, e:
-        handleError(e)
         
-    for a in soup.findAll('a',href=True):            #Process links
-        nodeID += 1
-        try:                                        # if Success
+        for a in soup.findAll('a',href=True):            #Process links
+            nodeID += 1
             rsp = urllib2.urlopen(a)
             fillNode(rsp, comicID, nodeID, 0)        
-        except urllib2.HTTPError, e:            # if Failure
-            handleError(e)
-            
-    for b in soup.findAll('img',href=True):            #Process Imgs
-        nodeID += 1
-        try:
+                
+        for b in soup.findAll('img',href=True):            #Process Imgs
+            nodeID += 1
             rsp = urllib2.urlopen(b)
             fillNode(rsp, comicID, nodeID, 0)
-        except urllib2.HTTPError, e:
-            handleError(e)
+    except urllib2.HTTPError, e:
+        handleError(e)
     
     return tree
     
