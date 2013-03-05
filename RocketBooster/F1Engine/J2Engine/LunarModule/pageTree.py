@@ -165,8 +165,8 @@ class PageTree:
     """PageTree.setHash(nodeId, hash) sets the hash of node nodeId."""
     def setHash(self, nodeId, hash):
         self.nodes[self.getIndex(nodeId)].setHash(hash)
-    """PageTree.getHash(nodeId) returns the hash of node nodeId."""
-    def getHash(self, nodeId):
+    """PageTree.getHash(nodeId=0) returns the hash of node nodeId."""
+    def getHash(self, nodeId=0):
         return self.nodes[self.getIndex(nodeId)].getHash()
 
     """PageTree.setAuthorTS(nodeId, authorTS) sets the authorTimeStamp. AuthorTimeStamp should not be a list."""
