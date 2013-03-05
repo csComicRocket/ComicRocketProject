@@ -1,7 +1,7 @@
 # Lucas Berge 2013
 
 import LunarModule.pageTree
-import errorNotification
+#import errorNotification
 #import urllib.request
 #import urllib.error
 import urllib2
@@ -31,6 +31,7 @@ def fillNode(tree, rsp, comicNum, nodeNum=None, parentNum=None):        #comicID
     #    tree.setMimeType(0, mimeType)
     #tree.setAuthorTS()
     #tree.setHash()
+    return tree
     
 def headReq(url):
     req = urllib2.Request(url)
@@ -51,11 +52,11 @@ imgs is a boolean that specifies whether to retrieve the whole image or just hea
 def fetchWeb(url, comicID, imgs=None):
 
     try:
-        tree   = LunarModule.pageTree.PageTree(url)
+        tree   = LunarModule.pageTree.PageTree(None)
         nodeID = 0                                 
         
         rsp  = urllib2.urlopen(url)                      # GET request to fill root
-        fillNode(tree, rsp, comicID, nodeID, None)       # Fill root node
+        tree = fillNode(tree, rsp, comicID, nodeID, None)       # Fill root node
         soup = BeautifulSoup(rsp.read())
         
         for a in soup.findAll('a',href=True):            #Process links
@@ -67,9 +68,11 @@ def fetchWeb(url, comicID, imgs=None):
             nodeID += 1
             rsp = headReq(b)
             fillNode(tree, rsp, comicID, nodeID, 0)
-
         return tree
 
     except urllib2.HTTPError as e:
         handleError(e)
     
+if __name__ == "__main__":
+    testTree = fetchWeb("http://www.xkcd.com", 0)
+    pass
