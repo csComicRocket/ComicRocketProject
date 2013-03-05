@@ -347,6 +347,8 @@ class Predictor:
                     validComicId = False
                 if (validComicId):
                     self.loadComic(comicId)
+                    if self.__predictorData == None:
+                        print "is this the spot"
                     self.updatePredictorList(self.__predictorData.getSchedule(), comicId)
             break
 
