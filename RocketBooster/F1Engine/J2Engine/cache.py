@@ -22,9 +22,11 @@ class Cache:
             pass #if an error is thrown it means the directory already exists
         try:
             with open(os.path.join(directory, fName)) as f:
+                print "this should not have worked"
                 pass  #non race way to check to see if the file already exists
             self.revisionPush(pageTree, directory, fName)
         except IOError: #if an error occurs the file does not yet exist, which means this is a new page
+            print "A new file is found"
             self.storeInLast3(pageTree.getComicId(0), pageTree.getUrl(0))
             self.storeInHistoryList(directory, pageTree.getUrl(0))
             Scheduler.predUpdate(pageTree.getComicId(0))
