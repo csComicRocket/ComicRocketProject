@@ -124,42 +124,42 @@ class PageTree:
         self.nodes[self.getIndex(nodeId)].setContent(content, encodeType)
 
     """PageTree.getContent(nodeId) returns content of tree node nodeId."""
-    def getContent(self, nodeId):
+    def getContent(self, nodeId=0):
         return self.nodes[self.getIndex(nodeId)].getContent()
 
     """PageTree.setUrl(nodeId, url) changes the url of the node nodeId."""
     def setUrl(self, nodeId, url):
         self.nodes[self.getIndex(nodeId)].setUrl(url)
     """PageTree.getUrl(nodeId) returns the url of node nodeId."""
-    def getUrl(self, nodeId):
+    def getUrl(self, nodeId=0):
         return self.nodes[self.getIndex(nodeId)].getUrl()
 
     """PageTree.setComicId(nodeId, comicId) sets the comicId of node nodeId."""
     def setComicId(self, nodeId, comicId):
         self.nodes[self.getIndex(nodeId)].setComicId(comicId)
     """PageTree.getComicId(nodeId) returns the comicId of node nodeId."""
-    def getComicId(self, nodeId):
+    def getComicId(self, nodeId=0):
         return self.nodes[self.getIndex(nodeId)].getComicId()
 
     """PageTree.setSourceMode(nodeId, sourceMode) changes the sourceMode of node nodeId."""
     def setSourceMode(self, nodeId, sourceMode):
         self.nodes[self.getIndex(nodeId)].setSourceMode(sourceMode)
     """PageTree.getSourceMode(nodeId) returns the sourceMode of node nodeId."""
-    def getSourceMode(self, nodeId):
+    def getSourceMode(self, nodeId=0):
         return self.nodes[self.getIndex(nodeId)].getSourceMode()
 
     """PageTree.setEncodeType(nodeId, encodeType) sets the encodeType of node nodeId."""
     def setEncodeType(self, nodeId, encodeType):
         self.nodes[self.getIndex(nodeId)].setEncodeType(encodeType)
     """PageTree.getEncodeType(nodeId) returns the encodeType of node nodeId."""
-    def getEncodeType(self, nodeId):
+    def getEncodeType(self, nodeId=0):
         return self.nodes[self.getIndex(nodeId)].getEncodeType()
 
     """PageTree.setMimeType(nodeId, mimeType) sets the mimeType of node nodeId."""
     def setMimeType(self, nodeId, mimeType):
         self.nodes[self.getIndex(nodeId)].setMimeType(mimeType)
     """PageTree.getMimeType(nodeId) returns the mimeType of node nodeId."""
-    def getMimeType(self, nodeId):
+    def getMimeType(self, nodeId=0):
         return self.nodes[self.getIndex(nodeId)].getMimeType()
 
     """PageTree.setHash(nodeId, hash) sets the hash of node nodeId."""
@@ -174,7 +174,7 @@ class PageTree:
         self.nodes[self.getIndex(nodeId)].setAuthorTS(authorTS)
 
     """PageTree.getAuthorTS(nodeId) gets the authorTimeStamp from node nodeId."""
-    def getAuthorTS(self, nodeId):
+    def getAuthorTS(self, nodeId=0):
         return self.nodes[self.getIndex(nodeId)].getAuthorTS()
 
     """PageTree.setPullTS(nodeId, pullTS) sets the pullTimeStamp.
@@ -184,18 +184,18 @@ class PageTree:
         self.nodes[self.getIndex(nodeId)].setPullTS(pullTS)
 
     """PageTree.clearPullTS(nodeId) empties the timestamp list of node nodeId."""
-    def clearPullTS(self, nodeId):
+    def clearPullTS(self, nodeId=0):
         self.nodes[self.getIndex(nodeId)].clearPullTS()
 
     """PageTree.getPullTS(nodeId) returns list of pullTimeStamps of node nodeId."""
-    def getPullTS(self, nodeId):
+    def getPullTS(self, nodeId=0):
         self.nodes[self.getIndex(nodeId)].getPullTS()
 
     """PageTree.setRevisionNum(nodeId, revisionNum) sets the revisionNum of node nodeId."""
     def setRevisionNum(self, nodeId, revisionNum):
         self.nodes[self.getIndex(nodeId)].setRevisionNum(revisionNum)
     """PageTree.getRevisionNum(nodeId) returns the revisionNum of node nodeId."""
-    def getRevisionNum(self, nodeId):
+    def getRevisionNum(self, nodeId=0):
         return self.nodes[self.getIndex(nodeId)].getRevisionNum()
 
     """PageTree.isReferredTo(nodeId) increments the isReferredTo member of node nodeId."""
@@ -203,7 +203,7 @@ class PageTree:
         self.nodes[self.getIndex(nodeId)].isReferredTo()
         
     """PageTree.isReferredTo(nodeId) increments the isReferredTo member of node nodeId."""
-    def getIsReferredTo(self, nodeId):
+    def getIsReferredTo(self, nodeId=0):
         return self.nodes[self.getIndex(nodeId)].getIsReferredTo()
 
     """PageTree.getParent(nodeId) returns the nodeId of the parent."""
@@ -211,7 +211,7 @@ class PageTree:
         return self.nodes[self.getIndex(nodeId)].bPointer
 
     """PageTree.getParent(nodeId) returns the list of nodeIds of the children."""
-    def getChildren(self, nodeId):
+    def getChildren(self, nodeId=0):
         return self.nodes[self.getIndex(nodeId)].fPointer
         
     def getPageTreeData(self):
