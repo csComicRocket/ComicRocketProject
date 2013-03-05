@@ -17,7 +17,6 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
         try:
             comicID  = self.headers['comicID']
             url = self.parseUrl()
-            print url
             tree = F1Engine.fetchHTTP.fetchHTTP(url, comicID)
             
         except Exception as e:

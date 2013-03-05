@@ -23,7 +23,7 @@ def notifications():
 
 def parseUrl(url):
     urlPieces = url.split("://")
-    host = urlPieces[0] + "://" + urlPieces[1].partition('/')[0]
+    host = urlPieces[1].partition('/')[0]
     url = urlPieces[1].partition('/')[1] + urlPieces[1].partition('/')[2]
     return (host, url)
 

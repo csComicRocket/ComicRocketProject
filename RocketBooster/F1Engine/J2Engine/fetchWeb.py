@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 """ fillNode(response:urllib.response, comicNum:int, nodeNum:int, parentNum:int)
     Takes a non-error response, parses the content and puts it into and adds a node
     to the pageTree object """
-def fillNode(tree, rsp, comicNum, nodeNum=None, parentNum=None):        #comicID argument
+def fillNode(url, tree, rsp, comicNum, nodeNum=None, parentNum=None):        #comicID argument
     pageStr    = rsp.read()
     headerDict = rsp.info()
     soup = BeautifulSoup(pageStr)
@@ -33,7 +33,8 @@ def fillNode(tree, rsp, comicNum, nodeNum=None, parentNum=None):        #comicID
 
 def handleError(e):
     #print e.code()
-    print e.read()
+    print e
+    #print e.read()
     #errorNotification(e)
     
 """ fetchWeb(url:string, imgs:boolean=None, comicID:int=None)
@@ -44,20 +45,20 @@ def fetchWeb(url, comicID, imgs=None):
 
     try:
         rsp  = urllib2.urlopen(url) 
-        tree   = LunarModule.pageTree.PageTree(url)
+        tree   = LunarModule.pageTree.PageTree()
         nodeID = 0                                       
-        #fillNode(rsp, comicID, nodeID, None)            # Fill root node # !!!comicID argument!!!
+        fillNode(url, rsp, comicID, nodeID, None)            # Fill root node # !!!comicID argument!!!
         soup = BeautifulSoup(rsp.read())
         
         for a in soup.findAll('a',href=True):            #Process links
             nodeID += 1
             rsp = urllib2.urlopen(a)
-            fillNode(tree, rsp, comicID, nodeID, 0)        
+            fillNode(url, tree, rsp, comicID, nodeID, 0)        
                 
         for b in soup.findAll('img',href=True):            #Process Imgs
             nodeID += 1
             rsp = urllib2.urlopen(b)
-            fillNode(tree, rsp, comicID, nodeID, 0)
+            fillNode(url, tree, rsp, comicID, nodeID, 0)
 
         return tree
 
