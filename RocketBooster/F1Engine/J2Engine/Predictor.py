@@ -269,7 +269,8 @@ class Predictor:
                         break
                     if (self.inURange(self.incDayHour(dayHour, -self.rangeWidth), uRanges[-1])):
                         uRangeLast = self.incDayHour(uRanges[-1]['position'], uRanges[-1]['width'])
-                        self.__predictorData.addUpdateRange(self.addUpdateRange(incDayHour(uRangeLast, Predictor.rangeWidth + 1)))
+                        #self.__predictorData.addUpdateRange(self.addUpdateRange(incDayHour(uRangeLast, Predictor.rangeWidth + 1)))
+                        self.__predictorData.addUpdateRange(incDayHour(uRangeLast, Predictor.rangeWidth + 1))
                         break    
                 self.__predictorData.addUpdateRange(self.blankUpdateRange(dayHour))
             else:
