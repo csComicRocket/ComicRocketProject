@@ -5,6 +5,7 @@ from RocketBooster.F1Engine.J2Engine import globalVars
 import logging
 import sys
 from threading import Thread
+import time
 
 missed = 0
 
