@@ -41,13 +41,12 @@ fetches requested URL from web, parses it and returns it in a PageTree object.
 imgs is a boolean that specifies whether to retrieve the whole image or just headers
 """
 def fetchWeb(url, comicID, imgs=None):
-                
-    tree   = LunarModule.pageTree.PageTree(url)
-    nodeID = 0
-        
+
     try:
-        rsp  = urllib2.urlopen(url)                                        
-        fillNode(rsp, comicID, nodeID, None)            # Fill root node # !!!comicID argument!!!
+        rsp  = urllib2.urlopen(url) 
+        tree   = LunarModule.pageTree.PageTree(url)
+        nodeID = 0                                       
+        #fillNode(rsp, comicID, nodeID, None)            # Fill root node # !!!comicID argument!!!
         soup = BeautifulSoup(rsp.read())
         
         for a in soup.findAll('a',href=True):            #Process links
