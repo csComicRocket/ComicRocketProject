@@ -125,7 +125,7 @@ class Cache:
         print "hist url: " + url
         temp = directory[len(cacheLoc + "cachInfo/"):]
         temp = temp.split('/')
-        directory = cacheLoc + temp[0] + '/'
+        directory = cacheLoc + temp[0]
         print "hist directory: " + directory
         try:
             with open(os.path.join(directory, "historyData.txt")) as f:

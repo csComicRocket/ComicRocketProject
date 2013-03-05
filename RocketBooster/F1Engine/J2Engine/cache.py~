@@ -102,7 +102,6 @@ class Cache:
         
         This function should only be called when the pageTree object does not have
         a current version in the cache."""
-        print "last url: " + url
         directory = cacheLoc + "predictorInfo/" + str(comicId) + "/"
         try:
             os.makedirs(directory)
@@ -116,7 +115,6 @@ class Cache:
         except IOError: #if an error occurs the file does not yet exist
             urlList = []
         if len(urlList) >= 3:
-            print "Why did it get here"
             urlList.pop(0)
         urlList.append(url + '\n')
         with open(directory + "last3Pages.txt", 'w+') as f:
@@ -128,6 +126,7 @@ class Cache:
         temp = directory[len(cacheLoc + "cachInfo/"):]
         temp = temp.split('/')
         directory = cacheLoc + temp[0] + '/'
+        print "hist directory: " + directory
         try:
             with open(os.path.join(directory, "historyData.txt")) as f:
                 pass
