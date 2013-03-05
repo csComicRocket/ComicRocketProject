@@ -122,12 +122,9 @@ class Cache:
             
     def storeInHistoryList(self, directory, url):
         """Store the newly found url in the list of urls to be checked."""
-        print "hist url: " + url
-        print "directory: " + directory
         temp = directory[len(cacheLoc + "cacheInfo/"):]
         temp = temp.split('/')
-        directory = cacheLoc + temp[0]
-        print "hist directory: " + directory
+        directory = cacheLoc + "cacheInfo/" + temp[0]
         try:
             with open(os.path.join(directory, "historyData.txt")) as f:
                 pass
