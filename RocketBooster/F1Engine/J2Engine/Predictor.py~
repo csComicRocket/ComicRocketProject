@@ -98,7 +98,7 @@ class Predictor:
     """ Contains the methods for predicting updates from predictorData and storing predicorData """
 
     def __init__(self):
-        self.__predictorData = None
+        self.__predictorData = PredictorData(None)
         self.__pdir = None
         self.__pfile = "predictorData.txt"
         self.__predictorList = self.blankPredictorList()
@@ -347,8 +347,6 @@ class Predictor:
                     validComicId = False
                 if (validComicId):
                     self.loadComic(comicId)
-                    if self.__predictorData == None:
-                        print "is this the spot"
                     self.updatePredictorList(self.__predictorData.getSchedule(), comicId)
             break
 

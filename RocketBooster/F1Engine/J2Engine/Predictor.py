@@ -390,7 +390,7 @@ class Predictor:
         except IOError:
             return
 
-        self.__predictorData = None
+        self.__predictorData = PredictorData(None)
         return True
 
 
