@@ -1,13 +1,13 @@
 #Lucas Berge
-import string
-from threading import Thread
-import F1Engine.crFunctions
-import F1Engine.fetchHTTP
+#import string
+#import SocketServer
 #from http import server
+#import sys
+from threading import Thread
+from F1Engine.crFunctions import resetPredData, lockPredData, unlockPredData, setUpdateSchedule
+from F1Engine import fetchHTTP
 import SimpleHTTPServer
-import SocketServer
 import BaseHTTPServer
-import sys
 
 class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
     """ Waits for HTTP requests in a loop on separate thread 
@@ -17,7 +17,8 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
         try:
             comicID  = self.headers['comicID']
             url = self.parseUrl()
-            tree = F1Engine.fetchHTTP.fetchHTTP(url, comicID)
+            print url
+            tree = fetchHTTP.fetchHTTP(url, comicID)
             
         except Exception as e:
             print(e)
@@ -60,7 +61,7 @@ def runListener():
             HttpServer.handle_request()
     except KeyboardInterrupt:
         print('^C received, shutting down...')
-        HttpServer.socket.close(self)
+        HttpServer.socket.close()
         
 if __name__ == '__main__':
     t = Thread(target=runListener, args=())
