@@ -102,6 +102,7 @@ class Cache:
         
         This function should only be called when the pageTree object does not have
         a current version in the cache."""
+        print "last url: " + url
         directory = cacheLoc + "predictorInfo/" + str(comicId) + "/"
         try:
             os.makedirs(directory)
@@ -122,7 +123,7 @@ class Cache:
             
     def storeInHistoryList(self, directory, url):
         """Store the newly found url in the list of urls to be checked."""
-        print "url: " + url
+        print "hist url: " + url
         temp = directory[len(cacheLoc + "cachInfo/"):]
         temp = temp.split('/')
         directory = cacheLoc + temp[0] + '/'

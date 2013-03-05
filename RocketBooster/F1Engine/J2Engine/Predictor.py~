@@ -59,7 +59,7 @@ class PredictorData:
         """ Add dayHour to the updateRange with the given index """
         ur_hist_len = len(self.__data['updateRange'][index]['updateHistory']) - Predictor.rangeHistorySize
         if (ur_hist_len > 0):
-            for i in ur_hist_len:
+            for i in range(ur_hist_len):
                 self.__data['updateRange'][i]['updateHistory'].pop(0)
         self.__data['updateRange'][index]['updateHistory'].append(dayHour)
 
