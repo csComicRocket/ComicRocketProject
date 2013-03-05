@@ -33,7 +33,7 @@ def fillNode(url, tree, rsp, comicNum, nodeNum=None, parentNum=None):        #co
 
 def handleError(e):
     #print e.code()
-    print e
+    pass
     #print e.read()
     #errorNotification(e)
     

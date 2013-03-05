@@ -47,7 +47,7 @@ def fetchWeb(url, comicID, imgs=None):
         rsp  = urllib2.urlopen(url) 
         tree   = LunarModule.pageTree.PageTree()
         nodeID = 0                                       
-        fillNode(url, rsp, comicID, nodeID, None)            # Fill root node # !!!comicID argument!!!
+        fillNode(url, tree, rsp, comicID, nodeID, None)            # Fill root node # !!!comicID argument!!!
         soup = BeautifulSoup(rsp.read())
         
         for a in soup.findAll('a',href=True):            #Process links
