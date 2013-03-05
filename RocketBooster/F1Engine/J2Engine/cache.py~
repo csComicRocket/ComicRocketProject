@@ -116,6 +116,7 @@ class Cache:
         except IOError: #if an error occurs the file does not yet exist
             urlList = []
         if len(urlList) >= 3:
+            print "Why did it get here"
             urlList.pop(0)
         urlList.append(url + '\n')
         with open(directory + "last3Pages.txt", 'w+') as f:
