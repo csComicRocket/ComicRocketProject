@@ -23,7 +23,7 @@ def fillNode(tree, rsp, comicNum, nodeNum=None, parentNum=None):        #comicID
     #mimeType    = headerDict["MIME-Version"]    #MIME and contentType appear to be the same thing
     
     tree.createPageNode(url, nodeNum, parentNum, _WEB, pageStr, contentType, rspDate)
-    tree.setComicId(comicNum)
+    tree.setComicId(nodeNum, comicNum)
     
     #if mimeType is None:                            #MIME and ContentType are interchangeable
     #    tree.setMimeType(0, contentType)
