@@ -123,7 +123,8 @@ class Cache:
     def storeInHistoryList(self, directory, url):
         """Store the newly found url in the list of urls to be checked."""
         print "hist url: " + url
-        temp = directory[len(cacheLoc + "cachInfo/"):]
+        print "directory: " + directory
+        temp = directory[len(cacheLoc + "cacheInfo/"):]
         temp = temp.split('/')
         directory = cacheLoc + temp[0]
         print "hist directory: " + directory
