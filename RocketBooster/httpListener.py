@@ -1,13 +1,13 @@
 #Lucas Berge
-#import string
-#from http import server
-#import SocketServer
-#import sys
+import string
 from threading import Thread
-from F1Engine.crFunctions import resetPredData, lockPredData, unlockPredData, setUpdateSchedule
-from F1Engine.fetchHTTP import fetchHTTP
+import F1Engine.crFunctions
+import F1Engine.fetchHTTP
+#from http import server
 import SimpleHTTPServer
+import SocketServer
 import BaseHTTPServer
+import sys
 
 class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
     """ Waits for HTTP requests in a loop on separate thread 
@@ -15,8 +15,8 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
         POSTS require crFunction header specifying action"""
     def do_GET(self):
         try:
-            url = self.parseUrl()
-            pageTree = fetchHTTP(url)
+            url = parseUrl()
+            tree = fetchHTTP(url)
             
         except Exception as e:
             print(e)
@@ -43,9 +43,9 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def parseUrl(self):
             _host = self.headers['Host'].split(':')[0]
             _path = self.path
-            _url = ''.join(_host)
+            _url = ''.join(host)
             _url += _path
-            return _url
+            return url
     
 running = True
 
@@ -59,7 +59,7 @@ def runListener():
             HttpServer.handle_request()
     except KeyboardInterrupt:
         print('^C received, shutting down...')
-        HttpServer.socket.close()
+        HttpServer.socket.close(self)
         
 if __name__ == '__main__':
     t = Thread(target=runListener, args=())

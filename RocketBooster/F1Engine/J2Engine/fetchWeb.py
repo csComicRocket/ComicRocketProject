@@ -1,19 +1,22 @@
 # Lucas Berge 2013
 
 import LunarModule.pageTree
-#import errorNotification
-import urllib
+import errorNotification
+#import urllib.request
+#import urllib.error
+import urllib2
 from bs4 import BeautifulSoup
 
 (_CACHE, _WEB) = range(2)
     
+    
 """ fillNode(response:urllib.response, comicNum:int, nodeNum:int, parentNum:int)
     Takes a non-error response, parses the content and puts it into and adds a node
     to the pageTree object """
-def fillNode(tree, rsp, comicNum, nodeNum=None, parentNum=None):        #comicID argument
+def fillNode(response, comicNum, nodeNum=None, parentNum=None):        #comicID argument
     pageStr    = rsp.read()
     headerDict = rsp.info()
-    url = rsp.geturl()
+    soup = BeautifulSoup(pageStr)
     
     contentType = headerDict["Content-Type"]
     rspDate     = headerDict["Date"]
@@ -27,11 +30,10 @@ def fillNode(tree, rsp, comicNum, nodeNum=None, parentNum=None):        #comicID
         tree.setMimeType(0, mimeType)
     #tree.setAuthorTS()
     #tree.setHash()
-    
 
 def handleError(e):
-    pass
-    #print e.read()
+    #print e.code()
+    print e.read()
     #errorNotification(e)
     
 """ fetchWeb(url:string, imgs:boolean=None, comicID:int=None)
@@ -42,24 +44,31 @@ def fetchWeb(url, comicID, imgs=None):
                 
     tree   = LunarModule.pageTree.PageTree(None)
     nodeID = 0
-
-    try:
-        rsp  = urllib.urlopen(url)
-        fillNode(tree, rsp, comicID, nodeID, None)            # Fill root node # !!!comicID argument!!!
-        soup = BeautifulSoup(rsp.read())
-
-        for a in soup.findAll('a',href=True):            #Process links
-            nodeID += 1
-            rsp = urllib.urlopen(a)
-            fillNode(tree, rsp, comicID, nodeID, 0)
-            
-        for b in soup.findAll('img',href=True):            #Process Imgs
-            nodeID += 1
-            rsp = urllib.urlopen(b)
-            fillNode(tree, rsp, comicID, nodeID, 0)
         
-    except IOError as e:
+    try:
+        rsp  = urllib2.urlopen(url)                                        
+        fillNode(rsp, comicID, nodeID, None)            # Fill root node # !!!comicID argument!!!
+    except urllib2.HTTPError, e:
         handleError(e)
+        
+    soup = BeautifulSoup(rsp.read())
+        
+        
+    for a in soup.findAll('a',href=True):            #Process links
+        nodeID += 1
+        try:                                        # if Success
+            rsp = urllib2.urlopen(a)
+            fillNode(rsp, comicID, nodeID, 0)        
+        except urllib2.HTTPError, e:            # if Failure
+            handleError(e)
+            
+    for b in soup.findAll('img',href=True):            #Process Imgs
+        nodeID += 1
+        try:
+            rsp = urllib2.urlopen(b)
+            fillNode(rsp, comicID, nodeID, 0)
+        except urllib2.HTTPError, e:
+            handleError(e)
     
     return tree
     
