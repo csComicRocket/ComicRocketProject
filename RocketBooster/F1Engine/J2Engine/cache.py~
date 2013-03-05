@@ -1,4 +1,4 @@
-import os
+import os, inspect
 import shutil
 import time
 
@@ -42,6 +42,8 @@ class Cache:
         #Split a url and make it into a directory name.
         if url.endswith("//") or not "/" in url:
             return cacheLoc + "cacheInfo/default/", "default"
+        if "&" in url:
+            url = url.replace("&", "\&")
         if "://" in url:
             directory = url.split("://")[1]
         else:

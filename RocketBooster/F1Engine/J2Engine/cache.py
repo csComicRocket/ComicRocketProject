@@ -42,6 +42,9 @@ class Cache:
         #Split a url and make it into a directory name.
         if url.endswith("//") or not "/" in url:
             return cacheLoc + "cacheInfo/default/", "default"
+        #TODO following needs to be tested, do we need to do the following??
+        #if "&" in url:
+            #url = url.replace("&", "\&")
         if "://" in url:
             directory = url.split("://")[1]
         else:
