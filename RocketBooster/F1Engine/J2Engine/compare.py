@@ -2,13 +2,13 @@
 
 from LunarModule.pageTree import *
 
-def hashCompare(oldPage,newPage):
+def hashCompare(newPage, oldPage):
     if(oldPage.getHash() == newPage.getHash()):
         return True
     else:
         return False
 
-def compare(oldPage,newPage):
+def compare(newPage, oldPage):
     #print "old:", str(oldPage.links)
     #print "new:", str(newPage.links)
     if len(oldPage.links) == len(newPage.links):
