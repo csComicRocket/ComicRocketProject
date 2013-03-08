@@ -163,6 +163,7 @@ class Cache:
             print directory + preFileString + "/pageTreeData.txt not found."
             return False
         try:
+            print os.path.join(directory, preFileString + fName)
             with open(os.path.join(directory, preFileString + fName)) as f:
                 content = f.read()
                 pageTree.setContent(0, content, contentType)
