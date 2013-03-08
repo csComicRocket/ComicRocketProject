@@ -56,7 +56,7 @@ def fetchWeb(url, comicID, imgs=None):
         soup = BeautifulSoup(rsp.read())
         print "Soup: " + str(len(soup.prettify()))
 
-        pageStr    = rsp.read()
+        pageStr    = soup.prettify()
         headerDict = rsp.info()
         url = rsp.geturl()
         print "stuff: " + str(len(pageStr))

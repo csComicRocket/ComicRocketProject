@@ -59,7 +59,7 @@ def fetchWeb(url, comicID, imgs=None):
         pageStr    = rsp.read()
         headerDict = rsp.info()
         url = rsp.geturl()
-        print "stuff: "str(len(pageStr))
+        print "stuff: " + str(len(pageStr))
 
         tree = fillNode(tree, pageStr, headerDict, url, comicID, nodeID, None)       # Fill root node
 
