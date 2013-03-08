@@ -178,3 +178,6 @@ class PageNode:
     """PageNode.getHash() returns the hash."""
     def getHash(self):
         return self.hash
+
+    def restoreHash(self, value):
+        self.hash = value

@@ -124,6 +124,10 @@ class PageTree:
     """PageTree.setContent(nodeId, content, encodeType) sets both content and encodeType, believe it or not."""
     def setContent(self, nodeId, content, encodeType):
         self.nodes[self.getIndex(nodeId)].setContent(content, encodeType)
+        self.loadLinks(content)
+
+    def loadLink(self, content):
+            
 
     """PageTree.getContent(nodeId) returns content of tree node nodeId."""
     def getContent(self, nodeId=0):

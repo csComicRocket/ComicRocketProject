@@ -124,6 +124,13 @@ class PageTree:
     """PageTree.setContent(nodeId, content, encodeType) sets both content and encodeType, believe it or not."""
     def setContent(self, nodeId, content, encodeType):
         self.nodes[self.getIndex(nodeId)].setContent(content, encodeType)
+        self.loadLinks(content)
+
+from bs4 import BeautifulSoup
+    def loadLink(self, content):
+        soup = BeautifulSoup(content)
+        for a in soup.findAll('a',href=True):            #Process links
+            self.links.append(a.get("href"))
 
     """PageTree.getContent(nodeId) returns content of tree node nodeId."""
     def getContent(self, nodeId=0):
