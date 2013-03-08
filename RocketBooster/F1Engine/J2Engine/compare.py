@@ -11,7 +11,7 @@ def hashCompare(oldPage,newPage):
 def compare(oldPage,newPage):
     if len(oldPage.links) == len(newPage.links):
         for i in xrange(len(oldPage.links)):
-            if i not in oldPage.blacklist:
+            if i not in oldPage.blackList:
                 if oldPage.links[i] != newPage.links[i]:
                     return False
     else:
