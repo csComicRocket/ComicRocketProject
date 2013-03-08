@@ -22,7 +22,7 @@ def newComic(comicURLs):
         cache = Cache()
         webObject = fetchWeb(url,False)
         cacheObject = cache.fetchCache(url,None)
-        if not compare(webObject.getHash(),cacheObject.getHash()):
+        if not compare(webObject.getHash(), cacheObject.getHash()):
             storeCache(webObject)
             lastChange = url
     if lastChange:

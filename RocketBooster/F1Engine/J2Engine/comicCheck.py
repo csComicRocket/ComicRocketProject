@@ -22,7 +22,7 @@ def newComic(comicURLs):
         cache = Cache()
         webObject = fetchWeb(url,False)
         cacheObject = cache.fetchCache(url,None)
-        if not compare(webObject.getHash(), cacheObject.getHash()):
+        if not compare(webObject, cacheObject):
             storeCache(webObject)
             lastChange = url
     if lastChange:
@@ -34,7 +34,7 @@ def histComic(comicURL):
     webObject = fetchWeb(comicURL,False)
     cache = Cache()
     cacheObject = cache.fetchCache(comicURL,None)
-    if compare(webObject.getHash(), cacheObject.getHash()) == False:
+    if not compare(webObject, cacheObject):
         storeCache(webObject)
         notification("Hist: " + comicURL)
     return None
