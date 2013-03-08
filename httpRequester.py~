@@ -27,14 +27,14 @@ def parseUrl(url):
     return (host, url)
 
 def handleMessage(msg):    
-    url = parseUrl(body)
+    url = parseUrl(msg)
     comicId = getComicId(url[0])
     httpRequest(url[0], url[1], comicId)
     latest = getLatest(url[0])
     if len(latest) == 0:
         with open("missed.txt", 'a+') as f:
             f.write("missed: " + msg)
-        print "Bad Notification:", missed
+        print "Bad Notification:", msg
     elif len(latest) > 1:
         with open("missed.txt", 'a+') as f:
             f.write("extra: " + msg)

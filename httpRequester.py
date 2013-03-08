@@ -34,7 +34,7 @@ def handleMessage(msg):
     if len(latest) == 0:
         with open("missed.txt", 'a+') as f:
             f.write("missed: " + msg)
-        print "Bad Notification:", missed
+        print "Bad Notification:", msg
     elif len(latest) > 1:
         with open("missed.txt", 'a+') as f:
             f.write("extra: " + msg)
