@@ -23,6 +23,7 @@ class PageTree:
         if url is not None:
             self.createPageNode(url, 0)
         self.links = []
+        self.blackList = []
 
     """PageTree.getIndex(position) returns the index of the node at nodeId=position."""
     def getIndex(self, position):
@@ -246,7 +247,7 @@ class PageTree:
         #for i in isReferredTo:
             #self.isReferredTo(0)
         aHash = lines[6].split("Hash: ")[1]
-        self.setHash(0, aHash)
+        self.restoreHash(0, aHash)
         #pageTreeDataString.append("PageStructure:\n" + self.getPageStructureString(0) + '\n')
 
     def equals(self, aTree):

@@ -247,7 +247,7 @@ class PageTree:
         #for i in isReferredTo:
             #self.isReferredTo(0)
         aHash = lines[6].split("Hash: ")[1]
-        self.setHash(0, aHash)
+        self.restoreHash(0, aHash)
         #pageTreeDataString.append("PageStructure:\n" + self.getPageStructureString(0) + '\n')
 
     def equals(self, aTree):

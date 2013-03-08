@@ -173,8 +173,8 @@ class PageNode:
         return self.isReferredTo
 
     """PageNode.setHash(hash) sets the hash."""
-    def setHash(self, hash):
-        self.hash = hash
+    def setHash(self):
+        self.hash = hash(self.content)
     """PageNode.getHash() returns the hash."""
     def getHash(self):
         return self.hash
