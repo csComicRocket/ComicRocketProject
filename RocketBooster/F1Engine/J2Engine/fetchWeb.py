@@ -68,14 +68,6 @@ def fetchWeb(url, comicID, imgs=None):
         
         tree.links = links
 
-        soup2 = BeautifulSoup(pageStr)
-        links2 = []
-        for a in soup2.findAll('a',href=True):            #Process links
-            links2.append(a.get("href"))
-        
-        print "page: " + str(len(links))
-        print "soup: " + str(len(links2))
-                
         """for b in soup.findAll('img',href=True):            #Process Imgs
             nodeID += 1
             rsp = headReq(b)
