@@ -27,7 +27,7 @@ def parseUrl(url):
     return (host, url)
 
 def handleMessage(msg):    
-    url = parseUrl(body)
+    url = parseUrl(msg)
     comicId = getComicId(url[0])
     httpRequest(url[0], url[1], comicId)
     latest = getLatest(url[0])
