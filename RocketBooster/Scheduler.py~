@@ -44,6 +44,7 @@ class ComicList:
             for i in range(SITELIMIT):
                 urlList.append(f.readline().strip())
                 if not urlList[i]:
+                    urlList.pop(i)
                     end = True
             self.current = f.tell()
         if end:
