@@ -9,8 +9,8 @@ def hashCompare(oldPage,newPage):
         return False
 
 def compare(oldPage,newPage):
-    #print "old:", str(oldPage.links)
-    #print "new:", str(newPage.links)
+    print "old:", str(oldPage.links)
+    print "new:", str(newPage.links)
     if len(oldPage.links) == len(newPage.links):
         for i in xrange(len(oldPage.links)):
             if i not in oldPage.blackList:
