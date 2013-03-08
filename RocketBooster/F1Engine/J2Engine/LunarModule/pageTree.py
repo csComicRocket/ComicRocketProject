@@ -128,7 +128,7 @@ class PageTree:
         self.nodes[self.getIndex(nodeId)].setContent(content, encodeType)
         self.loadLinks(content)
 
-    def loadLink(self, content):
+    def loadLinks(self, content):
         soup = BeautifulSoup(content)
         for a in soup.findAll('a',href=True):            #Process links
             self.links.append(a.get("href"))
