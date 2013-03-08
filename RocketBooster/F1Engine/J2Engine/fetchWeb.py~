@@ -54,6 +54,7 @@ def fetchWeb(url, comicID, imgs=None):
         
         rsp  = urllib2.urlopen(url)                      # GET request to fill root
         soup = BeautifulSoup(rsp.read())
+        print "Soup: " + len(soup)
 
         pageStr    = rsp.read()
         headerDict = rsp.info()
@@ -68,7 +69,6 @@ def fetchWeb(url, comicID, imgs=None):
             links.append(a.get("href"))
         
         tree.links = links
-        tree.blackList = [0 * len(links)]
                 
         """for b in soup.findAll('img',href=True):            #Process Imgs
             nodeID += 1

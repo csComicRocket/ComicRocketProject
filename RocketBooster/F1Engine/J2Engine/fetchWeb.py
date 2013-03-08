@@ -54,6 +54,7 @@ def fetchWeb(url, comicID, imgs=None):
         
         rsp  = urllib2.urlopen(url)                      # GET request to fill root
         soup = BeautifulSoup(rsp.read())
+        print "Soup: " + str(len(soup))
 
         pageStr    = rsp.read()
         headerDict = rsp.info()
