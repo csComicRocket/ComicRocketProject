@@ -170,6 +170,8 @@ class PageTree:
     """PageTree.getHash(nodeId=0) returns the hash of node nodeId."""
     def getHash(self, nodeId=0):
         return self.nodes[self.getIndex(nodeId)].getHash()
+    def restoreHash(self,nodeId,value):
+        self.nodes[self.getIndex(nodeId)].restoreHash(value)        
 
     """PageTree.setAuthorTS(nodeId, authorTS) sets the authorTimeStamp. AuthorTimeStamp should not be a list."""
     def setAuthorTS(self, nodeId, authorTS):
