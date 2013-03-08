@@ -53,6 +53,7 @@ def fetchWeb(url, comicID, imgs=None):
         nodeID = 0                                
         
         rsp  = urllib2.urlopen(url)                      # GET request to fill root
+        soup = BeautifulSoup(rsp.read())
 
         pageStr    = soup.prettify()
         headerDict = rsp.info()
