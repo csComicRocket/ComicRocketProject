@@ -10,6 +10,8 @@ import uuid
 
 from utilities import sanitizeId
 from pageNode import PageNode
+from bs4 import BeautifulSoup
+
 
 (_ADD, _DELETE, _INSERT) = range(3)
 (_ROOT, _DEPTH, _WIDTH) = range(3)
@@ -126,7 +128,6 @@ class PageTree:
         self.nodes[self.getIndex(nodeId)].setContent(content, encodeType)
         self.loadLinks(content)
 
-from bs4 import BeautifulSoup
     def loadLink(self, content):
         soup = BeautifulSoup(content)
         for a in soup.findAll('a',href=True):            #Process links
