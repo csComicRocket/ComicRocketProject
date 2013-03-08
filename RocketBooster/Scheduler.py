@@ -43,7 +43,7 @@ class ComicList:
             f.seek(self.current)
             for i in range(SITELIMIT):
                 urlList.append(f.readline().strip())
-                if not urlList[i]:
+                if not urlList[-1]:
                     urlList.pop()
                     end = True
             self.current = f.tell()
