@@ -6,8 +6,8 @@ import threading
 import F1Engine.J2Engine.Predictor
 import F1Engine.J2Engine.comicCheck
 
-SITELIMIT = 20
-PAGELIMIT = 20
+SITELIMIT = 100
+PAGELIMIT = 100
 SECONDS = 60
 
 timeFormat = "%Y-%m-%d %H:%M:%S"
