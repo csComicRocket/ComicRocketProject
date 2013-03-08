@@ -164,7 +164,8 @@ class Cache:
             return False
         try:
             with open(os.path.join(directory, preFileString + fName)) as f:
-                pageTree.setContent(0, f.read(), contentType)
+                content = f.read()
+                pageTree.setContent(0, content, contentType)
         except IOError:
             print directory + preFileString + "/" + fName + "not found."
             return False
