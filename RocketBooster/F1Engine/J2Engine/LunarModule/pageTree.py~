@@ -130,7 +130,7 @@ class PageTree:
 
     def loadLinks(self, content):
         soup = BeautifulSoup(content)
-        print soup.prettify()
+        print content
         for a in soup.findAll('a',href=True):            #Process links
             self.links.append(a.get("href"))
 
