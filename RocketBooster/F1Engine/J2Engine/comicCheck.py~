@@ -38,6 +38,8 @@ def histComic(comicURL):
     cacheObject = cache.fetchCache(comicURL,None)
     if not compare(webObject, cacheObject):
         print "Hist Comic check testing: " + comicURL
+        print "new: " + str(len(webObject.getContent(0)))
+        print "old: " + str(len(cacheObject.getContent(0)))
         cache.storeCache(webObject)
         #notification("Hist: " + comicURL)
     return None
