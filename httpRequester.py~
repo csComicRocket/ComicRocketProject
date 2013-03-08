@@ -5,6 +5,7 @@ from RocketBooster.F1Engine.J2Engine import globalVars
 import logging
 import sys
 from threading import Thread
+import time
 
 missed = 0
 
@@ -74,7 +75,7 @@ def getCaughtUp():
         for l in latest:
             url = parseUrl(l)
             httpRequest(url[0], url[1], hosts[h])
-            time.sleep(5)
+            time.sleep(1)
 
 if __name__ == "__main__":
     t = Thread(target=getCaughtUp(), args=())

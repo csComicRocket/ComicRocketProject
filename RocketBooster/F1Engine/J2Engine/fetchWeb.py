@@ -13,11 +13,8 @@ from bs4 import BeautifulSoup
 """ fillNode(response:urllib.response, comicNum:int, nodeNum:int, parentNum:int)
     Takes a non-error response, parses the content and puts it into and adds a node
     to the pageTree object """
-def fillNode(tree, rsp, comicNum, nodeNum=None, parentNum=None):        #comicID argument
-    pageStr    = rsp.read()
-    headerDict = rsp.info()
-    url = rsp.geturl()
-    
+def fillNode(tree, pageStr, headerDict, url, comicNum, nodeNum=None, parentNum=None):        #comicID argument
+
     contentType = headerDict["Content-Type"]
     rspDate     = headerDict["Date"]
     #mimeType    = headerDict["MIME-Version"]    #MIME and contentType appear to be the same thing
@@ -30,7 +27,7 @@ def fillNode(tree, rsp, comicNum, nodeNum=None, parentNum=None):        #comicID
     #else:
     #    tree.setMimeType(0, mimeType)
     #tree.setAuthorTS()
-    #tree.setHash()
+    tree.setHash(nodeNum)
     return tree
     
 def headReq(url):
@@ -53,26 +50,35 @@ def fetchWeb(url, comicID, imgs=None):
 
     try:
         tree   = LunarModule.pageTree.PageTree(None)
-        nodeID = 0                                 
+        nodeID = 0                                
         
         rsp  = urllib2.urlopen(url)                      # GET request to fill root
-        tree = fillNode(tree, rsp, comicID, nodeID, None)       # Fill root node
         soup = BeautifulSoup(rsp.read())
-        
+
+        pageStr    = rsp.read()
+        headerDict = rsp.info()
+        url = rsp.geturl()
+
+        tree = fillNode(tree, pageStr, headerDict, url, comicID, nodeID, None)       # Fill root node
+
+        links = []
+
         for a in soup.findAll('a',href=True):            #Process links
             nodeID += 1
-            rsp = headReq(a)
-            fillNode(tree, rsp, comicID, nodeID, 0)        
+            links.append(a.get("href"))
+        
+        tree.links = links
                 
-        for b in soup.findAll('img',href=True):            #Process Imgs
+        """for b in soup.findAll('img',href=True):            #Process Imgs
             nodeID += 1
             rsp = headReq(b)
-            fillNode(tree, rsp, comicID, nodeID, 0)
+            fillNode(tree, pageStr, headerDict, url, comicID, nodeID, 0)"""
+
         return tree
 
     except urllib2.HTTPError as e:
         handleError(e)
     
 if __name__ == "__main__":
-    testTree = fetchWeb("http://www.xkcd.com", 0)
+    testTree = fetchWeb("http://www.xkcd.com/", 0)
     pass

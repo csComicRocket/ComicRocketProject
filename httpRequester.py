@@ -7,8 +7,6 @@ import sys
 from threading import Thread
 import time
 
-missed = 0
-
 def callback(ch, method, properties, body):
     print " [x] Received %r" % (body,)
     handleMessage(body)    
@@ -34,8 +32,6 @@ def handleMessage(msg):
     httpRequest(url[0], url[1], comicId)
     latest = getLatest(url[0])
     if len(latest) == 0:
-        global missed
-        missed += 1
         with open("missed.txt", 'a+') as f:
             f.write("missed: " + msg)
         print "Bad Notification:", missed
@@ -75,7 +71,7 @@ def getCaughtUp():
         for l in latest:
             url = parseUrl(l)
             httpRequest(url[0], url[1], hosts[h])
-            time.sleep(5)
+            time.sleep(1)
 
 if __name__ == "__main__":
     t = Thread(target=getCaughtUp(), args=())

@@ -22,6 +22,8 @@ class PageTree:
         self.nodes = []
         if url is not None:
             self.createPageNode(url, 0)
+        self.links = []
+        self.blackList = []
 
     """PageTree.getIndex(position) returns the index of the node at nodeId=position."""
     def getIndex(self, position):
@@ -163,8 +165,8 @@ class PageTree:
         return self.nodes[self.getIndex(nodeId)].getMimeType()
 
     """PageTree.setHash(nodeId, hash) sets the hash of node nodeId."""
-    def setHash(self, nodeId, hash):
-        self.nodes[self.getIndex(nodeId)].setHash(hash)
+    def setHash(self, nodeId):
+        self.nodes[self.getIndex(nodeId)].setHash()
     """PageTree.getHash(nodeId=0) returns the hash of node nodeId."""
     def getHash(self, nodeId=0):
         return self.nodes[self.getIndex(nodeId)].getHash()
