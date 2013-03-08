@@ -64,11 +64,10 @@ def fetchWeb(url, comicID, imgs=None):
         links = []
 
         for a in soup.findAll('a',href=True):            #Process links
-            nodeID += 1
             links.append(a.get("href"))
         
         tree.links = links
-                
+
         """for b in soup.findAll('img',href=True):            #Process Imgs
             nodeID += 1
             rsp = headReq(b)
@@ -80,5 +79,5 @@ def fetchWeb(url, comicID, imgs=None):
         handleError(e)
     
 if __name__ == "__main__":
-    testTree = fetchWeb("http://www.xkcd.com/", 0)
+    testTree = fetchWeb("http://www.python.com/", 0)
     pass

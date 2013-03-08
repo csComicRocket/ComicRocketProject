@@ -2,7 +2,7 @@
 
 from LunarModule.pageTree import *
 
-def hashCompare(oldPage,newPage):
+def hashCompare(newPage, oldPage):
     if(oldPage.getHash() == newPage.getHash()):
         return True
     else:
