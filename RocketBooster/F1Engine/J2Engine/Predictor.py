@@ -323,7 +323,6 @@ class Predictor:
                 if (schedule[day][hour] == 1 and not comicId in self.__predictorList[day][hour]):
                     self.__predictorList[day][hour].append(comicId)
                 elif (schedule[day][hour] == 0):
-                    print comicId
                     while (comicId in self.__predictorList[day][hour]):
                         self.__predictorList[day][hour].remove(comicId)
 
@@ -750,7 +749,6 @@ class Predictor:
         dh = self.incDayHour(scaledTime(), -3*24 + 1)
         self.update(dh, comicId)
         self.loadComic(comicId)
-        print self.__predictorData._PredictorData__data
         t_res = self.__predictorData._PredictorData__data['updateRange'][1]['updateHistory'][-1] == dh
         t.append(( t_fname, t_num, t_res ))
 
