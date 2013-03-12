@@ -33,7 +33,8 @@ class PredictorData:
         else:
             self.__data = json.loads(dataString)
             # format [] to () in 'updateHistory'
-            print "ds: ", dataString
+            print "datastring (json): ", dataString
+            print "data: ", self.__data
             for i, ur in enumerate(self.__data['updateRange']):
                 print "ur: ", ur
                 for j, uh in enumerate(ur['updateHistory']):
