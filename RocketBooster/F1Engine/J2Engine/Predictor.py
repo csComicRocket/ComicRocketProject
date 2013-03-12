@@ -33,12 +33,11 @@ class PredictorData:
         else:
             self.__data = json.loads(dataString)
             # format [] to () in 'updateHistory'
-            print "<Predictor data before error>", self.__data, "</Predictor data before error>"
-            if (len(self.__data['updateRange']) > 0):
-                for i, ur in enumerate(self.__data['updateRange']):
-                    for j, uh in enumerate(ur['updateHistory']):
-                        self.__data['updateRange'][i]['updateHistory'][j] = (uh[0], uh[1])
-                    self.__data['updateRange'][i]['position'] = (ur['position'][0], ur['position'][1])
+            for i, ur in enumerate(self.__data['updateRange']):
+                print "ur: ", ur
+                for j, uh in enumerate(ur['updateHistory']):
+                    self.__data['updateRange'][i]['updateHistory'][j] = (uh[0], uh[1])
+                self.__data['updateRange'][i]['position'] = (ur['position'][0], ur['position'][1])
 
     def setSchedule(self, schedule):
         if (not self.__data['locked']):
