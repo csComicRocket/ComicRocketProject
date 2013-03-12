@@ -71,7 +71,7 @@ def getCaughtUp():
         for l in latest:
             url = parseUrl(l)
             httpRequest(url[0], url[1], hosts[h])
-            time.sleep(1)
+            time.sleep(.1)
 
 if __name__ == "__main__":
     t = Thread(target=getCaughtUp(), args=())
