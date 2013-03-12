@@ -112,7 +112,7 @@ class Predictor:
     hourScale = 5
 
     # directory - The directory of all predictor data
-    directory = "../../Cache/predictorInfo/"
+    directory = "Cache/predictorInfo/"
 
     # rangeWidth - The width in hours of the updateRanges
     rangeWidth = 3
