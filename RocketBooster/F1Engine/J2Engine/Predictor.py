@@ -250,6 +250,11 @@ class Predictor:
         """ Called whenever a comic has been updated """
         self.loadComic(comicId)
 
+        # print test
+        if (comicId == 1):
+            print self.__predictorData._PredictorData__data
+
+
         for i in range(1):
             # Stop weeding?
             stopWeeding = False
@@ -332,7 +337,7 @@ class Predictor:
                         self.__predictorList[day][hour].remove(comicId)
 
     def getHourList(self, dayHour):
-        print self.__predictorData._PredictorData__data
+
         return self.__predictorList[dayHour[0]][dayHour[1]]
 
     def blankPredictorList(self):
