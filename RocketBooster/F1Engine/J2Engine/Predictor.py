@@ -734,9 +734,9 @@ class Predictor:
 
         # 0 Weeding - add new UpdateRanges
         t_num = 0
-        dh = self.incDayHour(scaleTime(), -4*24)
+        dh = self.incDayHour(scaledTime(), -4*24)
         self.update(dh, comicId)
-        dh = self.incDayHour(scaleTime(), -3*24)
+        dh = self.incDayHour(scaledTime(), -3*24)
         self.update(dh, comicId)
         self.loadComic(comicId)
         t_res = self.__predictorData.getUpdateRanges()[-1]['position'] == dh
@@ -744,7 +744,7 @@ class Predictor:
 
         # 1 Weeding - addDayHour to existing updateRange
         t_num = 1
-        dh = self.incDayHour(scaleTime(), -3*24 + 1)
+        dh = self.incDayHour(scaledTime(), -3*24 + 1)
         self.update(dh, comicId)
         self.loadComic(comicId)
         t_res = self.__predictorData._PredictorData__data['updateRange'][1]['updateHistory'][-1] == dh
@@ -757,7 +757,7 @@ class Predictor:
         self.__predictorData._PredictorData__data['weedingStartSec'] -= 240
         self.saveComic(comicId)
 
-        self.update(scaleTime(), comicId)
+        self.update(scaledTime(), comicId)
         self.loadComic(comicId)
 
         if self.__predictorData == None:
@@ -769,7 +769,7 @@ class Predictor:
         # 3 - Regular update, add to spanning updateRange
         t_num = 3
         ur_width = self.__predictorData._PredictorData__data['updateRange'][-2]['width']
-        dh = self.incDayHour(scaleTime(), -3*24 + ur_width)
+        dh = self.incDayHour(scaledTime(), -3*24 + ur_width)
         self.update(dh, comicId)
         self.loadComic(comicId)
         t_res = self.__predictorData._PredictorData__data['updateRange'][1]['updateHistory'][-1] == dh
@@ -777,7 +777,7 @@ class Predictor:
 
         # 4 - Regular update, add to nearest updateRange
         t_num = 4
-        dh = self.incDayHour(scaleTime(), -4*24+13)
+        dh = self.incDayHour(scaledTime(), -4*24+13)
         self.update(dh, comicId)
         self.loadComic(comicId)
         t_res = self.__predictorData._PredictorData__data['updateRange'][1]['updateHistory'][-1] == dh
@@ -794,7 +794,7 @@ class Predictor:
         # 0
         t_num = 0
         self.scanDirectory(comicId)
-        dh = scaleTime()
+        dh = scaledTime()
         t_res = comicId in self.__predictorList[dh[0]][dh[1]]
         t.append(( t_fname, t_num, t_res ))
 
@@ -843,8 +843,8 @@ def scaledTime():
     epoch = time.strptime("2013-02-21 11:30:00", "%Y-%m-%d %H:%M:%S")
     timeInSec = time.mktime(time.gmtime()) - time.mktime(epoch)
     hourSince = timeInSec / 75
-    day = hourSince / 24 % 7
-    hour = hourSince % 24
+    day = int(hourSince / 24 % 7)
+    hour = int(hourSince % 24)
     return (day, hour)
 
 def scaledSeconds():
