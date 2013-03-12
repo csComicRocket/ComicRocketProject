@@ -33,10 +33,10 @@ class PredictorData:
         else:
             self.__data = json.loads(dataString)
             # format [] to () in 'updateHistory'
-            print "datastring (json): ", dataString
-            print "data: ", self.__data
+            # print "datastring (json): ", dataString
+            # print "data: ", self.__data
             for i, ur in enumerate(self.__data['updateRange']):
-                print "ur: ", ur
+                # print "ur: ", ur
                 for j, uh in enumerate(ur['updateHistory']):
                     self.__data['updateRange'][i]['updateHistory'][j] = (uh[0], uh[1])
                 self.__data['updateRange'][i]['position'] = (ur['position'][0], ur['position'][1])
@@ -322,6 +322,7 @@ class Predictor:
     #
 
     def updatePredictorList(self, schedule, comicId):
+        comicId = int(comicId)
         for day in range(7):
             for hour in range(24):
                 if (schedule[day][hour] == 1 and not comicId in self.__predictorList[day][hour]):
