@@ -40,6 +40,7 @@ def histComic(comicURL):
         print "Hist Comic check testing: " + comicURL
         print "new: " + str(len(webObject.getContent()))
         print "old: " + str(len(cacheObject.getContent()))
+        print webObject.getContent() == cacheObject.getContent()
         cache.storeCache(webObject)
         #notification("Hist: " + comicURL)
     return None
