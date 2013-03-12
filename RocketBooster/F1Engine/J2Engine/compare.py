@@ -14,7 +14,6 @@ def compare(newPage, oldPage):
     if len(oldPage.links) == len(newPage.links):
         for i in range(len(oldPage.links)):
             if i not in oldPage.blackList:
-                print "comparing: ", i
                 if oldPage.links[i] != newPage.links[i]:
                     print "links mismatch: ", oldPage.links[i], newPage.links[i]
                     return False
