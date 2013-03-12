@@ -69,6 +69,9 @@ class PredictorData:
     def addUpdateRange(self, uRange):
         self.__data['updateRange'].append(uRange)    
 
+    def setUpdateRanges(self, updateRanges):
+        self.__data['updateRange'] = updateRanges
+
     def getUpdateRanges(self):
         return self.__data['updateRange']
 
@@ -266,6 +269,8 @@ class Predictor:
                 print "weeding times:", self.__predictorData.getWeedingStart(), sec
                 if (sec >= self.__predictorData.getWeedingStart() + 7*24*self.hourScale):
                     self.__predictorData.stopWeeding()
+                    self.__predictorData.setUpdateRanges(self.calculateURPositions(self.__predictorData.getUpdateRanges()))
+                    self.__predictorData.setSchedule(self.calculateScheduleUR(self.__predictorData.getUpdateRanges()))
                     stopWeeding = True
 
                     if (len(self.__predictorData.getUpdateRanges()) == 0):
@@ -297,7 +302,8 @@ class Predictor:
                         dist[min(abs(ur_pos_hours - ur_width - hours), abs(ur_pos_hours + ur_width - hours))] = i
                     self.__predictorData.addDayHourToURange(dayHour, dist[min(dist.keys())])
 
-                self.calculateURPositions(self.__predictorData.getUpdateRanges())
+                
+                self.__predictorData.setUpdateRanges(self.calculateURPositions(self.__predictorData.getUpdateRanges()))
                 self.__predictorData.setSchedule(self.calculateScheduleUR(self.__predictorData.getUpdateRanges()))
         
         self.updatePredictorList(self.__predictorData.getSchedule(), comicId)
