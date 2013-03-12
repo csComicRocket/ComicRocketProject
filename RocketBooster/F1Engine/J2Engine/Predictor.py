@@ -29,7 +29,7 @@ class PredictorData:
 
             # weedingStart - seconds since the epoch when weeding started
             tgm = time.gmtime()
-            self.__data['weedingStartSec'] = time.mktime(time.strptime(str(tgm.tm_year) +' '+ str(tgm.tm_mon) +' '+ str(tgm.tm_mday) +' '+ str(tgm.tm_hour), '%Y %m %d %H'))
+            self.__data['weedingStartSec'] = time.mktime(time.strptime(str(tgm.tm_year) +' '+ str(tgm.tm_mon) +' '+ str(tgm.tm_mday) +' '+ str(tgm.tm_hour) +' '+ str(tgm.tm_min) +' '+ str(tgm.tm_sec), '%Y %m %d %H %M %S'))
         else:
             self.__data = json.loads(dataString)
             # format [] to () in 'updateHistory'
@@ -107,6 +107,9 @@ class Predictor:
     #
     # Settings
     #
+
+    # scales an hour to seconds
+    hourScale = 5
 
     # directory - The directory of all predictor data
     directory = "../../Cache/predictorInfo/"
@@ -253,8 +256,8 @@ class Predictor:
 
             if (self.__predictorData.isWeeding()):
                 tgm = time.gmtime()
-                sec = time.mktime(time.strptime(str(tgm.tm_year) +' '+ str(tgm.tm_mon) +' '+ str(tgm.tm_mday) +' '+ str(tgm.tm_hour), '%Y %m %d %H'))
-                if (sec >= self.__predictorData.getWeedingStart() + 7*24*60*60):
+                sec = time.mktime(time.strptime(str(tgm.tm_year) +' '+ str(tgm.tm_mon) +' '+ str(tgm.tm_mday) +' '+ str(tgm.tm_hour) +' '+ str(tgm.tm_min) +' '+ str(tgm.tm_sec), '%Y %m %d %H %M %S'))
+                if (sec >= self.__predictorData.getWeedingStart() + 7*24*self.hourScale):
                     self.__predictorData.stopWeeding()
                     stopWeeding = True
 
@@ -728,7 +731,7 @@ class Predictor:
         t_fname = 'Predictor.update'
         comicId = 9999997357
         pd_old = PredictorData(None)
-        pd_old._PredictorData__data['weedingStartSec'] -= 7*24*60*60 - 120
+        pd_old._PredictorData__data['weedingStartSec'] -= 7*24*Predictor.hourScale - Predictor.hourScale * 2
         self.__predictorData = pd_old
         self.saveComic(comicId)
 
@@ -747,6 +750,7 @@ class Predictor:
         dh = self.incDayHour(scaledTime(), -3*24 + 1)
         self.update(dh, comicId)
         self.loadComic(comicId)
+        print self.__predictorData._PredictorData__data
         t_res = self.__predictorData._PredictorData__data['updateRange'][1]['updateHistory'][-1] == dh
         t.append(( t_fname, t_num, t_res ))
 
@@ -754,7 +758,7 @@ class Predictor:
         # 2 stopWeeding - Stop weeding and add updateRange
         t_num = 2
         self.loadComic(comicId)
-        self.__predictorData._PredictorData__data['weedingStartSec'] -= 240
+        self.__predictorData._PredictorData__data['weedingStartSec'] -= 4 * Predictor.hourScale
         self.saveComic(comicId)
 
         self.update(scaledTime(), comicId)
@@ -835,6 +839,9 @@ class Predictor:
 
         return t
 
+
+
+
 def scaledTime():
     """Scales the current time to 1 day every 30 minutes.
 
@@ -842,7 +849,7 @@ def scaledTime():
     #return (time.gmtime().tm_wday, time.gmtime().tm_hour)
     epoch = time.strptime("2013-02-21 11:30:00", "%Y-%m-%d %H:%M:%S")
     timeInSec = time.mktime(time.gmtime()) - time.mktime(epoch)
-    hourSince = timeInSec / 75
+    hourSince = timeInSec / Predictor.hourScale
     day = int(hourSince / 24 % 7)
     hour = int(hourSince % 24)
     return (day, hour)
@@ -851,7 +858,7 @@ def scaledSeconds():
     #return (60-time.gmtime().tm_min)*60
     epoch = time.strptime("2013-02-21 11:30:00", "%Y-%m-%d %H:%M:%S")
     timeInSec = time.mktime(time.gmtime()) - time.mktime(epoch)
-    return 75 - (timeInSec % 75)
+    return Predictor.hourScale - (timeInSec % Predictor.hourScale)
 
 if __name__ == "__main__":
     p = Predictor()
