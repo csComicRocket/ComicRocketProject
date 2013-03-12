@@ -63,7 +63,7 @@ def fetchWeb(url, comicID, imgs=None):
 
         tree.loadLinks(pageStr)
 
-"""        links = []
+        """links = []
 
         for a in soup.findAll('a',href=True):            #Process links
             links.append(a.get("href"))
