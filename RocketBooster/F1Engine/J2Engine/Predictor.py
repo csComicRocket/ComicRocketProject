@@ -33,10 +33,12 @@ class PredictorData:
         else:
             self.__data = json.loads(dataString)
             # format [] to () in 'updateHistory'
-            for i, ur in enumerate(self.__data['updateRange']):
-                for j, uh in enumerate(ur['updateHistory']):
-                    self.__data['updateRange'][i]['updateHistory'][j] = (uh[0], uh[1])
-                self.__data['updateRange'][i]['position'] = (ur['position'][0], ur['position'][1])
+            print "<Predictor data before error>", self.__data, "</Predictor data before error>"
+            if (len(self.__data['updateRange']) > 0):
+                for i, ur in enumerate(self.__data['updateRange']):
+                    for j, uh in enumerate(ur['updateHistory']):
+                        self.__data['updateRange'][i]['updateHistory'][j] = (uh[0], uh[1])
+                    self.__data['updateRange'][i]['position'] = (ur['position'][0], ur['position'][1])
 
     def setSchedule(self, schedule):
         if (not self.__data['locked']):
@@ -326,7 +328,6 @@ class Predictor:
                 elif (schedule[day][hour] == 0):
                     while (comicId in self.__predictorList[day][hour]):
                         self.__predictorList[day][hour].remove(comicId)
-
 
     def getHourList(self, dayHour):
         return self.__predictorList[dayHour[0]][dayHour[1]]
@@ -835,6 +836,18 @@ class Predictor:
                 if (comicId in hour):
                     t_res = False
         t.append(( t_fname, t_num, t_res ))
+
+        t_fname = "Predictor.getHourList"
+        t_num = 0
+        t_res = True
+        self.generatePredictorDataForComic(1)
+        self.loadComic(1)
+        self.update((3,1), 1)
+        self.saveComic(1)
+        self.__predictorData = None
+        self.loadComic(1)
+        t.append(( t_fname, t_num, t_res ))
+
 
         return t
 
