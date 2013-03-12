@@ -36,7 +36,10 @@ class ComicList:
         self.urls = directory + "historyList.txt"
 		
     def getNext(self):
-        """Returns the next url to be checked or None if the list has been completed"""
+        """Returns the next urls to be checked or [] if the list has been completed.
+
+        In order to avoid overlap with the new comic checking this avoids ever adding any of
+        the last 3 urls to the list."""
         urlList = []
         end = False
         with open(self.urls) as f:
@@ -145,6 +148,7 @@ def hourlyEvents():
         with open(directory) as f:
             for line in f:
                 urls.append(line.strip())
+        print "new urls:", str(urls)
         F1Engine.J2Engine.comicCheck.newComic(urls)
     hourlyTimer = threading.Timer(F1Engine.J2Engine.Predictor.scaledSeconds(), hourlyEvents)
     hourlyTimer.start()

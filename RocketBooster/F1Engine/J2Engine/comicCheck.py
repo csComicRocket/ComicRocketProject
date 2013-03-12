@@ -32,7 +32,6 @@ def newComic(comicURLs):
     return None
 
 def histComic(comicURL):
-    #IN PROGRESS
     webObject = fetchWeb(comicURL,False)
     cache = Cache()
     cacheObject = cache.fetchCache(comicURL,None)
