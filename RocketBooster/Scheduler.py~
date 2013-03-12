@@ -86,7 +86,7 @@ class HistoryList:
             return []
         urlList = self.comics[0].getNext()
         while len(urlList) == 0:
-            self.waiting.append(self.comics.pop(0))
+            self.waiting.append(self.comics.pop())
             urlList = self.comics[0].getNext()
         self.waiting.append(self.comics.pop(0))
         return urlList

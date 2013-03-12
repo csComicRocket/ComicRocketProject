@@ -60,13 +60,8 @@ def fetchWeb(url, comicID, imgs=None):
         url = rsp.geturl()
        
         tree = fillNode(tree, pageStr, headerDict, url, comicID, nodeID, None)       # Fill root node
-
         tree.loadLinks(pageStr)
-        if "57" in url:
-            with open("vomit.txt", 'a+') as f:
-                for a in soup.findAll('a',href=True):            #Process links
-                    f.write(a.get("href") + '\n')
-        
+
         """links = []
 
         for a in soup.findAll('a',href=True):            #Process links
