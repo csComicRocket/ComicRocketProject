@@ -148,6 +148,7 @@ def hourlyEvents():
         with open(directory) as f:
             for line in f:
                 urls.append(line.strip())
+        print "new urls:", str(urls)
         F1Engine.J2Engine.comicCheck.newComic(urls)
     hourlyTimer = threading.Timer(F1Engine.J2Engine.Predictor.scaledSeconds(), hourlyEvents)
     hourlyTimer.start()

@@ -140,7 +140,7 @@ def hourlyEvents():
     global histComics   
     global hourlyTimer
     print "hourly events running"
-    currentTime = time.gmtime().tm_wday, time.gmtime().tm_hour
+    currentTime = predComics.scaledTime()
     histComics.recoverWaiting()
     for comicId in predComics.getHourList(currentTime):
         directory = cwd + "/Cache/predictorInfo/" + str(comicId) + "/last3Pages.txt"
