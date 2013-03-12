@@ -257,6 +257,7 @@ class Predictor:
             if (self.__predictorData.isWeeding()):
                 tgm = time.gmtime()
                 sec = time.mktime(time.strptime(str(tgm.tm_year) +' '+ str(tgm.tm_mon) +' '+ str(tgm.tm_mday) +' '+ str(tgm.tm_hour) +' '+ str(tgm.tm_min) +' '+ str(tgm.tm_sec), '%Y %m %d %H %M %S'))
+                print "weeding times:", self.__predictorData.getWeedingStart(), sec
                 if (sec >= self.__predictorData.getWeedingStart() + 7*24*self.hourScale):
                     self.__predictorData.stopWeeding()
                     stopWeeding = True
