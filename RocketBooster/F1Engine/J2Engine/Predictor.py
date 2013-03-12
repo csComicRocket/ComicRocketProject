@@ -332,7 +332,7 @@ class Predictor:
                         self.__predictorList[day][hour].remove(comicId)
 
     def getHourList(self, dayHour):
-        print __self.__predictorData.isWeeding()
+        print self.__predictorData.isWeeding()
         return self.__predictorList[dayHour[0]][dayHour[1]]
 
     def blankPredictorList(self):
