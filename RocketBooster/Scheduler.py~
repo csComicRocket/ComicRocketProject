@@ -140,9 +140,9 @@ def hourlyEvents():
     global histComics   
     global hourlyTimer
     print "hourly events running"
-    currentTime = predComics.scaledTime()
+    currentTime = F1Engine.J2Engine.Predictor.scaledTime()
     histComics.recoverWaiting()
-    for comicId in F1Engine.J2Engine.Predictor.getHourList(currentTime):
+    for comicId in predComics.getHourList(currentTime):
         directory = cwd + "/Cache/predictorInfo/" + str(comicId) + "/last3Pages.txt"
         urls = []
         with open(directory) as f:

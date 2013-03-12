@@ -142,6 +142,7 @@ def hourlyEvents():
     print "hourly events running"
     currentTime = F1Engine.J2Engine.Predictor.scaledTime()
     histComics.recoverWaiting()
+    print "currentTime:", currentTime, "Pred Data:", predComics.getHourList(currentTime)
     for comicId in predComics.getHourList(currentTime):
         directory = cwd + "/Cache/predictorInfo/" + str(comicId) + "/last3Pages.txt"
         urls = []
