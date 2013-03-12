@@ -12,9 +12,10 @@ def compare(newPage, oldPage):
     #print "old:", str(oldPage.links)
     #print "new:", str(newPage.links)
     if len(oldPage.links) == len(newPage.links):
-        for i in xrange(len(oldPage.links)):
+        for i in range(len(oldPage.links)):
             if i not in oldPage.blackList:
                 if oldPage.links[i] != newPage.links[i]:
+                    print "links mismatch: ", oldPage.links[i], newPage.links[i]
                     return False
     else:
         return False
