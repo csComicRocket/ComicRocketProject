@@ -61,12 +61,14 @@ def fetchWeb(url, comicID, imgs=None):
        
         tree = fillNode(tree, pageStr, headerDict, url, comicID, nodeID, None)       # Fill root node
 
-        links = []
+        tree.loadLinks(pageStr)
+
+"""        links = []
 
         for a in soup.findAll('a',href=True):            #Process links
             links.append(a.get("href"))
         
-        tree.links = links
+        tree.links = links"""
 
         """for b in soup.findAll('img',href=True):            #Process Imgs
             nodeID += 1
