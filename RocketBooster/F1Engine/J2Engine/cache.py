@@ -244,7 +244,8 @@ class Cache:
         self.fetchCache("http://this.does.not/exist")
 
 def defaultPredData(comicId):
-    Predictor.generatePredictorDataTemplate()
+    pred = Predictor()
+    pred.generatePredictorDataTemplate()
     directory = cacheLoc + "predictorInfo/" + str(comicId) + "/"
     shutil.copy2(cacheLoc + "predictorInfo/predictorData.txt", directory)
         
