@@ -105,6 +105,7 @@ class Cache:
         directory = cacheLoc + "predictorInfo/" + str(comicId) + "/"
         try:
             os.makedirs(directory)
+            print "Dirmade: ", directory
             defaultPredData(comicId)
             Scheduler.predScanDir(comicId)
         except OSError:
@@ -243,6 +244,7 @@ class Cache:
         self.fetchCache("http://this.does.not/exist")
 
 def defaultPredData(comicId):
+    # Predictor.generatePredictorDataTemplate()
     directory = cacheLoc + "predictorInfo/" + str(comicId) + "/"
     shutil.copy2(cacheLoc + "predictorInfo/predictorData.txt", directory)
         
