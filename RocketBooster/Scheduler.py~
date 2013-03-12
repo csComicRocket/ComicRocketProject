@@ -46,8 +46,18 @@ class ComicList:
                 if not urlList[-1]:
                     urlList.pop()
                     end = True
+                    break
             self.current = f.tell()
-        if end:
+            if not end:
+                for i in range(3):
+                    urlList.append(f.readline().strip())
+                    if not urlList[-1]:
+                        urlList.pop()
+                        end = True
+                        break
+        for i in range(3):
+            urlList.pop()
+        if end:            
             self.current = 0
             self.lastComplete = time.gmtime()
         with open(self.histData, 'w+') as f:
@@ -86,8 +96,11 @@ class HistoryList:
             return []
         urlList = self.comics[0].getNext()
         while len(urlList) == 0:
-            self.waiting.append(self.comics.pop())
-            urlList = self.comics[0].getNext()
+            self.waiting.append(self.comics.pop(0))
+            if len(self.comics) > 0:
+                urlList = self.comics[0].getNext()
+            else:
+                return []
         self.waiting.append(self.comics.pop(0))
         return urlList
 		
