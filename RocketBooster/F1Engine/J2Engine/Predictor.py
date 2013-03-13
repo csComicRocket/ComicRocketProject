@@ -348,7 +348,7 @@ class Predictor:
         sec = time.mktime(time.strptime(str(tgm.tm_year) +' '+ str(tgm.tm_mon) +' '+ str(tgm.tm_mday) +' '+ str(tgm.tm_hour) +' '+ str(tgm.tm_min) +' '+ str(tgm.tm_sec), '%Y %m %d %H %M %S'))
         print self.__predictorData._PredictorData__data
         if (sec >= self.__predictorData.getWeedingStart() + 7*24*self.hourScale):
-            self.stopWeeding()
+            self.stopWeeding(dayHour, comicId)
         self.saveComic(1)
         return self.__predictorList[dayHour[0]][dayHour[1]]
 
