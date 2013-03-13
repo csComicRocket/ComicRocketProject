@@ -4,6 +4,7 @@ and change them into the form it needs.
 """
 
 from J2Engine.cache import *
+import Scheduler
 
 def resetPredData(argList):
     """Reset the predictor history to default settings.
@@ -16,42 +17,28 @@ def resetPredData(argList):
     defaultPredData(comicId)
     return True
     
-def lockPredData(argList):
+def lockPredData(comicId):
     """Lock a comics expected update schedule.
     
     argList should be a comic id
     Use this if a comic is going on hiatus and you want to avoid the predictor
     data losing accuracy."""
-    try:
-        comicId = int(argList)
-    except ValueError:
-        return False
-    #Do stuff to lock the predictor data of comicId
+    Scheduler.lockComic(comicId, True)
     return False
     
-def unlockPredData(argList):
+def unlockPredData(comicId):
     """Unlock a comics expected update schedule.
     
     argList should be a comic id"""
-    try:
-        comicId = int(argList)
-    except ValueError:
-        return False
-    #Do stuff to unlock the predictor data of comicId
+    Scheduler.lockComic(comicId, False)
     return False
     
-def setUpdateSchedule(argList):
+def setUpdateSchedule(comicId, data):
     """Set a comics update schedule to provided times.
     
     argList should be a comicId and a list of (day,hour) tuples"""
-    try:
-        argList = argList.partition(',')
-        comicId = int(argList[0])
-        schedule = argList[2].strip('[]')
-        schedule = schedule.split(',')
-    except ValueError:
-        return False
-    #Update the predictor history using the provided list
+
+    #Not currently implemented
     return False
 
 def invalidNotification(url):

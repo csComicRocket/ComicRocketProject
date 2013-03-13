@@ -8,6 +8,7 @@ from F1Engine.crFunctions import *
 from F1Engine import fetchHTTP
 import SimpleHTTPServer
 import BaseHTTPServer
+import F1Engine.J2Engine.notification
 
 class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
     """ Waits for HTTP requests in a loop on separate thread 
@@ -35,12 +36,13 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
             elif(crFn == 'unlockPredData'):
                 unlockPredData(self.headers['comicID'])
             elif(crFn == 'setUpdateSchedule'):
-                setUpdateSchedule(self.headers['data'])
+                setUpdateSchedule(self.headers['comicID'], self.headers['data'])
             elif(crFn == 'invalidNotification'):
                 invalidNotification(self.headers['url'])
             
         except KeyError:
-            print "Invalid API data"
+            print "Invalid crFunction arguments"
+            F1Engine.J2Engine.notification.notification("Invalid crFunction arguments")
         except Exception as e:
             print(e)
             self.send_error(500, 'Internal Server Error: Failed POST')

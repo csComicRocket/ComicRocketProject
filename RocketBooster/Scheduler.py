@@ -159,6 +159,12 @@ def predUpdate(comicId):
     
 def predScanDir(comicId):
     predComics.scanDirectory(comicId)
+
+def lockComic(comicId, val):
+    if val:
+        predComics.lockComic(comicId)
+    else:
+        predComics.unlockComic(comicId)
 		
 def runTests():
     pass

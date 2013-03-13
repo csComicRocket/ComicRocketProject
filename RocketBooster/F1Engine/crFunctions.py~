@@ -4,7 +4,6 @@ and change them into the form it needs.
 """
 
 from J2Engine.cache import *
-import J2Engine.compare
 
 def resetPredData(argList):
     """Reset the predictor history to default settings.
@@ -41,17 +40,11 @@ def unlockPredData(argList):
     #Do stuff to unlock the predictor data of comicId
     return False
     
-def setUpdateSchedule(argList):
+def setUpdateSchedule(comicId, data):
     """Set a comics update schedule to provided times.
     
     argList should be a comicId and a list of (day,hour) tuples"""
-    try:
-        argList = argList.partition(',')
-        comicId = int(argList[0])
-        schedule = argList[2].strip('[]')
-        schedule = schedule.split(',')
-    except ValueError:
-        return False
+
     #Update the predictor history using the provided list
     return False
 
@@ -60,7 +53,12 @@ def invalidNotification(url):
     cache = Cache()
     curTree = cache.fetchCache(url)
     lastTree = cache.fetchCache(url, -1)
-    cache.storeCache(compare.blackListDiffs(curTree, lastTree))
+    if len(curTree.links) != len(lastTree.links):
+        return
+    for i in range(len(curTree.links)):
+        if curTree.links[i] != lastTree.links[i]:
+            curTree.blackList.append(i)
+    cache.storeCache(curTree)
     
 def runTests():
     tests = []
