@@ -248,7 +248,7 @@ class Predictor:
         self.__predictorData = PredictorData(None)
         self.saveComic(comicId)
 
-    def stopWeeding(self, dayHour, comicId):
+    def stopWeeding(self, dayHour):
         self.__predictorData.stopWeeding()
         self.__predictorData.setUpdateRanges(self.calculateURPositions(self.__predictorData.getUpdateRanges()))
         self.__predictorData.setSchedule(self.calculateScheduleUR(self.__predictorData.getUpdateRanges()))
@@ -275,7 +275,7 @@ class Predictor:
                 sec = time.mktime(time.strptime(str(tgm.tm_year) +' '+ str(tgm.tm_mon) +' '+ str(tgm.tm_mday) +' '+ str(tgm.tm_hour) +' '+ str(tgm.tm_min) +' '+ str(tgm.tm_sec), '%Y %m %d %H %M %S'))
                 # print "weeding times:", self.__predictorData.getWeedingStart(), sec
                 if (sec >= self.__predictorData.getWeedingStart() + 7*24*self.hourScale):
-                    self.stopWeeding(dayHour, comicId)
+                    self.stopWeeding(dayHour)
                     stopWeeding = True
 
             if (self.__predictorData.isWeeding() or stopWeeding):
@@ -348,7 +348,7 @@ class Predictor:
         sec = time.mktime(time.strptime(str(tgm.tm_year) +' '+ str(tgm.tm_mon) +' '+ str(tgm.tm_mday) +' '+ str(tgm.tm_hour) +' '+ str(tgm.tm_min) +' '+ str(tgm.tm_sec), '%Y %m %d %H %M %S'))
         print self.__predictorData._PredictorData__data
         if (sec >= self.__predictorData.getWeedingStart() + 7*24*self.hourScale):
-            self.stopWeeding(dayHour, comicId)
+            self.stopWeeding(dayHour)
         self.saveComic(1)
         return self.__predictorList[dayHour[0]][dayHour[1]]
 
