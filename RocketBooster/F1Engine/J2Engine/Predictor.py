@@ -344,6 +344,7 @@ class Predictor:
 
     def getHourList(self, dayHour):
         self.loadComic(1)
+        tgm = time.gmtime()
         sec = time.mktime(time.strptime(str(tgm.tm_year) +' '+ str(tgm.tm_mon) +' '+ str(tgm.tm_mday) +' '+ str(tgm.tm_hour) +' '+ str(tgm.tm_min) +' '+ str(tgm.tm_sec), '%Y %m %d %H %M %S'))
         print self.__predictorData._PredictorData__data
         if (sec >= self.__predictorData.getWeedingStart() + 7*24*self.hourScale):
