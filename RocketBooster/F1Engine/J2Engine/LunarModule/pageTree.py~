@@ -11,7 +11,7 @@ import uuid
 from utilities import sanitizeId
 from pageNode import PageNode
 from bs4 import BeautifulSoup
-
+import json
 
 (_ADD, _DELETE, _INSERT) = range(3)
 (_ROOT, _DEPTH, _WIDTH) = range(3)
@@ -131,8 +131,10 @@ class PageTree:
 
     def loadLinks(self, content):
         soup = BeautifulSoup(content)
+        links = []
         for a in soup.findAll('a',href=True):            #Process links
-            self.links.append(a.get("href"))
+            links.append(a.get("href"))
+        self.links = links
 
     """PageTree.getContent(nodeId) returns content of tree node nodeId."""
     def getContent(self, nodeId=0):
@@ -227,7 +229,7 @@ class PageTree:
     def getChildren(self, nodeId=0):
         return self.nodes[self.getIndex(nodeId)].fPointer
         
-    def getPageTreeData(self):
+    """def getPageTreeData(self):
         pageTreeDataString = []
         pageTreeDataString.append("EncodeType: " + str(self.getEncodeType(0)) + '\n')
         pageTreeDataString.append("MimeType: " + str(self.getMimeType(0)) + '\n')
@@ -240,9 +242,35 @@ class PageTree:
         pageTreeDataString.append("IsReferredTo: " + str(self.getIsReferredTo(0)) + '\n')
         pageTreeDataString.append("Hash: " + str(self.getHash(0)) + '\n')
         pageTreeDataString.append("PageStructure:\n" + self.getPageStructureString(0) + '\n')
-        return pageTreeDataString
+        return pageTreeDataString"""
+
+    def getPageTreeData(self):
+        #This replaces the above function
+        """This turns the attributes into a dict and uses json to generate the string."""
+        pageTreeDataString = {}
+        pageTreeDataString["EncodeType"] = self.getEncodeType(0)
+        pageTreeDataString["MimeType"] = self.getMimeType(0)
+        pageTreeDataString["AuthorTS"] = self.getAuthorTS(0)
+        pageTreeDataString["PullTS"] = self.getPullTS(0)
+        if (self.getRevisionNum(0) == None):
+            self.setRevisionNum(0, 0)
+        pageTreeDataString["RevisionNum"] = self.getRevisionNum(0)
+        pageTreeDataString["IsReferredTo"] = self.getIsReferredTo(0)
+        pageTreeDataString["Hash"] = self.getHash(0)
+        pageTreeDataString["BlackList"] = self.blackList
+        return json.dumps(pageTreeDataString)
 
     def setPageTreeData(self, fileContent):
+        data = json.loads(fileContent)
+        self.setEncodeType(0, data["EncodeType"])
+        self.setMimeType(0, data["MimeType:"])
+        self.setAuthorTS(0, data["AuthorTS"])
+        self.setPullTS(0, data["PullTS"])
+        self.setRevisionNum(0, data["RevisionNum"])
+        self.restoreHash(0, data["Hash"])
+        self.blackList = data["BlackList"]
+
+    """def setPageTreeData(self, fileContent):
         lines = fileContent.split("\n")
         encodeType = lines[0].split("EncodeType: ")[1]
         self.setEncodeType(0, encodeType)
@@ -259,7 +287,7 @@ class PageTree:
             #self.isReferredTo(0)
         aHash = lines[6].split("Hash: ")[1]
         self.restoreHash(0, aHash)
-        #pageTreeDataString.append("PageStructure:\n" + self.getPageStructureString(0) + '\n')
+        #pageTreeDataString.append("PageStructure:\n" + self.getPageStructureString(0) + '\n')"""
 
     def equals(self, aTree):
         if self.getContent(0) == aTree.getContent(0) and self.getHash(0) == aTree.getHash(0) and self.getEncodeType(0) == aTree.getEncodeType(0) and self.getPullTS(0) == aTree.getPullTS(0) and self.getIsReferredTo(0) == aTree.getIsReferredTo(0):
@@ -270,7 +298,10 @@ class PageTree:
 """PageTree's main function: currently builds a little pageTree with 10 nodes sorta randomly connected, then prints."""
 if __name__== "__main__":
 
-    pageTree = PageTree(None)
+    pt = PageTree("http://www.xkcd.com")
+    print pt.getPageTreeData()
+
+    """pageTree = PageTree(None)
     pageTree.createPageNode("http://www.xkcd.com", 0)  # root node
     pageTree.createPageNode("http://www.xkcd.com/apic.jpg", 1, parent = 0)
     pageTree.createPageNode("http://www.xkcd.com/style.css", 2, parent = 0)
@@ -313,4 +344,4 @@ if __name__== "__main__":
     print(pageTree.getPullTS(0))
     print("It's evident that it doesn't work at the moment. TODO: fix it.")
 
-    print(">> Example of something else.")
+    print(">> Example of something else.")"""

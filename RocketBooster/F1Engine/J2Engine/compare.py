@@ -1,16 +1,16 @@
-#Eric Smith
+#Eric Smith & Daniel Leblanc
 
 from LunarModule.pageTree import *
 
-def hashCompare(newPage, oldPage):
+def hashCompare(webPage, cachePage):
+    """Compares a hash on the contents of the two pageTrees"""
     if(hash(oldPage.getContent(0)) == hash(newPage.getContent(0))):
         return True
     else:
         return False
 
-def compare(newPage, oldPage):
-    #print "old:", str(oldPage.links)
-    #print "new:", str(newPage.links)
+def compare(webPage, cachePage):
+    """Compares the links used in the two pageTrees"""
     if len(oldPage.links) == len(newPage.links):
         for i in range(len(oldPage.links)):
             if i not in oldPage.blackList:
@@ -20,3 +20,8 @@ def compare(newPage, oldPage):
     else:
         return False
     return True
+
+def domainCompare(webPage, cachePage):
+    """Just compares the Domains that have been reported as important"""
+    for domain in cachePage.assocDomains:
+        pass

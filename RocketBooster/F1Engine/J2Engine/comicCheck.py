@@ -27,8 +27,7 @@ def newComic(comicURLs):
             cache.storeCache(webObject)
             lastChange = url
     if lastChange:
-        notification(lastChange)
-        #notification("New: " + lastChange)
+        notification("New: " + lastChange)
     return None
 
 def histComic(comicURL):
@@ -41,5 +40,5 @@ def histComic(comicURL):
         print "old: " + str(len(cacheObject.getContent()))
         print webObject.getContent() == cacheObject.getContent()
         cache.storeCache(webObject)
-        #notification("Hist: " + comicURL)
+        notification("Hist: " + comicURL)
     return None

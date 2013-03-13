@@ -22,12 +22,16 @@ def notifications():
 
 def parseUrl(url):
     urlPieces = url.split("://")
-    host = urlPieces[1].partition('/')[0]
-    url = urlPieces[1].partition('/')[1] + urlPieces[1].partition('/')[2]
-    return (host, url)
+    if "New" in urlPieces[0]:
+        host = urlPieces[1].partition('/')[0]
+        url = urlPieces[1].partition('/')[1] + urlPieces[1].partition('/')[2]
+        return (host, url)
+    return None
 
 def handleMessage(msg):    
     url = parseUrl(msg)
+    if not url:
+        return
     comicId = getComicId(url[0])
     httpRequest(url[0], url[1], comicId)
     latest = getLatest(url[0])
@@ -35,6 +39,7 @@ def handleMessage(msg):
         with open("missed.txt", 'a+') as f:
             f.write("missed: " + msg)
         print "Bad Notification:", msg
+        invalidNotif(url[0], url[1], msg)
     elif len(latest) > 1:
         with open("missed.txt", 'a+') as f:
             f.write("extra: " + msg)
@@ -50,19 +55,26 @@ def getComicId(host):
         return data[host]
     return data
 
-def getLatest(host):
+def getLatest(host, url=None):
     latest = []
+    new = (url == None)
     with open("/usr/local/bin/" + host + ".list") as f:
         for line in f:
-            latest.append(line.strip())
-    with open("/usr/local/bin/" + host + ".list", 'w+') as f:
-        pass
+            if new:
+                latest.append(line.strip())
+            if url == line.strip():
+                new = True
     return latest
 
 def httpRequest(host, url, comicId):
     conn = HTTPConnection(host, 81)
     conn.request("GET", url, headers = {"comicID" : comicId})
-    #r1 = conn.getresponse()
+    #r = conn.getresponse()
+
+def invalidNotif(host, url, msg):
+    conn = HTTPConnection(host, 81)
+    conn.request("POST", url, headers = {"url" : msg, "crFunction" : "invalidNotification"})
+    #r = conn.getresponse()
 
 def getCaughtUp():
     hosts = getComicId(None)

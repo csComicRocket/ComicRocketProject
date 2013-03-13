@@ -46,7 +46,7 @@ def handleError(e):
 fetches requested URL from web, parses it and returns it in a PageTree object.
 imgs is a boolean that specifies whether to retrieve the whole image or just headers
 """
-def fetchWeb(url, comicID, imgs=None):
+def fetchWeb(url, comicID=None, imgs=None):
 
     try:
         tree   = LunarModule.pageTree.PageTree(None)
@@ -61,13 +61,6 @@ def fetchWeb(url, comicID, imgs=None):
        
         tree = fillNode(tree, pageStr, headerDict, url, comicID, nodeID, None)       # Fill root node
         tree.loadLinks(pageStr)
-
-        """links = []
-
-        for a in soup.findAll('a',href=True):            #Process links
-            links.append(a.get("href"))
-        
-        tree.links = links"""
 
         """for b in soup.findAll('img',href=True):            #Process Imgs
             nodeID += 1

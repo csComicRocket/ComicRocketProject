@@ -4,7 +4,7 @@
 #from http import server
 #import sys
 from threading import Thread
-from F1Engine.crFunctions import resetPredData, lockPredData, unlockPredData, setUpdateSchedule
+from F1Engine.crFunctions import *
 from F1Engine import fetchHTTP
 import SimpleHTTPServer
 import BaseHTTPServer
@@ -27,17 +27,20 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_POST(self):
         try:
             crFn = self.headers['crFunction']
-            comicID  = self.headers['comicID']
             
             if(crFn == 'resetPredData'):
-                resetPredData(comicID)
-            if(crFn == 'lockPredData'):
-                lockPredData(comicID)
-            if(crFn == 'unlockPredData'):
-                unlockPredData(comicID)
-            if(crFn == 'setUpdateSchedule'):
-                setUpdateSchedule(comicID)
+                resetPredData(self.headers['comicID'])
+            elif(crFn == 'lockPredData'):
+                lockPredData(self.headers['comicID'])
+            elif(crFn == 'unlockPredData'):
+                unlockPredData(self.headers['comicID'])
+            elif(crFn == 'setUpdateSchedule'):
+                setUpdateSchedule(self.headers['data'])
+            elif(crFn == 'invalidNotification'):
+                invalidNotification(self.headers['url'])
             
+        except KeyError:
+            print "Invalid API data"
         except Exception as e:
             print(e)
             self.send_error(500, 'Internal Server Error: Failed POST')

@@ -105,6 +105,7 @@ class Cache:
         directory = cacheLoc + "predictorInfo/" + str(comicId) + "/"
         try:
             os.makedirs(directory)
+            print "Dirmade: ", directory
             defaultPredData(comicId)
             Scheduler.predScanDir(comicId)
         except OSError:
@@ -166,7 +167,6 @@ class Cache:
             #print os.path.join(directory, preFileString + fName)
             with open(os.path.join(directory, preFileString + fName)) as f:
                 content = f.read()
-                print "cache: " + str(len(content))
                 pageTree.setContent(0, content, contentType)
         except IOError:
             print directory + preFileString + "/" + fName + "not found."
@@ -244,6 +244,8 @@ class Cache:
         self.fetchCache("http://this.does.not/exist")
 
 def defaultPredData(comicId):
+    pred = Predictor()
+    pred.generatePredictorDataTemplate()
     directory = cacheLoc + "predictorInfo/" + str(comicId) + "/"
     shutil.copy2(cacheLoc + "predictorInfo/predictorData.txt", directory)
         

@@ -4,6 +4,7 @@ and change them into the form it needs.
 """
 
 from J2Engine.cache import *
+import J2Engine.compare
 
 def resetPredData(argList):
     """Reset the predictor history to default settings.
@@ -59,12 +60,7 @@ def invalidNotification(url):
     cache = Cache()
     curTree = cache.fetchCache(url)
     lastTree = cache.fetchCache(url, -1)
-    if len(curTree.links) != len(lastTree.links):
-        return
-    for i in range(len(curTree.links)):
-        if curTree.links[i] != lastTree.links[i]:
-            curTree.blackList.append(i)
-    cache.storeCache(curTree)
+    cache.storeCache(compare.blackListDiffs(curTree, lastTree))
     
 def runTests():
     tests = []

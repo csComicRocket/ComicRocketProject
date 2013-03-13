@@ -1,13 +1,13 @@
 #Lucas Berge
-import string
-from threading import Thread
-import F1Engine.crFunctions
-import F1Engine.fetchHTTP
+#import string
+#import SocketServer
 #from http import server
+#import sys
+from threading import Thread
+from F1Engine.crFunctions import *
+from F1Engine import fetchHTTP
 import SimpleHTTPServer
-import SocketServer
 import BaseHTTPServer
-import sys
 
 class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
     """ Waits for HTTP requests in a loop on separate thread 
@@ -18,7 +18,7 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
             comicID  = self.headers['comicID']
             url = self.parseUrl()
             print url
-            tree = F1Engine.fetchHTTP.fetchHTTP(url, comicID)
+            tree = fetchHTTP.fetchHTTP(url, comicID)
             
         except Exception as e:
             print(e)
@@ -27,20 +27,23 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_POST(self):
         try:
             crFn = self.headers['crFunction']
-            comicID  = self.headers['comicID']
             
             if(crFn == 'resetPredData'):
-                resetPredData(comicID)
-            if(crFn == 'lockPredData'):
-                lockPredData(comicID)
-            if(crFn == 'unlockPredData'):
-                unlockPredData(comicID)
-            if(crFn == 'setUpdateSchedule'):
-                setUpdateSchedule(comicID)
+                resetPredData(self.headers['comicID'])
+            elif(crFn == 'lockPredData'):
+                lockPredData(self.headers['comicID'])
+            elif(crFn == 'unlockPredData'):
+                unlockPredData(self.headers['comicID'])
+            elif(crFn == 'setUpdateSchedule'):
+                setUpdateSchedule(self.headers['data'])
+            elif(crFn == 'invalidNotification'):
+                invalidNotification(self.headers['url'])
             
         except Exception as e:
             print(e)
             self.send_error(500, 'Internal Server Error: Failed POST')
+        except KeyError:
+            print "Invalid API data"
 
     def parseUrl(self):
             _host = self.headers['Host'].rsplit(':')[0]
@@ -61,7 +64,7 @@ def runListener():
             HttpServer.handle_request()
     except KeyboardInterrupt:
         print('^C received, shutting down...')
-        HttpServer.socket.close(self)
+        HttpServer.socket.close()
         
 if __name__ == '__main__':
     t = Thread(target=runListener, args=())

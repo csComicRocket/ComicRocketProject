@@ -30,7 +30,7 @@ class Cache:
             Scheduler.predUpdate(pageTree.getComicId(0))
         try:
             with open(os.path.join(directory,"pageTreeData.txt"), 'w+') as f:
-                f.writelines(pageTree.getPageTreeData())
+                f.write(pageTree.getPageTreeData())
             with open(os.path.join(directory, fName), 'w+') as f:
                 f.write(str(pageTree.getContent(0)))
             return True
