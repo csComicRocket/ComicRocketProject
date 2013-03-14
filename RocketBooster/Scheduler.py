@@ -140,6 +140,9 @@ def scheduler():
     print "Terminated"
 
 def updateData():
+    global newPagesAdded
+    global newComicNotification
+    global histComicNotification
     print "New comic notifications sent:  " + str(newComicNotification)
     print "Hist comic notifications sent: " + str(histComicNotification)
     print "New pages added:               " + str(newPagesAdded)
