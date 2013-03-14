@@ -15,7 +15,7 @@ def fetchHTTP(url, comicID, imgs=None):
                 cache.storeCache(pt)
         return pt
     except:
-        J2Engine.notification.notification("Error getting page from web")
+        J2Engine.notification.notification("Error fetching from web:" + url)
 
 if __name__ == "main":
     fetchHTTP()
