@@ -55,13 +55,15 @@ def getComicId(host):
         return data[host]
     return data
 
-def getLatest(host):
+def getLatest(host, url=None):
     latest = []
+    new = (url == None)
     with open("/usr/local/bin/" + host + ".list") as f:
         for line in f:
-            latest.append(line.strip())
-    with open("/usr/local/bin/" + host + ".list", 'w+') as f:
-        pass
+            if new:
+                latest.append(line.strip())
+            if url == line.strip():
+                new = True
     return latest
 
 def httpRequest(host, url, comicId):
@@ -84,7 +86,7 @@ def getCaughtUp():
             time.sleep(.1)
 
 if __name__ == "__main__":
-    t = Thread(target=getCaughtUp(), args=())
+    t = Thread(target=getCaughtUp, args=())
     t.start()
     try:
         notifications()

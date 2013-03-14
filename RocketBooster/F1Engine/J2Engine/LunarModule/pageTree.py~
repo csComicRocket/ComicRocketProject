@@ -269,6 +269,7 @@ class PageTree:
             data = json.loads(fileContent)
         except ValueError:
             self.oldSetPageTreeData(fileContent)
+            return
         self.setEncodeType(0, data["EncodeType"])
         self.setMimeType(0, data["MimeType:"])
         self.setAuthorTS(0, data["AuthorTS"])

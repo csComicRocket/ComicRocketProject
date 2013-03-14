@@ -51,7 +51,7 @@ def getComicId(host):
     with open("/usr/local/bin/comics.ids") as f:
         data = f.read()
     data = eval(data)
-    if host:            
+    if host:
         return data[host]
     return data
 
@@ -82,11 +82,12 @@ def getCaughtUp():
         latest = getLatest(h)
         for l in latest:
             url = parseUrl(l)
-            httpRequest(url[0], url[1], hosts[h])
-            time.sleep(.1)
+            if url:
+                httpRequest(url[0], url[1], hosts[h])
+                time.sleep(.1)
 
 if __name__ == "__main__":
-    t = Thread(target=getCaughtUp(), args=())
+    t = Thread(target=getCaughtUp, args=())
     t.start()
     try:
         notifications()

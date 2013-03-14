@@ -271,7 +271,7 @@ class PageTree:
             self.oldSetPageTreeData(fileContent)
             return
         self.setEncodeType(0, data["EncodeType"])
-        self.setMimeType(0, data["MimeType:"])
+        self.setMimeType(0, data["MimeType"])
         self.setAuthorTS(0, data["AuthorTS"])
         self.setPullTS(0, data["PullTS"])
         self.setRevisionNum(0, data["RevisionNum"])
