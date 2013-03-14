@@ -21,4 +21,7 @@ def compare(webPage, cachePage):
         return False
     return True
 
-def domainCompare(webPage, cachePage)
+def domainCompare(webPage, cachePage):
+    """Just compares the Domains that have been reported as important"""
+    for domain in cachePage.assocDomains:
+        pass

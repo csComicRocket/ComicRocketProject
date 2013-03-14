@@ -1,19 +1,11 @@
-# Eric Smith
+# Eric Smith & Daniel Leblanc
 
 from compare import *
 from fetchWeb import *
 from cache import *
 from notification import *
 from LunarModule.pageTree import *
-
-"""def comicCheck(comicURL):
-    webObject = fetchWeb(comicURL,False)
-    cacheObject = fetchCache(comicURL,None)
-    if compare(webObject.getHash(),cacheObject.getHash()) == False:
-        storeCache(webObject)
-        notification(comicURL)               
-    return None
-"""
+import Scheduler
 
 #The only difference between these two functions at the moment is that the newComic func stores the new find in the cache
 def newComic(comicURLs):
@@ -27,6 +19,7 @@ def newComic(comicURLs):
             cache.storeCache(webObject)
             lastChange = url
     if lastChange:
+        Scheduler.newComicNotification += 1
         notification("New: " + lastChange)
     return None
 
@@ -40,5 +33,6 @@ def histComic(comicURL):
         print "old: " + str(len(cacheObject.getContent()))
         print webObject.getContent() == cacheObject.getContent()
         cache.storeCache(webObject)
-        #notification("Hist: " + comicURL)
+        Scheduler.histComicNotification += 1
+        notification("Hist: " + comicURL)
     return None

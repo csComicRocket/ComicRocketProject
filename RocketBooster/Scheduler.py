@@ -115,6 +115,9 @@ class HistoryList:
 
 running = True
 hourlyTimer = None
+newPagesAdded = 0
+newComicNotification = 0
+histComicNotification = 0
 
 def scheduler():
     """Checks the new comics expected in each hour block and the archived comics"""
@@ -135,21 +138,28 @@ def scheduler():
     print "Scheduler Terminating... "
     hourlyTimer.cancel()
     print "Terminated"
+
+def updateData():
+    print "New comic notifications sent:  " + str(newComicNotification)
+    print "Hist comic notifications sent: " + str(histComicNotification)
+    print "New pages added:               " + str(newPagesAdded)
+    newPagesAdded = 0
+    newComicNotification = 0
+    histComicNotification = 0
         
 def hourlyEvents():
     global histComics   
     global hourlyTimer
     print "hourly events running"
+    updateData()
     currentTime = F1Engine.J2Engine.Predictor.scaledTime()
     histComics.recoverWaiting()
-    print "currentTime:", currentTime, "Pred Data:", predComics.getHourList(currentTime)
     for comicId in predComics.getHourList(currentTime):
         directory = cwd + "/Cache/predictorInfo/" + str(comicId) + "/last3Pages.txt"
         urls = []
         with open(directory) as f:
             for line in f:
                 urls.append(line.strip())
-        print "new urls:", str(urls)
         F1Engine.J2Engine.comicCheck.newComic(urls)
     hourlyTimer = threading.Timer(F1Engine.J2Engine.Predictor.scaledSeconds(), hourlyEvents)
     hourlyTimer.start()

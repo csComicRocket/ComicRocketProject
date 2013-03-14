@@ -35,7 +35,6 @@ class Cache:
                 f.write(str(pageTree.getContent(0)))
             return True
         except IOError:
-            print "D'oh"
             return False
         
     def parseDirectory(self, url):
@@ -105,7 +104,6 @@ class Cache:
         directory = cacheLoc + "predictorInfo/" + str(comicId) + "/"
         try:
             os.makedirs(directory)
-            print "Dirmade: ", directory
             defaultPredData(comicId)
             Scheduler.predScanDir(comicId)
         except OSError:
@@ -161,15 +159,13 @@ class Cache:
                 contentType = pageTree.getEncodeType(0)
                 pageTree.setSourceMode(0, "cache")
         except IOError:
-            print directory + preFileString + "/pageTreeData.txt not found."
+            Scheduler.newPagesAdded += 1
             return False
         try:
-            #print os.path.join(directory, preFileString + fName)
             with open(os.path.join(directory, preFileString + fName)) as f:
                 content = f.read()
                 pageTree.setContent(0, content, contentType)
         except IOError:
-            print directory + preFileString + "/" + fName + "not found."
             return False
         return pageTree
 
