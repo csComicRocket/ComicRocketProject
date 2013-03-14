@@ -22,15 +22,13 @@ def notifications():
 
 def parseUrl(url):
     urlPieces = url.split("://")
-    if "New" in urlPieces[0]:
-        host = urlPieces[1].partition('/')[0]
-        url = urlPieces[1].partition('/')[1] + urlPieces[1].partition('/')[2]
-        return (host, url)
-    return None
+    host = urlPieces[1].partition('/')[0]
+    url = urlPieces[1].partition('/')[1] + urlPieces[1].partition('/')[2]
+    return (host, url)
 
-def handleMessage(msg):    
+def handleMessage(msg):
     url = parseUrl(msg)
-    if not url:
+    if "New" not in msg.split("://")[0]:
         return
     comicId = getComicId(url[0])
     httpRequest(url[0], url[1], comicId)
@@ -45,8 +43,7 @@ def handleMessage(msg):
             f.write("extra: " + msg)
     for l in latest:
         url = parseUrl(l)
-        if url:
-            httpRequest(url[0], url[1], comicId)
+        httpRequest(url[0], url[1], comicId)
 
 def getComicId(host):
     with open("/usr/local/bin/comics.ids") as f:
@@ -83,9 +80,8 @@ def getCaughtUp():
         latest = getLatest(h)
         for l in latest:
             url = parseUrl(l)
-            if url:
-                httpRequest(url[0], url[1], hosts[h])
-                time.sleep(.1)
+            httpRequest(url[0], url[1], hosts[h])
+            time.sleep(.1)
 
 if __name__ == "__main__":
     t = Thread(target=getCaughtUp, args=())
