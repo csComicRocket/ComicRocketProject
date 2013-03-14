@@ -117,7 +117,7 @@ class Cache:
             urlList = []
         if len(urlList) >= 3:
             urlList.pop(0)
-        lastTree = self.fetchCache(urlList[-1])
+        lastTree = self.fetchCache(urlList[-1].strip())
         pageTree.assocDomains = lastTree.assocDomains
         urlList.append(url + '\n')
         with open(directory + "last3Pages.txt", 'w+') as f:
