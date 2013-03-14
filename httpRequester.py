@@ -45,7 +45,8 @@ def handleMessage(msg):
             f.write("extra: " + msg)
     for l in latest:
         url = parseUrl(l)
-        httpRequest(url[0], url[1], comicId)
+        if url:
+            httpRequest(url[0], url[1], comicId)
 
 def getComicId(host):
     with open("/usr/local/bin/comics.ids") as f:
