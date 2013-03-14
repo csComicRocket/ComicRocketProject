@@ -15,7 +15,6 @@ def compare(webPage, cachePage):
         for i in range(len(oldPage.links)):
             if i not in oldPage.blackList:
                 if oldPage.links[i] != newPage.links[i]:
-                    print "links mismatch: ", oldPage.links[i], newPage.links[i]
                     return False
     else:
         return False
