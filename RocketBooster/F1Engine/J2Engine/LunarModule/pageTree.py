@@ -26,6 +26,7 @@ class PageTree:
             self.createPageNode(url, 0)
         self.links = []
         self.blackList = []
+        self.assocDomains = []
 
     """PageTree.getIndex(position) returns the index of the node at nodeId=position."""
     def getIndex(self, position):
@@ -258,12 +259,16 @@ class PageTree:
         pageTreeDataString["IsReferredTo"] = self.getIsReferredTo(0)
         pageTreeDataString["Hash"] = self.getHash(0)
         pageTreeDataString["BlackList"] = self.blackList
+        pageTreeDataString["AssocDomains"] = self.assocDomains
         return json.dumps(pageTreeDataString)
 
     def setPageTreeData(self, fileContent):
         #This replaces the below function
         """Uses json to parse the file contents and populate the pageTree attributes"""
-        data = json.loads(fileContent)
+        try:
+            data = json.loads(fileContent)
+        except ValueError:
+            self.oldSetPageTreeData(filecontent)
         self.setEncodeType(0, data["EncodeType"])
         self.setMimeType(0, data["MimeType:"])
         self.setAuthorTS(0, data["AuthorTS"])
@@ -271,8 +276,9 @@ class PageTree:
         self.setRevisionNum(0, data["RevisionNum"])
         self.restoreHash(0, data["Hash"])
         self.blackList = data["BlackList"]
+        self.assocDomains = data["AssocDomains"]
 
-    """def setPageTreeData(self, fileContent):
+    def oldSetPageTreeData(self, fileContent):
         lines = fileContent.split("\n")
         encodeType = lines[0].split("EncodeType: ")[1]
         self.setEncodeType(0, encodeType)
@@ -289,7 +295,7 @@ class PageTree:
             #self.isReferredTo(0)
         aHash = lines[6].split("Hash: ")[1]
         self.restoreHash(0, aHash)
-        #pageTreeDataString.append("PageStructure:\n" + self.getPageStructureString(0) + '\n')"""
+        #pageTreeDataString.append("PageStructure:\n" + self.getPageStructureString(0) + '\n')
 
     def equals(self, aTree):
         if self.getContent(0) == aTree.getContent(0) and self.getHash(0) == aTree.getHash(0) and self.getEncodeType(0) == aTree.getEncodeType(0) and self.getPullTS(0) == aTree.getPullTS(0) and self.getIsReferredTo(0) == aTree.getIsReferredTo(0):

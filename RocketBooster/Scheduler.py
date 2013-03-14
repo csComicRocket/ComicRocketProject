@@ -11,6 +11,9 @@ PAGELIMIT = 20
 SECONDS = 60
 
 timeFormat = "%Y-%m-%d %H:%M:%S"
+newPagesAdded = 0
+newComicNotification = 0
+histComicNotification = 0
 
 class ComicList:
     """Represents a current list of pages in a comic that need to be checked.
@@ -115,9 +118,6 @@ class HistoryList:
 
 running = True
 hourlyTimer = None
-newPagesAdded = 0
-newComicNotification = 0
-histComicNotification = 0
 
 def scheduler():
     """Checks the new comics expected in each hour block and the archived comics"""

@@ -139,7 +139,13 @@ def scheduler():
     hourlyTimer.cancel()
     print "Terminated"
 
-def updateData
+def updateData():
+    print "New comic notifications sent:  " + str(newComicNotification)
+    print "Hist comic notifications sent: " + str(histComicNotification)
+    print "New pages added:               " + str(newPagesAdded)
+    newPagesAdded = 0
+    newComicNotification = 0
+    histComicNotification = 0
         
 def hourlyEvents():
     global histComics   
