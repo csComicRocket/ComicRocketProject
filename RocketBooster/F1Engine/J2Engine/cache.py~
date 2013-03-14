@@ -6,6 +6,7 @@ from LunarModule.pageTree import PageTree
 from LunarModule.pageNode import PageNode
 from Predictor import Predictor
 import Scheduler
+import json
 
 cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 cacheLoc = os.path.join(cwd, "../../Cache/")
@@ -117,8 +118,6 @@ class Cache:
             urlList = []
         if len(urlList) >= 3:
             urlList.pop(0)
-        #lastTree = self.fetchCache(urlList[-1])
-        #pageTree.assocDomains = lastTree.assocDomains
         urlList.append(url + '\n')
         with open(directory + "last3Pages.txt", 'w+') as f:
             f.writelines(urlList)
@@ -171,7 +170,20 @@ class Cache:
                 pageTree.setContent(0, content, contentType)
         except IOError:
             return False
+        
         return pageTree
+
+    def getLists(self, url):
+        """Retrieves the black list and the filter list from the file"""
+        temp = directory[len(cacheLoc + "cacheInfo/"):]
+        temp = temp.split('/')
+        directory = cacheLoc + "cacheInfo/" + temp[0]
+        try:
+            with open(os.path.join(directory, "filterData.txt")) as f:
+                lists = json.loads(f.read())
+                return lists["BlackList"], lists["FilterList"]
+        except IOError, ValueError:
+            return [], []
 
     def clearPage(self, url):
         directory = self.parseDirectory(url)

@@ -80,9 +80,8 @@ def getCaughtUp():
         latest = getLatest(h)
         for l in latest:
             url = parseUrl(l)
-            if url:
-                httpRequest(url[0], url[1], hosts[h])
-                time.sleep(.1)
+            httpRequest(url[0], url[1], hosts[h])
+            time.sleep(.1)
 
 if __name__ == "__main__":
     t = Thread(target=getCaughtUp, args=())

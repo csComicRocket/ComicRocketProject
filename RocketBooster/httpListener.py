@@ -4,7 +4,7 @@
 #from http import server
 #import sys
 from threading import Thread
-from F1Engine.crFunctions import *
+import F1Engine.crFunctions
 from F1Engine import fetchHTTP
 import SimpleHTTPServer
 import BaseHTTPServer
@@ -16,9 +16,9 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
         POSTS require crFunction header specifying action"""
     def do_GET(self):
         try:
-            comicID  = self.headers['comicID']
+            comicId  = self.headers['comicId']
             url = self.parseUrl()
-            tree = fetchHTTP.fetchHTTP(url, comicID)
+            tree = fetchHTTP.fetchHTTP(url, comicId)
             
         except Exception as e:
             print(e)
@@ -29,19 +29,29 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
             crFn = self.headers['crFunction']
             
             if(crFn == 'resetPredData'):
-                resetPredData(self.headers['comicID'])
+                F1Engine.crFunctions.resetPredData(self.headers['comicId'])
             elif(crFn == 'lockPredData'):
-                lockPredData(self.headers['comicID'])
+                F1Engine.crFunctions.lockPredData(self.headers['comicId'])
             elif(crFn == 'unlockPredData'):
-                unlockPredData(self.headers['comicID'])
+                F1Engine.crFunctions.unlockPredData(self.headers['comicId'])
             elif(crFn == 'setUpdateSchedule'):
-                setUpdateSchedule(self.headers['comicID'], self.headers['data'])
+                F1Engine.crFunctions.setUpdateSchedule(self.headers['comicId'], self.headers['data'])
             elif(crFn == 'invalidNotification'):
-                invalidNotification(self.headers['url'])
+                F1Engine.crFunctions.invalidNotification(self.headers['url'])
+            elif(crFn == 'newComicFilterList'):
+                F1Engine.crFunctions.newComicFilterList(self.headers['comicId'], self.headers['data'])
+            elif(crFn == 'newComicBlackList'):
+                F1Engine.crFunctions.newComicBlackList(self.headers['comicId'], self.headers['data'])
+            elif(crFn == 'histComicFilterList'):
+                F1Engine.crFunctions.histComicFilterList(self.headers['url'], self.headers['data'])
+            elif(crFn == 'histComicBlackList'):
+                F1Engine.crFunctions.histComicBlackList(self.headers['url'], self.headers['data'])
+            else:
+                raise KeyError
             
         except KeyError:
-            print "Invalid crFunction arguments"
-            F1Engine.J2Engine.notification.notification("Invalid crFunction arguments")
+            print "Invalid crFunction call"
+            F1Engine.J2Engine.notification.notification("Invalid crFunction call")
         except Exception as e:
             print(e)
             self.send_error(500, 'Internal Server Error: Failed POST')

@@ -66,7 +66,7 @@ def getLatest(host, url=None):
 
 def httpRequest(host, url, comicId):
     conn = HTTPConnection(host, 81)
-    conn.request("GET", url, headers = {"comicID" : comicId})
+    conn.request("GET", url, headers = {"comicId" : comicId})
     #r = conn.getresponse()
 
 def invalidNotif(host, url, msg):

@@ -26,7 +26,7 @@ class PageTree:
             self.createPageNode(url, 0)
         self.links = []
         self.blackList = []
-        self.assocDomains = []
+        self.filterList = []
 
     """PageTree.getIndex(position) returns the index of the node at nodeId=position."""
     def getIndex(self, position):
@@ -258,8 +258,6 @@ class PageTree:
         pageTreeDataString["RevisionNum"] = self.getRevisionNum(0)
         pageTreeDataString["IsReferredTo"] = self.getIsReferredTo(0)
         pageTreeDataString["Hash"] = self.getHash(0)
-        pageTreeDataString["BlackList"] = self.blackList
-        pageTreeDataString["AssocDomains"] = self.assocDomains
         return json.dumps(pageTreeDataString)
 
     def setPageTreeData(self, fileContent):
@@ -276,8 +274,6 @@ class PageTree:
         self.setPullTS(0, data["PullTS"])
         self.setRevisionNum(0, data["RevisionNum"])
         self.restoreHash(0, data["Hash"])
-        self.blackList = data["BlackList"]
-        self.assocDomains = data["AssocDomains"]
 
     def oldSetPageTreeData(self, fileContent):
         lines = fileContent.split("\n")

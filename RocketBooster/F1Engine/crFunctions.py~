@@ -4,6 +4,10 @@ and change them into the form it needs.
 """
 
 from J2Engine.cache import *
+import Scheduler
+import json
+
+cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
 def resetPredData(argList):
     """Reset the predictor history to default settings.
@@ -16,28 +20,20 @@ def resetPredData(argList):
     defaultPredData(comicId)
     return True
     
-def lockPredData(argList):
+def lockPredData(comicId):
     """Lock a comics expected update schedule.
     
     argList should be a comic id
     Use this if a comic is going on hiatus and you want to avoid the predictor
     data losing accuracy."""
-    try:
-        comicId = int(argList)
-    except ValueError:
-        return False
-    #Do stuff to lock the predictor data of comicId
+    Scheduler.lockComic(comicId, True)
     return False
     
-def unlockPredData(argList):
+def unlockPredData(comicId):
     """Unlock a comics expected update schedule.
     
     argList should be a comic id"""
-    try:
-        comicId = int(argList)
-    except ValueError:
-        return False
-    #Do stuff to unlock the predictor data of comicId
+    Scheduler.lockComic(comicId, False)
     return False
     
 def setUpdateSchedule(comicId, data):
@@ -45,7 +41,7 @@ def setUpdateSchedule(comicId, data):
     
     argList should be a comicId and a list of (day,hour) tuples"""
 
-    #Update the predictor history using the provided list
+    #Not currently implemented
     return False
 
 def invalidNotification(url):
@@ -59,7 +55,32 @@ def invalidNotification(url):
         if curTree.links[i] != lastTree.links[i]:
             curTree.blackList.append(i)
     cache.storeCache(curTree)
-    
+
+def newComicFilterList(comicId, data):
+    fname = cwd + "../Cache/predictorInfo/" + str(comicId) + "/filterData.txt"
+
+def newComicBlackList(comicId, data):
+    pass
+
+def histComicFilterList(url, data):
+    pass
+
+def histComicBlackList(url, data):
+    pass
+
+def applyDataToStoredLists(fname, key, data):
+    try:
+        data = json.loads(data)
+        with open(fname) as f:
+            lists = json.loads(f.read())
+        for item in data[key]:
+            lists[key].append(item)
+        with open(fname, 'w+') as f:
+            f.write(json.dump(lists))
+    except ValueError, IOError:
+        print "Invalid filter data"
+        F1Engine.J2Engine.notification.notification("Invalid filter data")
+
 def runTests():
     tests = []
     try:

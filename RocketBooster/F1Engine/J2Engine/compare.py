@@ -2,6 +2,11 @@
 
 from LunarModule.pageTree import *
 
+def compare(webPage, cachePage):
+    applyFilters(webPage)
+    applyFilters(cachePage)
+    return linkCompare(webPage, cachePage)
+
 def hashCompare(webPage, cachePage):
     """Compares a hash on the contents of the two pageTrees"""
     if(hash(cachePage.getContent(0)) == hash(webPage.getContent(0))):
@@ -9,18 +14,15 @@ def hashCompare(webPage, cachePage):
     else:
         return False
 
-def compare(webPage, cachePage):
+def linkCompare(webPage, cachePage):
     """Compares the links used in the two pageTrees"""
     if len(cachePage.links) == len(webPage.links):
         for i in range(len(cachePage.links)):
-            if i not in cachePage.blackList:
-                if cachePage.links[i] != webPage.links[i]:
-                    return False
+            if cachePage.links[i] != webPage.links[i]:
+                return False
     else:
         return False
     return True
 
-def domainCompare(webPage, cachePage):
-    """Just compares the Domains that have been reported as important"""
-    for domain in cachePage.assocDomains:
-        pass
+def applyFilters(page):
+    pass

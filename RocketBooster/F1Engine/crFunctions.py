@@ -5,6 +5,9 @@ and change them into the form it needs.
 
 from J2Engine.cache import *
 import Scheduler
+import json
+
+cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
 def resetPredData(argList):
     """Reset the predictor history to default settings.
@@ -52,7 +55,34 @@ def invalidNotification(url):
         if curTree.links[i] != lastTree.links[i]:
             curTree.blackList.append(i)
     cache.storeCache(curTree)
-    
+
+def newComicFilterList(comicId, data):
+    fname = cwd + "../Cache/predictorInfo/" + str(comicId) + "/filterData.txt"
+    applyDataToStoredLists(fname, 'Filterlist', fname)
+
+def newComicBlackList(comicId, data):
+    fname = cwd + "../Cache/predictorInfo/" + str(comicId) + "/filterData.txt"
+    applyDataToStoredLists(fname, 'BlackList', fname)
+
+def histComicFilterList(url, data):
+    pass
+
+def histComicBlackList(url, data):
+    pass
+
+def applyDataToStoredLists(fname, key, data):
+    try:
+        data = json.loads(data)
+        with open(fname) as f:
+            lists = json.loads(f.read())
+        for item in data[key]:
+            lists[key].append(item)
+        with open(fname, 'w+') as f:
+            f.write(json.dump(lists))
+    except ValueError, IOError:
+        print "Invalid filter data"
+        F1Engine.J2Engine.notification.notification("Invalid filter data")
+
 def runTests():
     tests = []
     try:
