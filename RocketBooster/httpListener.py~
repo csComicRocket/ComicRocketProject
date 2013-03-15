@@ -38,14 +38,10 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
                 F1Engine.crFunctions.setUpdateSchedule(self.headers['comicId'], self.headers['data'])
             elif(crFn == 'invalidNotification'):
                 F1Engine.crFunctions.invalidNotification(self.headers['url'])
-            elif(crFn == 'newComicFilterList'):
+            elif(crFn == 'updateNewComicLists'):
                 F1Engine.crFunctions.newComicFilterList(self.headers['comicId'], self.headers['data'])
-            elif(crFn == 'newComicBlackList'):
-                F1Engine.crFunctions.newComicBlackList(self.headers['comicId'], self.headers['data'])
-            elif(crFn == 'histComicFilterList'):
+            elif(crFn == 'updateHistComicLists'):
                 F1Engine.crFunctions.histComicFilterList(self.headers['url'], self.headers['data'])
-            elif(crFn == 'histComicBlackList'):
-                F1Engine.crFunctions.histComicBlackList(self.headers['url'], self.headers['data'])
             else:
                 raise KeyError
             

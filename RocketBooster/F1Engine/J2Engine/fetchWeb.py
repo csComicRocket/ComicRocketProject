@@ -37,11 +37,6 @@ def headReq(url):
     rsp = urllib2.urlopen(req)
     return rsp
 
-def handleError(e):
-    #print e.code()
-    print e.read()
-    #errorNotification(e)
-    
 """ fetchWeb(url:string, imgs:boolean=None, comicID:int=None)
 fetches requested URL from web, parses it and returns it in a PageTree object.
 imgs is a boolean that specifies whether to retrieve the whole image or just headers
@@ -71,7 +66,7 @@ def fetchWeb(url, filterList, comicID=None, imgs=None):
         return tree
 
     except urllib2.HTTPError as e:
-        handleError(e)
+        notification.notification(e.read())
     
 if __name__ == "__main__":
     testTree = fetchWeb("http://www.amazon.com/", 0)

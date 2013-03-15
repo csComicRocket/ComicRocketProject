@@ -19,6 +19,13 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
             comicId  = self.headers['comicId']
             url = self.parseUrl()
             tree = fetchHTTP.fetchHTTP(url, comicId)
+
+            self.protocol_version='HTTP/1.1'
+            self.send_response(200)
+            self.send_header("Content-type", tree.getEncodeType(comicID))
+            self.send_header("Source-Mode", tree.getSourceMode(0))
+            self.end_headers()
+            self.wfile.write(tree.getContent(comicID))
             
         except Exception as e:
             print(e)
