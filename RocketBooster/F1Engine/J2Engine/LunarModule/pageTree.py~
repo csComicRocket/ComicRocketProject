@@ -130,12 +130,16 @@ class PageTree:
         self.nodes[self.getIndex(nodeId)].setContent(content, encodeType)
         self.loadLinks(content)
 
-    def loadLinks(self, content):
+    def loadLinks(self, content, filterList = None):
         soup = BeautifulSoup(content)
         links = []
-        for a in soup.findAll('a',href=True):            #Process links
-            links.append(a.get("href"))
-        self.links = links
+        if not filterList:
+            for a in soup.findAll('a',href=True):            #Process links
+                links.append(a.get("href"))
+            self.links = links
+        else:
+            for filt in filterList:
+                tags = filt.splt(' ')
 
     """PageTree.getContent(nodeId) returns content of tree node nodeId."""
     def getContent(self, nodeId=0):
@@ -258,8 +262,6 @@ class PageTree:
         pageTreeDataString["RevisionNum"] = self.getRevisionNum(0)
         pageTreeDataString["IsReferredTo"] = self.getIsReferredTo(0)
         pageTreeDataString["Hash"] = self.getHash(0)
-        pageTreeDataString["BlackList"] = self.blackList
-        pageTreeDataString["AssocDomains"] = self.assocDomains
         return json.dumps(pageTreeDataString)
 
     def setPageTreeData(self, fileContent):
@@ -276,8 +278,6 @@ class PageTree:
         self.setPullTS(0, data["PullTS"])
         self.setRevisionNum(0, data["RevisionNum"])
         self.restoreHash(0, data["Hash"])
-        self.blackList = data["BlackList"]
-        self.assocDomains = data["AssocDomains"]
 
     def oldSetPageTreeData(self, fileContent):
         lines = fileContent.split("\n")

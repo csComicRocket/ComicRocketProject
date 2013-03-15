@@ -173,20 +173,23 @@ class Cache:
         
         return pageTree
 
-    def getLists(self, directory):
+    def getLists(self, url, comicId=None):
         """Retrieves the black list and the filter list from the file.
         
         If the comic is one of the last 3 it loads the Lists from the predictor info, 
         otherwise the Lists are loaded from the cacheInfo."""
-        temp = directory[len(cacheLoc + "cacheInfo/"):]
-        temp = temp.split('/')
-        directory = cacheLoc + "cacheInfo/" + temp[0]
+        if comicId:
+            fname = cacheLoc + "predictorInfo/" + str(comicId) + "/filterData.txt"
+        else:
+            url = url.split('://')[1]
+            url = url.rpartition('/')[0]
+            fname = cacheLoc + "cacheInfo/" + url + "/filterData.txt"
         try:
-            with open(os.path.join(directory, "filterData.txt")) as f:
+            with open(fname) as f:
                 lists = json.loads(f.read())
-                return lists["BlackList"], lists["FilterList"]
+            return lists
         except IOError, ValueError:
-            return [], []
+            return {}
 
     def clearPage(self, url):
         directory = self.parseDirectory(url)

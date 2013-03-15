@@ -56,26 +56,22 @@ def invalidNotification(url):
             curTree.blackList.append(i)
     cache.storeCache(curTree)
 
-def newComicFilterList(comicId, data):
+def updateNewComicLists(comicId, data):
     fname = cwd + "../Cache/predictorInfo/" + str(comicId) + "/filterData.txt"
-    applyDataToStoredLists(fname, 'Filterlist', fname)
+    applyDataToStoredLists(fname, data)
 
-def newComicBlackList(comicId, data):
-    fname = cwd + "../Cache/predictorInfo/" + str(comicId) + "/filterData.txt"
-    applyDataToStoredLists(fname, 'BlackList', fname)
+def updateHistComicLists(url, data):
+    url = url.split('://')[1]
+    url = url.rpartition('/')[0]
+    fname = cwd + "../Cache/cacheInfo/" + url + "/filterData.txt"
+    applyDataToStoredLists(fname, data)
 
-def histComicFilterList(url, data):
-    pass
-
-def histComicBlackList(url, data):
-    pass
-
-def applyDataToStoredLists(fname, key, data):
+def applyDataToStoredLists(fname, data):
     try:
         data = json.loads(data)
         with open(fname) as f:
             lists = json.loads(f.read())
-        for item in data[key]:
+        for key, item in data.iteritems():
             lists[key].append(item)
         with open(fname, 'w+') as f:
             f.write(json.dump(lists))

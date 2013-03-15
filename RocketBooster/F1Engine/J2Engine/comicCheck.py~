@@ -8,14 +8,14 @@ from LunarModule.pageTree import *
 import Scheduler
 
 #The only difference between these two functions at the moment is that the newComic func stores the new find in the cache
-def newComic(comicURLs):
+def newComic(comicURLs, comicId):
     lastChange = None
     for url in comicURLs:
         cache = Cache()
-        webObject = fetchWeb(url,False)
+        lists = cache.getLists(url, comicId)
+        webObject = fetchWeb(url, lists["PredFilters"])
         cacheObject = cache.fetchCache(url,None)
-        if not compare(webObject, cacheObject):
-            print "New Comic change found: " + url
+        if not compare(webObject, cacheObject, lists["BlackLists"]):
             cache.storeCache(webObject)
             lastChange = url
     if lastChange:
@@ -24,14 +24,11 @@ def newComic(comicURLs):
     return None
 
 def histComic(comicURL):
-    webObject = fetchWeb(comicURL,False)
     cache = Cache()
+    lists = cache.getLists(url)
+    webObject = fetchWeb(comicURL, lists["HistFilters"])
     cacheObject = cache.fetchCache(comicURL,None)
-    if not compare(webObject, cacheObject):
-        print "Hist Comic change found: " + comicURL
-        print "new: " + str(len(webObject.getContent()))
-        print "old: " + str(len(cacheObject.getContent()))
-        print webObject.getContent() == cacheObject.getContent()
+    if not compare(webObject, cacheObject, lists["BlackLists"]):
         cache.storeCache(webObject)
         Scheduler.histComicNotification += 1
         notification("Hist: " + comicURL)

@@ -3,6 +3,8 @@
 from LunarModule.pageTree import *
 
 def compare(webPage, cachePage):
+    applyFilters(webPage)
+    applyFilters(cachePage)
     return linkCompare(webPage, cachePage)
 
 def hashCompare(webPage, cachePage):
@@ -21,3 +23,6 @@ def linkCompare(webPage, cachePage):
     else:
         return False
     return True
+
+def applyFilters(page):
+    pass

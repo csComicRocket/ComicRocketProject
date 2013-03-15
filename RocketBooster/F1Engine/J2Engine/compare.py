@@ -1,10 +1,9 @@
 #Eric Smith & Daniel Leblanc
 
 from LunarModule.pageTree import *
+import re
 
-def compare(webPage, cachePage):
-    applyFilters(webPage)
-    applyFilters(cachePage)
+def compare(webPage, cachePage, linkFilters=[]):
     return linkCompare(webPage, cachePage)
 
 def hashCompare(webPage, cachePage):
@@ -24,5 +23,10 @@ def linkCompare(webPage, cachePage):
         return False
     return True
 
-def applyFilters(page):
-    pass
+def filteredLinkCompare(webPage, cachePage, linkFilters):
+    for link in webPage.links:
+        for exp in linkFilters:
+            if re.search(exp, link) and link not in cachePage.links:
+                return False
+    return True
+

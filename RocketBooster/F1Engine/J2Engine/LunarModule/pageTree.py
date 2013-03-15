@@ -130,12 +130,15 @@ class PageTree:
         self.nodes[self.getIndex(nodeId)].setContent(content, encodeType)
         self.loadLinks(content)
 
-    def loadLinks(self, content):
+    def loadLinks(self, content, filterList = None):
         soup = BeautifulSoup(content)
         links = []
+        for filt in filterList:
+            soup.select(filt).extract()
         for a in soup.findAll('a',href=True):            #Process links
             links.append(a.get("href"))
         self.links = links
+
 
     """PageTree.getContent(nodeId) returns content of tree node nodeId."""
     def getContent(self, nodeId=0):

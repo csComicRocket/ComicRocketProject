@@ -50,8 +50,8 @@ class HTTPListener(SimpleHTTPServer.SimpleHTTPRequestHandler):
                 raise KeyError
             
         except KeyError:
-            print "Invalid crFunction"
-            F1Engine.J2Engine.notification.notification("Invalid crFunction arguments")
+            print "Invalid crFunction call"
+            F1Engine.J2Engine.notification.notification("Invalid crFunction call")
         except Exception as e:
             print(e)
             self.send_error(500, 'Internal Server Error: Failed POST')

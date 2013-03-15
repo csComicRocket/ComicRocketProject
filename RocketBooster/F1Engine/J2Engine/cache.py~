@@ -173,8 +173,11 @@ class Cache:
         
         return pageTree
 
-    def getLists(self, url):
-        """Retrieves the black list and the filter list from the file"""
+    def getLists(self, directory):
+        """Retrieves the black list and the filter list from the file.
+        
+        If the comic is one of the last 3 it loads the Lists from the predictor info, 
+        otherwise the Lists are loaded from the cacheInfo."""
         temp = directory[len(cacheLoc + "cacheInfo/"):]
         temp = temp.split('/')
         directory = cacheLoc + "cacheInfo/" + temp[0]
